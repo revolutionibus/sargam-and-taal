@@ -200,10 +200,15 @@
         <div id="sargamTurn" class="turn">Starts on sam</div>
         <div id="sargamScore" class="small muted"></div>
         <div id="sargamLines" class="sargam-lines"></div>
+        <div id="sargamResize" class="sargam-resize" role="separator" aria-orientation="horizontal" tabindex="0"
+          title="Drag to show more or fewer lines (or use the arrow keys)"><i></i><span></span></div>
         <p class="muted small sargam-help">One line = one avartan. Komal swars are underlined, tivra Ma has a mark above,
           dots show mandra (below) and taar (above) saptak. Use headphones when checking your singing.</p>
         <div class="sargam-settings">
-          <select id="sargamExercise"></select>
+          <div class="row sargam-pick">
+            <select id="sargamExercise"></select>
+            <button id="sargamEdit" aria-pressed="false" title="Show the line editor">Edit</button>
+          </div>
           <div id="sargamEditor" hidden>
             <div class="field"><label>Name</label>
               <input id="sargamLineName" type="text" placeholder="e.g. Yaman palta 1"></div>

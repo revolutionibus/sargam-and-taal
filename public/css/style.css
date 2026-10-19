@@ -350,7 +350,11 @@ details summary:hover { color: var(--text); }
 #sargamPanel .turn { margin-top: 0; }
 .sargam-help { margin: 12px 0 0; }
 .sargam-settings { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 16px; }
-.sargam-settings > select { width: 100%; margin-bottom: 10px; }
+.sargam-pick { margin-bottom: 10px; gap: 8px; }
+.sargam-pick select { flex: 1; min-width: 0; }
+.sargam-pick button { flex: 0 0 auto; }
+.sargam-pick button[aria-pressed=true] { background: var(--accent-soft); color: var(--accent-2); border-color: var(--accent); }
+button[hidden] { display: none; }
 #sargamError:empty, #sargamWarn:empty { display: none; }
 .status-line.warn { color: var(--accent-2); }
 #sargamEditor .hint { margin: 2px 0 6px; line-height: 1.55; }
@@ -364,7 +368,20 @@ details summary:hover { color: var(--text); }
 }
 .turn.listen { background: var(--khali-soft); color: var(--khali); }
 .turn.yours { background: var(--accent-soft); color: var(--accent-2); }
-.sargam-lines { display: flex; flex-direction: column; gap: 6px; }
+.sargam-lines {
+  display: flex; flex-direction: column; gap: 6px; padding-top: 4px;
+  overflow-y: auto; overscroll-behavior: contain;
+}
+/* Drag handle under the lines: sets how many lines are visible. */
+.sargam-resize {
+  display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0 2px;
+  cursor: ns-resize; touch-action: none; user-select: none; color: var(--muted); font-size: .7rem;
+  border-top: 1px dashed var(--line); margin-top: 4px;
+}
+.sargam-resize[hidden] { display: none; }
+.sargam-resize i { width: 36px; height: 4px; border-radius: 2px; background: var(--line-strong); }
+.sargam-resize:hover i, .sargam-resize.dragging i, .sargam-resize:focus-visible i { background: var(--accent); }
+.sargam-resize:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .s-line {
   display: flex; gap: 6px; align-items: flex-start; padding: 8px 6px; border-radius: 10px;
   border: 1px solid transparent; transition: background .15s;

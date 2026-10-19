@@ -17,11 +17,11 @@
     swarOn: false, swarRaga: 'yaman', swarEvery: 2, swarSpeed: 1, swarVol: 0.5,
     sargamPanel: true, sargamOn: true, sargamExercise: 'scale', sargamRaga: 'bilawal',
     sargamCustom: 'S R G M P - - - | P M G R S - - -', sargamPerBeat: 1, sargamMode: 'along',
-    sargamInst: 'harmonium', sargamVol: 0.7, sargamCheck: false,
+    sargamInst: 'harmonium', sargamVol: 0.7, sargamCheck: false, sargamVisible: 4,
     fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'en', theme: 'auto',
   };
   // Settings captured by a preset (everything except app preferences).
-  const APP_PREFS = ['fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme',
+  const APP_PREFS = ['fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible',
                      'lehraOpen', 'tanpuraOpen', 'swarOpen', 'taalOpen'];
 
   let store = { settings: {}, custom: [], sequences: [], presets: [], favorites: [], sargamLines: [] };
@@ -523,6 +523,7 @@
   let sargamSpans = [];      // note index -> its spans (a long note spans several beats)
   let sargamLineNotes = [];  // line -> indexes of the notes that start in it
   let sargamLineEls = [];
+  let sargamEditing = false;   // the line editor shows only after pressing Edit
   let sargamOn = [];
   let checkNote = null;   // note being checked: { idx, semi, start, samples }
   const score = { ok: 0, low: 0, high: 0, miss: 0 };
@@ -551,7 +552,9 @@
 
   function applySargam() {
     player.setSargam(sargamNotes(), S.sargamMode);
-    $('sargamEditor').hidden = !isOwnLine();
+    $('sargamEditor').hidden = !(isOwnLine() && sargamEditing);
+    $('sargamEdit').hidden = !isOwnLine();
+    $('sargamEdit').setAttribute('aria-pressed', String(sargamEditing));
     $('sargamLineDelete').hidden = !savedLine();
     $('sargamRaga').disabled = isOwnLine();
     resetSargamScore();
@@ -572,6 +575,7 @@
 
   function selectSargamExercise(value) {
     S.sargamExercise = value;
+    if (value === 'custom') sargamEditing = true;   // nothing to see until it is written
     const line = savedLine();
     if (line) S.sargamCustom = line.notes;
     $('sargamCustom').value = S.sargamCustom;
@@ -598,6 +602,7 @@
       store.sargamLines.push(line);
     }
     S.sargamExercise = 'line:' + line.id;
+    sargamEditing = false;   // saved: close the editor
     save(true);
     fillSargamExercise();
     applySargam();
@@ -701,6 +706,74 @@
       sargamLineEls.push(row);
       box.appendChild(row);
     }
+    fitSargamLines();
+  }
+
+  // The notation box shows S.sargamVisible lines and scrolls the rest.
+  // Lines wrap at narrow widths, so the height is measured, not computed.
+  function fitSargamLines() {
+    const box = $('sargamLines');
+    const handle = $('sargamResize');
+    const rows = sargamLineEls;
+    const n = Math.max(1, Math.min(S.sargamVisible, rows.length));
+    handle.hidden = rows.length < 2;
+    handle.lastChild.textContent = rows.length < 2 ? '' : `${n} of ${rows.length} lines`;
+    handle.setAttribute('aria-valuenow', n);
+    handle.setAttribute('aria-valuemax', rows.length);
+    if (n >= rows.length || !box.offsetParent) { box.style.maxHeight = ''; return; }
+    const top = rows[0].getBoundingClientRect().top;
+    box.style.maxHeight = Math.ceil(rows[n].getBoundingClientRect().top - top) + 'px';
+  }
+
+  function setSargamVisible(n) {
+    n = Math.max(1, Math.min(n, sargamLineEls.length));
+    if (n === Math.min(S.sargamVisible, sargamLineEls.length)) return;
+    S.sargamVisible = n;
+    fitSargamLines();
+    save();
+  }
+
+  // Drag the handle under the lines; it snaps to whole lines.
+  function initSargamResize() {
+    const box = $('sargamLines');
+    const handle = $('sargamResize');
+    let drag = null;
+    handle.addEventListener('pointerdown', (e) => {
+      if (!sargamLineEls.length) return;
+      e.preventDefault();
+      handle.setPointerCapture(e.pointerId);
+      drag = { y: e.clientY, h: box.getBoundingClientRect().height };
+      handle.classList.add('dragging');
+    });
+    handle.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      const want = drag.h + e.clientY - drag.y;
+      const top = sargamLineEls[0].getBoundingClientRect().top;
+      // Lines whose middle is above the wanted height stay visible.
+      let n = 0;
+      for (const r of sargamLineEls) {
+        const b = r.getBoundingClientRect();
+        if (b.top - top + b.height / 2 > want) break;
+        n++;
+      }
+      setSargamVisible(n);
+    });
+    const end = () => { drag = null; handle.classList.remove('dragging'); };
+    handle.addEventListener('pointerup', end);
+    handle.addEventListener('pointercancel', end);
+    handle.addEventListener('keydown', (e) => {
+      const cur = Math.min(S.sargamVisible, sargamLineEls.length);
+      if (e.key === 'ArrowDown') setSargamVisible(cur + 1);
+      else if (e.key === 'ArrowUp') setSargamVisible(cur - 1);
+      else return;
+      e.preventDefault();
+    });
+    // Re-measure when the panel opens or changes width (lines rewrap).
+    let width = 0;
+    new ResizeObserver(([entry]) => {
+      const w = Math.round(entry.contentRect.width);
+      if (w !== width) { width = w; fitSargamLines(); }
+    }).observe($('sargamPanel'));
   }
 
   function updateTurn(ev) {
@@ -725,8 +798,10 @@
     if (ev.kind === 'line') {
       sargamLineEls.forEach((r, i) => r.classList.toggle('current', i === ev.line));
       const row = sargamLineEls[ev.line];
-      const panel = $('sargamPanel');
-      if (row && panel.scrollHeight > panel.clientHeight) panel.scrollTop = row.offsetTop - 140;
+      const box = $('sargamLines');
+      if (row && box.scrollHeight > box.clientHeight) {
+        box.scrollTo({ top: box.scrollTop + row.getBoundingClientRect().top - box.getBoundingClientRect().top, behavior: 'smooth' });
+      }
       updateTurn(ev);
       finishCheck();
       // The line is about to be sung again: clear its old marks.
@@ -813,6 +888,12 @@
     $('sargamLineName').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveSargamLine(); });
     $('sargamLineSave').addEventListener('click', saveSargamLine);
     $('sargamLineDelete').addEventListener('click', deleteSargamLine);
+    $('sargamEdit').addEventListener('click', () => {
+      sargamEditing = !sargamEditing;
+      applySargam();
+      if (sargamEditing) $('sargamCustom').focus();
+    });
+    initSargamResize();
     bind('sargamPerBeat', 'sargamPerBeat', { onChange: applySargam });
     bind('sargamMode', 'sargamMode', { type: 'str', onChange: applySargam });
     bind('sargamInst', 'sargamInst', { type: 'str', onChange: (v) => engine.ctx && engine.load(engine.melodicFiles(v)) });
