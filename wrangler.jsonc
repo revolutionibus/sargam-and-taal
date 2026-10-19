@@ -1,0 +1,10 @@
+// Cloudflare Workers config: serves public/ as a static site (no Worker code).
+// Deploy with `npx wrangler deploy`; preview locally with `npx wrangler dev`.
+// On Cloudflare the JSON files are read-only, so saves stay in the browser.
+{
+  "name": "taal-studio",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./public"
+  }
+}

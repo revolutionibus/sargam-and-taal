@@ -1,0 +1,378 @@
+// Audio engine: sample loading, retuning to the chosen Sa, per-channel buses,
+// and small synthesized fallbacks used when a sample file is missing.
+(function (root) {
+  'use strict';
+  const D = root.Data;
+  const BUSES = ['taal', 'dayan', 'bayan', 'manjeera', 'lehra', 'tanpura', 'swar', 'sargam'];
+
+  class Engine {
+    constructor() {
+      this.ctx = null;
+      this.buffers = new Map();   // file name -> AudioBuffer
+      this.missing = new Set();   // file names that failed to load
+      this.loading = new Map();   // file name -> Promise
+      this.lastVariant = {};
+      this.saSemis = 0;           // Sa relative to C#4, in semitones (fractional)
+      this.tablaFine = 0;         // extra dayan tuning, semitones
+      this.vol = { master: 0.8, taal: 0.9, dayan: 1, bayan: 1, manjeera: 0.5,
+                   lehra: 0.6, tanpura: 0.6, swar: 0.5, sargam: 0.7 };
+      this.session = null;
+      this.preview = null;
+      this.onSamplesChanged = null;
+    }
+
+    ensure() {
+      if (!this.ctx) {
+        const Ctx = root.AudioContext || root.webkitAudioContext;
+        this.ctx = new Ctx({ latencyHint: 'interactive' });
+        this.comp = this.ctx.createDynamicsCompressor();
+        this.comp.threshold.value = -10;
+        this.comp.ratio.value = 4;
+        this.masterGain = this.ctx.createGain();
+        this.masterGain.gain.value = this.vol.master;
+        this.masterGain.connect(this.comp).connect(this.ctx.destination);
+        this.noise = this.makeNoise();
+        this.preview = this.makeSession();
+      }
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      return this.ctx;
+    }
+
+    get now() { return this.ctx ? this.ctx.currentTime : 0; }
+
+    // ── Sessions & volume ────────────────────────────────────────────────
+    makeSession() {
+      const c = this.ctx;
+      const s = { out: c.createGain() };
+      s.out.connect(this.masterGain);
+      for (const b of BUSES) s[b] = c.createGain();
+      s.taal.connect(s.out);
+      s.dayan.connect(s.taal); s.bayan.connect(s.taal); s.manjeera.connect(s.taal);
+      s.lehra.connect(s.out); s.tanpura.connect(s.out); s.swar.connect(s.out); s.sargam.connect(s.out);
+      this.applyVolumes(s);
+      s.voices = {};
+      return s;
+    }
+
+    applyVolumes(s) {
+      if (!s) return;
+      const t = this.ctx.currentTime;
+      for (const b of BUSES) s[b].gain.setTargetAtTime(this.vol[b], t, 0.02);
+    }
+
+    setVolume(name, v) {
+      this.vol[name] = v;
+      if (!this.ctx) return;
+      if (name === 'master') this.masterGain.gain.setTargetAtTime(v, this.ctx.currentTime, 0.02);
+      else { this.applyVolumes(this.session); this.applyVolumes(this.preview); }
+    }
+
+    startSession() {
+      this.ensure();
+      this.session = this.makeSession();
+      return this.session;
+    }
+
+    stopSession(fade, s = this.session) {
+      if (!s) return;
+      if (s === this.session) this.session = null;
+      const t = this.ctx.currentTime;
+      const len = fade ? 1.2 : 0.04;
+      s.out.gain.setValueAtTime(s.out.gain.value, t);
+      s.out.gain.linearRampToValueAtTime(0, t + len);
+      setTimeout(() => s.out.disconnect(), (len + 0.2) * 1000);
+    }
+
+    // ── Tuning ───────────────────────────────────────────────────────────
+    // key: 0..11 (C..B), cents: -100..100. Picks the octave closest to C#.
+    setSa(key, cents) {
+      let s = key - 1 + cents / 100;
+      while (s >= 6) s -= 12;
+      while (s < -6) s += 12;
+      this.saSemis = s;
+    }
+    saFrequency(octaveOffset = 0) {
+      return 440 * Math.pow(2, (D.SAMPLE_BASE_MIDI + this.saSemis - 69) / 12 + octaveOffset);
+    }
+
+    // ── Sample loading ──────────────────────────────────────────────────
+    filesForGroup(group) {
+      const n = D.SAMPLE_GROUPS[group];
+      if (!n) return [group + '.wav'];
+      return Array.from({ length: n }, (_, i) => `${group}_${i + 1}.wav`);
+    }
+
+    load(files) {
+      this.ensure();
+      return Promise.all(files.map((f) => this.loadFile(f)));
+    }
+
+    loadFile(file) {
+      if (this.buffers.has(file) || this.missing.has(file)) return Promise.resolve();
+      if (this.loading.has(file)) return this.loading.get(file);
+      const p = this.readSample(file)
+        .then((ab) => new Promise((res, rej) => this.ctx.decodeAudioData(ab, res, rej)))
+        .then((buf) => { this.buffers.set(file, buf); })
+        .catch(() => { this.missing.add(file); })
+        .finally(() => {
+          this.loading.delete(file);
+          if (this.onSamplesChanged) this.onSamplesChanged();
+        });
+      this.loading.set(file, p);
+      return p;
+    }
+
+    // The standalone build (build_standalone.py) opens from file://, where
+    // fetch is blocked: there each sample is a script that sets
+    // TaalSamples[file] to its base64 bytes.
+    readSample(file) {
+      if (!root.TAAL_STANDALONE) {
+        return fetch('sounds/' + file)
+          .then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); });
+      }
+      return new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'sounds/' + file.replace(/\.wav$/, '.js');
+        s.onload = () => {
+          const b64 = (root.TaalSamples || {})[file];
+          delete root.TaalSamples[file];
+          s.remove();
+          if (!b64) { rej(new Error('empty')); return; }
+          const bin = atob(b64), bytes = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+          res(bytes.buffer);
+        };
+        s.onerror = () => { s.remove(); rej(new Error('missing')); };
+        document.head.appendChild(s);
+      });
+    }
+
+    // Random variant of a group, avoiding immediate repeats.
+    pickBuffer(group) {
+      const files = this.filesForGroup(group).filter((f) => this.buffers.has(f));
+      if (!files.length) return null;
+      let i = Math.floor(Math.random() * files.length);
+      if (files.length > 1 && files[i] === this.lastVariant[group]) i = (i + 1) % files.length;
+      this.lastVariant[group] = files[i];
+      return this.buffers.get(files[i]);
+    }
+
+    playBuffer(buf, time, bus, { semis = 0, vel = 1, pan = 0, dur = 0, release = 0.25 } = {}) {
+      const c = this.ctx;
+      const src = c.createBufferSource();
+      src.buffer = buf;
+      src.playbackRate.value = Math.pow(2, semis / 12);
+      const g = c.createGain();
+      g.gain.value = vel;
+      let node = src.connect(g);
+      if (pan && c.createStereoPanner) {
+        const p = c.createStereoPanner();
+        p.pan.value = pan;
+        node = node.connect(p);
+      }
+      node.connect(bus);
+      src.start(time);
+      if (dur > 0) {
+        g.gain.setValueAtTime(vel, time + dur);
+        g.gain.linearRampToValueAtTime(0, time + dur + release);
+        src.stop(time + dur + release + 0.05);
+      }
+      return { src, gain: g };
+    }
+
+    // ── Percussion ──────────────────────────────────────────────────────
+    stroke(group, time, vel, bus, extraSemis = 0) {
+      if (!group) return;
+      const pitched = !D.UNPITCHED.has(group);
+      const semis = pitched ? this.saSemis + this.tablaFine + extraSemis : 0;
+      const v = vel * (0.92 + Math.random() * 0.12);
+      const buf = this.pickBuffer(group);
+      if (buf) this.playBuffer(buf, time, bus, { semis, vel: v });
+      else if (this.filesForGroup(group).every((f) => this.missing.has(f))) {
+        this.synthStroke(group, time, v, bus);
+      }
+    }
+
+    // ── Melodic ─────────────────────────────────────────────────────────
+    // semi: semitones relative to Sa (0 = madhya Sa). Uses the sample nearest
+    // the sounding pitch, so the key's transposition is kept small.
+    // release: fade after dur (default depends on the instrument).
+    melodic(instrument, semi, time, dur, vel, bus, release) {
+      const set = D.MELODIC[instrument];
+      let best = null;
+      for (const [file, off] of set) {
+        const f = file + '.wav';
+        if (!this.buffers.has(f)) continue;
+        const d = Math.abs(this.saSemis + semi - off);
+        if (!best || d < Math.abs(this.saSemis + semi - best[1])) best = [f, off];
+      }
+      if (!best) {
+        if (set.every(([f]) => this.missing.has(f + '.wav'))) this.synthMelodic(instrument, semi, time, dur, vel, bus);
+        return null;
+      }
+      return this.playBuffer(this.buffers.get(best[0]), time, bus,
+        { semis: this.saSemis + semi - best[1], vel, dur,
+          release: release ?? ({ harmonium: 0.12, piano: 0.25 }[instrument] ?? 0.6) });
+    }
+
+    melodicFiles(instrument) {
+      return D.MELODIC[instrument].map(([f]) => f + '.wav');
+    }
+
+    // Tanpura string: semi relative to tabla Sa (madhya tanpura Sa = -12).
+    tanpuraFiles(tone) {
+      return Object.keys(D.TANPURA_ROLE_SEMI).map((r) => `tanpura_${tone}_${r}.wav`);
+    }
+
+    tanpuraString(tone, semi, preferRole, time, vel, pan, bus, voiceKey) {
+      let role = preferRole;
+      if (!role || D.TANPURA_ROLE_SEMI[role] === undefined) {
+        role = 'sa';
+        for (const r of ['pa', 'sa', 'sa_low']) {
+          if (Math.abs(semi - D.TANPURA_ROLE_SEMI[r]) < Math.abs(semi - D.TANPURA_ROLE_SEMI[role])) role = r;
+        }
+      }
+      const file = `tanpura_${tone}_${role}.wav`;
+      const s = this.session || this.preview;
+      // A new pluck damps the previous note on the same string.
+      const prev = s.voices[voiceKey];
+      if (prev) {
+        prev.gain.gain.cancelScheduledValues(time);
+        prev.gain.gain.setTargetAtTime(0, time, 0.12);
+        try { prev.src.stop(time + 1); } catch (e) { /* already stopped */ }
+      }
+      let v = null;
+      if (this.buffers.has(file)) {
+        v = this.playBuffer(this.buffers.get(file), time, bus,
+          { semis: this.saSemis + semi - D.TANPURA_ROLE_SEMI[role], vel, pan });
+      } else if (this.missing.has(file)) {
+        v = this.synthTanpura(semi, time, vel, pan, bus);
+      }
+      if (v) s.voices[voiceKey] = v;
+    }
+
+    // ── Synthesized fallbacks ───────────────────────────────────────────
+    makeNoise() {
+      const c = this.ctx;
+      const b = c.createBuffer(1, c.sampleRate, c.sampleRate);
+      const d = b.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      return b;
+    }
+
+    tone(freq, time, amp, decay, bus, type = 'sine') {
+      const c = this.ctx;
+      const o = c.createOscillator();
+      o.type = type;
+      o.frequency.value = freq;
+      const g = c.createGain();
+      g.gain.setValueAtTime(0, time);
+      g.gain.linearRampToValueAtTime(amp, time + 0.003);
+      g.gain.setTargetAtTime(0, time + 0.003, decay);
+      o.connect(g).connect(bus);
+      o.start(time);
+      o.stop(time + decay * 7 + 0.05);
+      return o;
+    }
+
+    noiseBurst(time, amp, decay, bus, filterType, freq, q = 1) {
+      const c = this.ctx;
+      const src = c.createBufferSource();
+      src.buffer = this.noise;
+      const f = c.createBiquadFilter();
+      f.type = filterType;
+      f.frequency.value = freq;
+      f.Q.value = q;
+      const g = c.createGain();
+      g.gain.setValueAtTime(amp, time);
+      g.gain.setTargetAtTime(0, time, decay);
+      src.connect(f).connect(g).connect(bus);
+      src.start(time, Math.random() * 0.5);
+      src.stop(time + decay * 7 + 0.05);
+    }
+
+    synthStroke(group, t, v, bus) {
+      const f = this.saFrequency() * Math.pow(2, this.tablaFine / 12);
+      const ring = (amps, decays, click) => {
+        amps.forEach((a, i) => this.tone(f * (i + 1), t, a * v * 0.5, decays[i], bus));
+        this.noiseBurst(t, click * v, 0.004, bus, 'highpass', 3000);
+      };
+      const bayanGe = (bend) => {
+        const o = this.tone(f * 0.36, t, v, 0.45, bus);
+        o.frequency.setValueAtTime(f * 0.34, t);
+        o.frequency.exponentialRampToValueAtTime(f * 0.36 * bend, t + 0.12);
+        this.noiseBurst(t, 0.5 * v, 0.015, bus, 'lowpass', 300);
+      };
+      switch (group) {
+        case 'na': case 'ne': ring([0.35, 0.8, 0.55, 0.35, 0.2], [0.35, 0.45, 0.3, 0.2, 0.12], 0.5); break;
+        case 'sur': case 'tin': ring([0.6, 0.7, 0.35, 0.15, 0.1], [0.5, 0.4, 0.25, 0.15, 0.1], 0.3); break;
+        case 'tun': case 'din': case 'soft_din': ring([1, 0.35, 0.12, 0.05], [0.9, 0.5, 0.3, 0.2], 0.15); break;
+        case 'ti': case 'te': case 'ra': case 'tra':
+          this.tone(f, t, 0.25 * v, 0.05, bus);
+          this.noiseBurst(t, 0.6 * v, 0.03, bus, 'bandpass', group === 'ra' ? 1400 : 1800);
+          if (group === 'tra') this.noiseBurst(t + 0.035, 0.45 * v, 0.03, bus, 'bandpass', 1400);
+          break;
+        case 'ki': case 'thap': case 'tichki': case 'closed_ge':
+          this.noiseBurst(t, 0.9 * v, 0.035, bus, 'bandpass', 500, 0.8);
+          this.tone(f * 0.5, t, 0.4 * v, 0.04, bus);
+          break;
+        case 'manjeera_open':
+          [2840, 3970, 5190, 6380].forEach((fr, i) => this.tone(fr, t, 0.12 * v, 0.9 - i * 0.15, bus));
+          this.noiseBurst(t, 0.3 * v, 0.02, bus, 'highpass', 5000);
+          break;
+        case 'manjeera_closed':
+          this.noiseBurst(t, 0.5 * v, 0.03, bus, 'highpass', 4000);
+          break;
+        default:
+          if (group.startsWith('pk_')) ring([0.8, 0.3, 0.1], [0.4, 0.25, 0.15], 0.2);
+          else bayanGe(group.includes('sliding') ? 1.25 : 1.08);
+      }
+    }
+
+    synthMelodic(instrument, semi, t, dur, vel, bus) {
+      const c = this.ctx;
+      const f = this.saFrequency() * Math.pow(2, semi / 12);
+      if (instrument === 'harmonium') {
+        const lp = c.createBiquadFilter();
+        lp.type = 'lowpass'; lp.frequency.value = 2200;
+        const g = c.createGain();
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.18 * vel, t + 0.03);
+        g.gain.setValueAtTime(0.18 * vel, t + dur);
+        g.gain.linearRampToValueAtTime(0, t + dur + 0.1);
+        lp.connect(g).connect(bus);
+        for (const [type, mul] of [['sawtooth', 1], ['square', 1.003]]) {
+          const o = c.createOscillator();
+          o.type = type; o.frequency.value = f * mul;
+          o.connect(lp); o.start(t); o.stop(t + dur + 0.15);
+        }
+      } else {
+        this.tone(f, t, 0.4 * vel, instrument === 'santoor' ? 0.6 : 1.2, bus, 'triangle');
+        this.tone(f * 2, t, 0.1 * vel, 0.3, bus);
+      }
+    }
+
+    synthTanpura(semi, t, vel, pan, bus) {
+      const c = this.ctx;
+      const f = this.saFrequency() * Math.pow(2, semi / 12);
+      const o = c.createOscillator();
+      o.type = 'sawtooth'; o.frequency.value = f;
+      const lp = c.createBiquadFilter();
+      lp.type = 'bandpass'; lp.Q.value = 1.5;
+      lp.frequency.setValueAtTime(f * 3, t);
+      lp.frequency.exponentialRampToValueAtTime(f * 14, t + 1.2);
+      lp.frequency.exponentialRampToValueAtTime(f * 4, t + 5);
+      const g = c.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.35 * vel, t + 0.02);
+      g.gain.setTargetAtTime(0, t + 0.02, 2.2);
+      let node = o.connect(lp).connect(g);
+      if (pan && c.createStereoPanner) { const p = c.createStereoPanner(); p.pan.value = pan; node = node.connect(p); }
+      node.connect(bus);
+      o.start(t); o.stop(t + 10);
+      return { src: o, gain: g };
+    }
+  }
+
+  root.Engine = Engine;
+})(this);

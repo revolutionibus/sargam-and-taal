@@ -1,0 +1,26 @@
+{
+  "app": "taal-studio",
+  "version": 1,
+  "sargamLines": [
+    {
+      "id": "mvf99jjx",
+      "name": "dadra-sargam-1",
+      "notes": ".n S R | G M P |\n - - - | P M G |\n R S - | - - ~ |\nS r m  | P d S'|\nn' d' P'|"
+    },
+    {
+      "id": "mvfbofaz",
+      "name": "কাহারবা তাল",
+      "notes": "S[1.5] S[0.5]  S[1] P |\n S (SR) S .P |"
+    },
+    {
+      "id": "mvfgjlzc",
+      "name": "নিপট কাহারবা-১",
+      "notes": "S G R G | S R S .N|\nS R G R | G m G - |\nP D m P | G m R G | \nS R G R | (S .N) (.D .N) (SR) S|\n----|----|\n----|----|\nP P P P | D P D P |\nm m m m | P m P m |\nR R R R | R G m P |\nR m G R | (.D.N) (SR) (GR) S |"
+    },
+    {
+      "id": "mvfhwajv",
+      "name": "তোমার দেশ কোথা হে পথিক",
+      "notes": "S S - | R m m | m m P | P P -| PPD|\nmP-|(PD) n D| P m G |R S -| R mm|\n m m P | P P -| PPD|\nmP-|(PD) n D| P m G |R S -|"
+    }
+  ]
+}

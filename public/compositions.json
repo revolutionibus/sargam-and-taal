@@ -1,0 +1,15 @@
+{
+  "app": "taal-studio",
+  "version": 1,
+  "custom": [
+    {
+      "id": "c-mvfe81c3",
+      "name": "k1",
+      "marks": "",
+      "tempo": 100,
+      "drum": "tabla",
+      "bols": "Dha Dhin Dhi Dha",
+      "kind": "custom"
+    }
+  ]
+}

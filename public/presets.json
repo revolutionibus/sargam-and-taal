@@ -1,0 +1,60 @@
+{
+  "app": "taal-studio",
+  "version": 1,
+  "presets": [
+    {
+      "name": "নিপট কাহারবা-১",
+      "settings": {
+        "taalId": "keherwa",
+        "tempo": 130,
+        "key": 1,
+        "fine": 6,
+        "master": 0.31,
+        "taalOn": true,
+        "drum": "",
+        "startBeat": 1,
+        "taalVol": 0.57,
+        "dayanVol": 1,
+        "bayanVol": 1,
+        "tablaFine": 0,
+        "manjeeraOn": true,
+        "manjeeraVol": 1.23,
+        "manjeeraMode": "beats",
+        "manjeeraBeats": {
+          "keherwa": "1 5",
+          "jhaptaal": ""
+        },
+        "lehraOn": false,
+        "lehraId": "da-pahadi",
+        "lehraVol": 0.47,
+        "lehraAuto": false,
+        "tanpuraOn": false,
+        "tanpuraPattern": 1,
+        "tanpuraTone": "p3",
+        "tanpuraCount": 1,
+        "tanpuraSpeed": 0.7,
+        "tanpuraRandom": true,
+        "tanpuraVol": 0.31,
+        "tanpuraDelays": [
+          1,
+          0.9,
+          0.9,
+          1.7
+        ],
+        "swarOn": false,
+        "swarRaga": "khamaj",
+        "swarEvery": 2,
+        "swarSpeed": 1.15,
+        "swarVol": 0.94,
+        "sargamOn": true,
+        "sargamExercise": "line:mvfgjlzc",
+        "sargamRaga": "bilawal",
+        "sargamCustom": "S G R G | S R S .N|\nS R G R | G m G - |\nP D m P | G m R G |\nS R G R | (S .N) (.D .N) (SR) S|\n----|----|\n----|----|\nP P P P | D P D P |\nm m m m | P m P m |\nR R R R | R G m P |\nR m G R | (.D.N) (SR) (GR) S |",
+        "sargamPerBeat": 1,
+        "sargamMode": "along",
+        "sargamInst": "harmonium",
+        "sargamVol": 0.73
+      }
+    }
+  ]
+}
