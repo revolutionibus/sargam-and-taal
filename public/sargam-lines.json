@@ -21,6 +21,31 @@
       "id": "mvfhwajv",
       "name": "তোমার দেশ কোথা হে পথিক",
       "notes": "S S - | R m m | m m P | P P -| PPD|\nmP-|(PD) n D| P m G |R S -| R mm|\n m m P | P P -| PPD|\nmP-|(PD) n D| P m G |R S -|"
+    },
+    {
+      "id": "mvfquojn",
+      "name": "নিপট কাহারবা-২",
+      "notes": "S r G m | P d P m |\nG m P m | G m r S |\n.d .d .n S|r G r S|\nG r (Gm) (Pm)| G (mG) r S|\n----|----|\n\n----|----|\nm P d N | S' S' r S'|\nd N S' r'|G' G' r' S'|\nN S' r' S' | N d P P |\nm P (mP) (dP)|m (Gm) r S|"
+    },
+    {
+      "id": "mvfr24uu",
+      "name": "নিপট কাহারবা-৩",
+      "notes": ".N R G M |P P R G |\nP P R G | .N R S S|\nG R G M | P D N D|\nS' N D P | M G R S|\n|----|----|\n|----|----|\nM G M D | S' N R' S'|\nN R' G' R'| N R' S' S' |\nN D P P | M D P M |\nG R (GM) (PM) | G R (.NR) S|"
+    },
+    {
+      "id": "mvfr8w2d",
+      "name": "নিপট কাহারবা-৪",
+      "notes": "S G m P | G m P D |\nS' S' n D| P m G S|\n.n S G S | G m P D|\nn D P D | (mP) (DP) (mG) (S.n)|\n----|----|\n----|----|\nG m P D| n D S' S' |\nn S' G' G' | S' n D S'|\nn D P D | (mP) (DP) m G|\nS (GR) (mG) (Pm) | (DP) (mG) (RG) (mP)|"
+    },
+    {
+      "id": "mvfrr3se",
+      "name": "নিপট কাহারবা-৫",
+      "notes": "S[1.5] r[0.5] S[1] .n | S r g m |\nP m g m | g r S -|\nP[1.5] P[0.5] P[1] d | m P g m|\nP (nn) d P | (mP) (gm) P P | \n----|----|\n----|----|\ng (mm) d (nn) | S' (r'r') S' S' |\nd (nn) S' g' | r' (S'n) S' -|\nn S' r' S'| n d P m |\n(Pd)[1.5] m[0.5] P[1] (gm)| (Pm) (gm) (Pd) P|"
+    },
+    {
+      "id": "mvfs6j52",
+      "name": "নিপট দাদরা-১",
+      "notes": "P d P | m P m |\ng m g | R S R |\n.n S R| g m P |\nd P m | P P P |\nP d n | S' R' g|\nR' S' n| d P m|\nP n d | P m P|\ng m g | R S -|\n---|---|\nP d m | P g m|\nP d n| d P P |\nP d n | S' R' g|\nR' S' R'| n S' -|\nP n d | P m P|\ng P m | g R g|\nS g R | S .n .d|\n.P .d .n | R S-|"
     }
   ]
 }
