@@ -180,6 +180,13 @@
 
   const KEYS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
+  // Show the built-in names in the interface language.
+  if (root.I18n) {
+    for (const list of [TANPURA_TONES, TANPURA_PATTERNS, TAALS, LEHRAS, SARGAM_INSTRUMENTS, RAGAS, ALANKARS]) {
+      list.forEach((x) => { x.name = root.I18n.t(x.name); });
+    }
+  }
+
   root.Data = {
     SAMPLE_BASE_MIDI, SAMPLE_GROUPS, UNPITCHED, MELODIC,
     TANPURA_TONES, TANPURA_ROLE_SEMI, TANPURA_PATTERNS,

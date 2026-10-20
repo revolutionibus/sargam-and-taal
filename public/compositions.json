@@ -10,6 +10,24 @@
       "drum": "tabla",
       "bols": "Dha Dhin Dhi Dha",
       "kind": "custom"
+    },
+    {
+      "id": "c-mvgfilg4",
+      "name": "Dadra-3",
+      "marks": "",
+      "tempo": 100,
+      "drum": "tabla",
+      "bols": "Dha Tu Tu Na Dhin Na",
+      "kind": "custom"
+    },
+    {
+      "id": "c-mvghjxss",
+      "name": "dadra-16",
+      "marks": "",
+      "tempo": 100,
+      "drum": "tabla",
+      "bols": "(Dha#|Dha2#|Dha3#|Dha5#)[1] (Dhin*|Dhin2*) (Na---)[1] (Tra#Ka---)[1] (Dhin*|Dhin2*)[1] (Na---)[1]",
+      "kind": "custom"
     }
   ]
 }

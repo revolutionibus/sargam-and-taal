@@ -16,7 +16,7 @@
     let b = 0;
     p.vibhags.forEach((len, i) => { vibhagStart.set(b, marks[i] || ''); b += len; });
     return { ...t, beats: p.beats, vibhags: p.vibhags, cells: p.cells, events: p.events,
-             errors: p.errors, marks, vibhagStart };
+             choices: p.choices, errors: p.errors, marks, vibhagStart };
   }
 
   function compileLehra(l) {
@@ -42,6 +42,8 @@
       this.sargam = null;
       this.sargamVisual = [];
       this.sargamCount = -1;     // beats since the sargam started (-1 = wait for sam)
+      this.sargamLoop = null;    // line indexes to loop, or null for every line
+      this.picks = new WeakMap(); // choice group -> picked alternative
     }
 
     // notes: [{ pos, len, semi | null(rest) }] in beats, from Notation.parseSargam;
@@ -55,12 +57,31 @@
           const next = notes[i + 1];
           return n.semi !== null && !!next && next.semi === n.semi && Math.abs(next.pos - (n.pos + n.len)) < 1e-6;
         };
-        this.sargam = { notes: notes.map((n, i) => ({ ...n, i, repeat: repeat(n, i) })), mode, total: last.pos + last.len };
+        const out = notes.map((n, i) => ({ ...n, i, repeat: repeat(n, i) }));
+        // Meend: a note that glides on sounds through the swars it glides
+        // into (they are slurred, not played), so it carries the whole chain:
+        // its length, the slides into each of them (in beats from its start)
+        // and the repeat gap of the swar it lands on.
+        for (const n of out) {
+          if (n.slur || n.glideTo === undefined) continue;
+          n.glides = [];
+          let k = n.i;
+          for (; out[k].glideTo !== undefined; k++) {
+            const g = out[k];
+            n.glides.push({ at: g.pos + g.glideAt - n.pos, end: g.pos + g.len - n.pos, semi: g.glideTo });
+          }
+          n.chainLen = out[k].pos + out[k].len - n.pos;
+          n.repeat = out[k].repeat;
+        }
+        this.sargam = { notes: out, mode, total: last.pos + last.len };
       } else {
         this.sargam = null;
       }
       this.sargamCount = -1;
     }
+
+    // Loop only these lines (indexes, in playing order); null or empty = all.
+    setSargamLoop(lines) { this.sargamLoop = lines && lines.length ? lines.slice() : null; }
 
     // One line of the exercise = one avartan; the last line is padded with rests.
     sargamLayout(beats) {
@@ -245,6 +266,13 @@
       return this._manjeera.hits;
     }
 
+    // Alternative to play for a "(a|b)" group; picked on its first beat, or
+    // here when playback starts partway through it.
+    pick(group) {
+      if (!this.picks.has(group)) this.picks.set(group, Math.floor(Math.random() * group.n));
+      return this.picks.get(group);
+    }
+
     scheduleBeat(t, samOnly) {
       const s = this.s;
       const e = this.engine;
@@ -254,17 +282,19 @@
       const dur = this.beatDur();
 
       if (s.taalOn) {
+        for (const g of taal.choices) if (g.start === b) this.picks.set(g, Math.floor(Math.random() * g.n));
         for (const ev of N.eventsInBeat(taal.events, b)) {
           if (samOnly && ev.pos > b) break;
+          if (ev.alt && this.pick(ev.alt.group) !== ev.alt.k) continue;
           const at = t + (ev.pos - b) * dur;
-          const accent = s.accentSam && ev.pos === 0 ? 1.12 : 1;
+          const accent = (s.accentSam && ev.pos === 0 ? 1.12 : 1) * (ev.vel || 1);
           if (taal.drum === 'pakhawaj') {
             for (const [g, delay] of N.PK_BOLS[ev.bol] || []) e.stroke(g, at + delay, 0.9 * accent, ses.dayan);
           } else {
             const bol = N.BOLS[ev.bol];
             const v = (bol.v || 1) * accent;
-            if (bol.r) e.stroke(bol.r, at, 0.85 * v, ses.dayan);
-            if (bol.l) e.stroke(bol.l, at, 0.9 * v, ses.bayan);
+            if (bol.r) e.stroke(bol.r, at, 0.85 * v, ses.dayan, 0, ev.variant);
+            if (bol.l) e.stroke(bol.l, at, 0.9 * v, ses.bayan, 0, ev.variant);
           }
         }
         if (s.manjeeraOn && s.manjeeraMode === 'custom') {
@@ -315,25 +345,31 @@
       const { lines } = this.sargamLayout(beats);
       const av = Math.floor(this.sargamCount / beats);
       const call = q.mode === 'call';
-      const line = (call ? Math.floor(av / 2) : av) % lines;
+      const k = call ? Math.floor(av / 2) : av;
+      // Selected lines that still exist (an edited line may have fewer lines).
+      const loop = this.sargamLoop && this.sargamLoop.filter((l) => l < lines);
+      const line = loop && loop.length ? loop[k % loop.length] : k % lines;
       const yourTurn = call && av % 2 === 1;
       const lineEnd = (line + 1) * beats;
       const absB = line * beats + (this.sargamCount % beats);   // position in the exercise
       if (b === 0) this.sargamVisual.push({ time: t, kind: 'line', line, yourTurn });
       for (const n of N.eventsInBeat(q.notes, absB)) {
         const at = t + (n.pos - absB) * dur;
-        if (n.semi !== null && q.mode !== 'silent' && !yourTurn) {
+        if (n.semi !== null && !n.slur && q.mode !== 'silent' && !yourTurn) {
           // A note running past the avartan is cut at the line end.
-          const len = Math.min(n.pos + n.len, lineEnd) - n.pos;
+          const len = Math.min(n.pos + (n.chainLen ?? n.len), lineEnd) - n.pos;
+          const glides = n.glides && n.glides.map((g) => ({ at: at + g.at * dur, end: at + g.end * dur, semi: g.semi }));
           if (n.repeat) {
             // Stop (incl. a short fade) a little before the repeated swar starts.
             const gap = Math.min(SARGAM_REPEAT_GAP, len * dur * 0.25);
-            this.engine.melodic(s.sargamInst, n.semi, at, Math.max(0.03, len * dur - gap - 0.03), 0.75, ses.sargam, 0.03);
+            this.engine.melodic(s.sargamInst, n.semi, at, Math.max(0.03, len * dur - gap - 0.03), 0.75, ses.sargam, 0.03, glides);
           } else {
-            this.engine.melodic(s.sargamInst, n.semi, at, Math.max(0.05, len * dur - 0.02), 0.75, ses.sargam);
+            this.engine.melodic(s.sargamInst, n.semi, at, Math.max(0.05, len * dur - 0.02), 0.75, ses.sargam, undefined, glides);
           }
         }
-        this.sargamVisual.push({ time: at, kind: 'note', idx: n.i, line, yourTurn, semi: n.semi });
+        // glideAt: when this swar starts sliding away (pitch checking stops).
+        this.sargamVisual.push({ time: at, kind: 'note', idx: n.i, line, yourTurn, semi: n.semi,
+                                 glideAt: n.glideTo === undefined ? null : at + n.glideAt * dur });
       }
       // Exercise ended mid-line: the rest of the avartan is padding.
       if (q.total >= absB - 1e-9 && q.total < absB + 1 - 1e-9 && q.total < lineEnd - 1e-9) {

@@ -199,6 +199,10 @@
         </div>
         <div id="sargamTurn" class="turn">Starts on sam</div>
         <div id="sargamScore" class="small muted"></div>
+        <div id="sargamLoopBar" class="loop-bar" hidden>
+          <span id="sargamLoopInfo" class="small"></span>
+          <button id="sargamLoopClear" class="small">Clear</button>
+        </div>
         <div id="sargamLines" class="sargam-lines"></div>
         <div id="sargamResize" class="sargam-resize" role="separator" aria-orientation="horizontal" tabindex="0"
           title="Drag to show more or fewer lines (or use the arrow keys)"><i></i><span></span></div>
@@ -214,7 +218,7 @@
               <input id="sargamLineName" type="text" placeholder="e.g. Yaman palta 1"></div>
             <textarea id="sargamCustom" rows="3" spellcheck="false"
               placeholder="S R G M P - - - | P M G R S - - -"></textarea>
-            <p class="muted small hint">Brackets share one beat: <code>S R (GM) P (DNS')</code>.
+            <p class="muted small hint" data-i18n="sargamHint">Brackets share one beat: <code>S R (GM) P (DNS')</code>.
               <code>[beats]</code> sets a length that carries on until changed: <code>S[0.5] R G M[2]</code>.
               <code>-</code> holds the previous swar, <code>~</code> is a rest.</p>
             <div class="row">
@@ -239,6 +243,11 @@
               <option value="call">Call &amp; response</option>
               <option value="silent">Notes only (you sing)</option>
             </select></div>
+          <div class="field"><label>Loop</label>
+            <select id="sargamLoop">
+              <option value="all">All lines</option>
+              <option value="selected">Selected lines</option>
+            </select></div>
           <div class="field"><label>Instrument</label><select id="sargamInst"></select></div>
           <div class="field"><label>Volume</label><input id="sargamVol" type="range" min="0" max="1.5" step="0.01"></div>
           <div class="field"><label><input type="checkbox" id="sargamCheck"> Check my singing (mic)</label></div>
@@ -257,8 +266,10 @@
         <div class="field"><label>Default tempo</label><input id="cTempo" type="number" min="10" max="800" value="100"></div>
         <div class="field"><label>Drum</label>
           <select id="cDrum"><option value="tabla">Tabla</option><option value="pakhawaj">Pakhawaj</option></select></div>
-        <label>Bols <span class="muted small">— beats separated by spaces, vibhags by “|”. Several bols in one beat
-          share it: <code>TiRaKiTa</code>, <code>DhaGe</code>. “-” is a rest.</span></label>
+        <label>Bols <span class="muted small" data-i18n="bolsHelp">— beats separated by spaces, vibhags by “|”. Several bols in one beat
+          share it: <code>TiRaKiTa</code>, <code>DhaGe</code>. “-” is a rest. <code>(Na---)[1]</code> fits a group
+          into 1 beat, <code>(Dha|Dha2)</code> picks one at random, <code>Dha2</code> = recording 2, <code>#</code> louder,
+          <code>*</code> softer.</span></label>
         <textarea id="cBols" rows="6" spellcheck="false"
           placeholder="Dha Dhin Dhin Dha | Dha Dhin Dhin Dha | Dha Tin Tin Ta | Ta Dhin Dhin Dha"></textarea>
         <div id="cStatus" class="status-line"></div>
@@ -346,10 +357,10 @@
     </div>
     <div class="card">
       <h3>Language</h3>
-      <div class="field"><label>Sargam names</label>
+      <div class="field"><label>App and sargam names</label>
         <select id="sargamLang">
           <option value="en">English (Sa Re Ga)</option>
-          <option value="bn">বাংলা (সা রে গা)</option>
+          <option value="bn">বাংলা (সা রা গা)</option>
         </select></div>
     </div>
     <div class="card">
@@ -358,7 +369,7 @@
     </div>
     <div class="card">
       <h3>Keyboard shortcuts</h3>
-      <p class="small"><kbd>Space</kbd> play/stop · <kbd>↑</kbd>/<kbd>↓</kbd> tempo ±1 (<kbd>Shift</kbd> ±10) ·
+      <p class="small" data-i18n="shortcuts"><kbd>Space</kbd> play/stop · <kbd>↑</kbd>/<kbd>↓</kbd> tempo ±1 (<kbd>Shift</kbd> ±10) ·
         <kbd>T</kbd> tap tempo · <kbd>S</kbd> strum swarmandal · <kbd>[</kbd>/<kbd>]</kbd> Sa down/up ·
         <kbd>G</kbd> sargam panel</p>
     </div>
@@ -370,6 +381,7 @@
   </section>
 </main>
 
+<script src="js/i18n.js"></script>
 <script src="js/notation.js"></script>
 <script src="js/data.js"></script>
 <script src="js/audio.js"></script>

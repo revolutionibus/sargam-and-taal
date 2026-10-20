@@ -237,7 +237,7 @@ main { padding: 20px 24px 48px; max-width: 1768px; margin: 0 auto; }
   transition: background .06s, color .06s, transform .06s;
 }
 .cell .num { font-size: .68rem; color: var(--muted); font-variant-numeric: tabular-nums; }
-.cell .bol { font-weight: 600; white-space: nowrap; }
+.cell .bol { font-weight: 600; white-space: normal; }   /* long choice cells wrap at "/" */
 .cell.sam { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 .cell.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); transform: translateY(-2px); }
 .cell.on .num { color: var(--on-accent); opacity: .8; }
@@ -387,6 +387,26 @@ button[hidden] { display: none; }
   border: 1px solid transparent; transition: background .15s;
 }
 .s-line.current { border-color: var(--line); background: var(--panel-2); }
+/* Loop selected lines: lines become toggles; unpicked ones fade once any is picked. */
+.loop-bar {
+  display: flex; align-items: center; gap: 8px; margin: 0 0 6px; padding: 6px 10px;
+  border-radius: var(--radius-sm); background: var(--accent-soft); color: var(--accent-2);
+}
+.loop-bar[hidden] { display: none; }
+.loop-bar span { flex: 1; }
+.loop-bar button { padding: 3px 10px; }
+.s-line.pickable { cursor: pointer; }
+.s-line.pickable:hover { border-color: var(--line); }
+.s-line.pickable:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.s-line.pickable .ln { color: var(--text); }
+.s-line.pickable .ln::before {
+  content: ''; display: block; width: 12px; height: 12px; margin: -2px 0 3px;
+  border: 1.5px solid var(--line-strong); border-radius: 3px;
+}
+.s-line.picked { border-color: var(--accent); }
+.s-line.picked .ln { color: var(--accent); font-weight: 700; }
+.s-line.picked .ln::before { background: var(--accent); border-color: var(--accent); }
+.sargam-lines.has-picks .s-line.pickable:not(.picked) { opacity: .45; }
 .s-line .ln { flex: 0 0 18px; font-size: .72rem; color: var(--muted); padding-top: 8px; font-variant-numeric: tabular-nums; }
 .s-line .vibs { display: flex; flex-wrap: wrap; gap: 6px 10px; }
 .s-vib { display: flex; gap: 3px; }
@@ -412,6 +432,16 @@ button[hidden] { display: none; }
 .sw.taar::after { top: -2px; }
 .sw.mandra::after { bottom: -3px; }
 .sw.taar2::after { box-shadow: 4px 0 0 currentColor; margin-left: -3.5px; }
+/* Meend: a slur from the swar to the swar it glides into. Each span draws its
+   piece; a swar in the middle of a chain of glides draws a straight one. */
+.sw.meend::before, .sw.meend-in::before {
+  content: ''; position: absolute; top: -6px; height: 5px;
+  border-top: 1.5px solid var(--accent); pointer-events: none;
+}
+.sw.meend::before { left: 45%; right: -3px; border-left: 1.5px solid var(--accent); border-top-left-radius: 8px 5px; }
+.sw.meend-in.meend::before { left: -3px; border-left: 0; border-radius: 0; }
+.sw.meend-in::before { left: -3px; right: 45%; border-right: 1.5px solid var(--accent); border-top-right-radius: 8px 5px; }
+.sw.meend-in.meend::before { right: -3px; border-right: 0; }
 .sw.on { background: var(--accent); color: var(--on-accent); }
 .sw.ok { box-shadow: inset 0 -3px 0 var(--ok); }
 .sw.low { box-shadow: inset 0 -3px 0 var(--khali); }
@@ -449,6 +479,7 @@ button[hidden] { display: none; }
 .pads button { padding: 12px 4px; font-weight: 600; background: var(--panel-2); border-color: transparent; }
 .pads button:hover { border-color: var(--line-strong); }
 .pads button.flash { background: var(--accent); color: var(--on-accent); }
+.pads button.notation { font-family: ui-monospace, monospace; color: var(--muted); }
 .list { list-style: none; margin: 0 0 12px; padding: 0; }
 .list li {
   display: flex; justify-content: space-between; align-items: center; gap: 8px;

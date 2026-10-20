@@ -3,6 +3,7 @@
   'use strict';
   const D = window.Data;
   const N = window.Notation;
+  const { t: tr, num } = window.I18n;
   const $ = (id) => document.getElementById(id);
   const STORE = 'taalStudio.v1';
 
@@ -18,7 +19,8 @@
     sargamPanel: true, sargamOn: true, sargamExercise: 'scale', sargamRaga: 'bilawal',
     sargamCustom: 'S R G M P - - - | P M G R S - - -', sargamPerBeat: 1, sargamMode: 'along',
     sargamInst: 'harmonium', sargamVol: 0.7, sargamCheck: false, sargamVisible: 4,
-    fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'en', theme: 'auto',
+    sargamLoop: 'all', sargamLoopLines: {},
+    fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'bn', theme: 'auto',
   };
   // Settings captured by a preset (everything except app preferences).
   const APP_PREFS = ['fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible',
@@ -55,8 +57,8 @@
   // The standalone build has no server: it ships the files' contents in
   // js/saved.js as a starting point, and from then on keeps them in the browser.
   const STANDALONE = !!window.TAAL_STANDALONE;
-  const BROWSER_ONLY = STANDALONE ? 'Saved in this browser (Settings → Export all to back it up).'
-    : 'Saved in this browser only (start the app with ./run.sh to save to the file).';
+  const BROWSER_ONLY = tr(STANDALONE ? 'Saved in this browser (Settings → Export all to back it up).'
+    : 'Saved in this browser only (start the app with ./run.sh to save to the file).');
   function writeFile(key) {
     if (STANDALONE) return Promise.resolve(false);
     const body = JSON.stringify({ app: 'taal-studio', version: 1, [key]: store[key] });
@@ -128,18 +130,18 @@
 
   function taalLabel(t) {
     const beats = N.parseBols(t.bols).beats;
-    return `${t.name} · ${beats}`;
+    return `${t.name} · ${num(beats)}`;
   }
 
   function fillTaalSelect(sel, current) {
     sel.innerHTML = '';
     const favs = allTaals().filter((t) => store.favorites.includes(t.id));
     const mk = (list) => list.map((t) => opt(t.id, taalLabel(t), t.id === current));
-    if (favs.length) sel.appendChild(group('★ Favourites', favs.map((t) => opt(t.id, taalLabel(t)))));
-    sel.appendChild(group('Taals', mk(D.TAALS.filter((t) => t.kind !== 'composition'))));
-    sel.appendChild(group('Compositions', mk(D.TAALS.filter((t) => t.kind === 'composition'))));
-    if (store.custom.length) sel.appendChild(group('My compositions', mk(store.custom)));
-    if (draftTaal && current === draftTaal.id) sel.appendChild(group('Draft', [opt(draftTaal.id, draftTaal.name, true)]));
+    if (favs.length) sel.appendChild(group(tr('★ Favourites'), favs.map((t) => opt(t.id, taalLabel(t)))));
+    sel.appendChild(group(tr('Taals'), mk(D.TAALS.filter((t) => t.kind !== 'composition'))));
+    sel.appendChild(group(tr('Compositions'), mk(D.TAALS.filter((t) => t.kind === 'composition'))));
+    if (store.custom.length) sel.appendChild(group(tr('My compositions'), mk(store.custom)));
+    if (draftTaal && current === draftTaal.id) sel.appendChild(group(tr('Draft'), [opt(draftTaal.id, draftTaal.name, true)]));
     sel.value = current;
   }
 
@@ -155,8 +157,8 @@
     const sel = $('lehraSelect');
     sel.innerHTML = '';
     const list = lehrasFor(taal.beats);
-    sel.appendChild(opt('', list.length ? 'None' : `No lehra for ${taal.beats} beats`));
-    list.forEach((l) => sel.appendChild(opt(l.id, `${l.name} (${l.beats} beats)`)));
+    sel.appendChild(opt('', list.length ? tr('None') : tr('No lehra for {n} beats', { n: taal.beats })));
+    list.forEach((l) => sel.appendChild(opt(l.id, tr('{name} ({n} beats)', { name: l.name, n: l.beats }))));
     sel.value = list.some((l) => l.id === S.lehraId) ? S.lehraId : '';
     const l = D.LEHRAS.find((x) => x.id === sel.value);
     $('lehraNotes').textContent = l ? l.notes : '';
@@ -193,7 +195,7 @@
         const c = document.createElement('div');
         const cell = taal.cells[b];
         c.className = 'cell' + (b === 0 ? ' sam' : '') + (cell.error ? ' error' : '');
-        c.innerHTML = `<div class="num">${b + 1}</div><div class="bol"></div>`;
+        c.innerHTML = `<div class="num">${num(b + 1)}</div><div class="bol"></div>`;
         c.querySelector('.bol').textContent = cell.text;
         row.appendChild(c);
         cells.push(c);
@@ -226,7 +228,7 @@
       const ev = q.shift();
       if (ev.taal !== gridTaal) showTaalGrid(ev.taal);
       highlight(ev.beat);
-      $('avartan').textContent = ev.avartan + 1;
+      $('avartan').textContent = num(ev.avartan + 1);
       if (ev.seq) markSeqStep(ev.seq.i);
       if (ev.final) {
         setTimeout(() => { if (!player.playing) { highlight(-1); markSeqStep(-1); } }, 600);
@@ -236,17 +238,17 @@
     while (sq.length && sq[0].time <= now) sargamNote(sq.shift());
     if (player.playing) {
       const t = Math.max(0, now - player.startTime);
-      $('elapsed').textContent = `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+      $('elapsed').textContent = num(`${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`);
     }
     requestAnimationFrame(frame);
   }
 
   // ── Transport ────────────────────────────────────────────────────────
   function layaName(bpm) {
-    if (bpm < 60) return 'Vilambit';
-    if (bpm < 160) return 'Madhya';
-    if (bpm < 320) return 'Drut';
-    return 'Ati-drut';
+    if (bpm < 60) return tr('Vilambit');
+    if (bpm < 160) return tr('Madhya');
+    if (bpm < 320) return tr('Drut');
+    return tr('Ati-drut');
   }
   function setTempo(v) {
     v = Math.round(Math.max(10, Math.min(800, Number(v) || S.tempo)));
@@ -261,7 +263,7 @@
     $('key').value = S.key;
     $('fine').value = S.fine;
     engine.setSa(S.key, S.fine);
-    $('saInfo').textContent = `· ${engine.saFrequency().toFixed(1)} Hz`;
+    $('saInfo').textContent = `· ${num(engine.saFrequency().toFixed(1))} Hz`;
     save();
   }
 
@@ -410,7 +412,7 @@
       syncLehra(c);
       fillLehraSelect();
     } else {
-      $('nowPlaying').textContent = `${gridTaal ? gridTaal.name : ''} → ${c.name} (on sam)`;
+      $('nowPlaying').textContent = tr('{from} → {to} (on sam)', { from: gridTaal ? gridTaal.name : '', to: c.name });
     }
     S.startBeat = 1;
     $('startBeat').value = 1;
@@ -437,6 +439,8 @@
     setTempo(S.tempo);
     setKey(S.key, S.fine);
     updateFav();
+    $('avartan').textContent = num(0);
+    $('elapsed').textContent = num('0:00');
 
     $('taalSelect').addEventListener('change', (e) => selectTaal(e.target.value));
     $('favBtn').addEventListener('click', () => {
@@ -478,8 +482,8 @@
     bind('tanpuraPattern', 'tanpuraPattern');
     bind('tanpuraTone', 'tanpuraTone', { type: 'str', onChange: (v) => engine.ctx && engine.load(engine.tanpuraFiles(v)) });
     bind('tanpuraCount', 'tanpuraCount');
-    bind('tanpuraSpeed', 'tanpuraSpeed', { onChange: (v) => { $('tanpuraSpeedVal').textContent = v.toFixed(2) + '×'; } });
-    $('tanpuraSpeedVal').textContent = Number(S.tanpuraSpeed).toFixed(2) + '×';
+    bind('tanpuraSpeed', 'tanpuraSpeed', { onChange: (v) => { $('tanpuraSpeedVal').textContent = num(v.toFixed(2)) + '×'; } });
+    $('tanpuraSpeedVal').textContent = num(Number(S.tanpuraSpeed).toFixed(2)) + '×';
     bind('tanpuraRandom', 'tanpuraRandom');
     bind('tanpuraVol', 'tanpuraVol', { onChange: (v) => engine.setVolume('tanpura', v) });
     document.querySelectorAll('.tdelay').forEach((el) => {
@@ -552,6 +556,7 @@
 
   function applySargam() {
     player.setSargam(sargamNotes(), S.sargamMode);
+    player.setSargamLoop(loopLines());
     $('sargamEditor').hidden = !(isOwnLine() && sargamEditing);
     $('sargamEdit').hidden = !isOwnLine();
     $('sargamEdit').setAttribute('aria-pressed', String(sargamEditing));
@@ -565,10 +570,10 @@
   function fillSargamExercise() {
     const ex = $('sargamExercise');
     ex.innerHTML = '';
-    ex.appendChild(group('Alankars', D.ALANKARS.map((a) => opt(a.id, a.name))));
+    ex.appendChild(group(tr('Alankars'), D.ALANKARS.map((a) => opt(a.id, a.name))));
     const mine = store.sargamLines.slice().sort((a, b) => a.name.localeCompare(b.name));
-    if (mine.length) ex.appendChild(group('My lines', mine.map((l) => opt('line:' + l.id, l.name))));
-    ex.appendChild(group('Your own', [opt('custom', 'New custom line…')]));
+    if (mine.length) ex.appendChild(group(tr('My lines'), mine.map((l) => opt('line:' + l.id, l.name))));
+    ex.appendChild(group(tr('Your own'), [opt('custom', tr('New custom line…'))]));
     if (isOwnLine() && S.sargamExercise !== 'custom' && !savedLine()) S.sargamExercise = 'custom';
     ex.value = S.sargamExercise;
   }
@@ -591,9 +596,9 @@
     const notes = S.sargamCustom.trim();
     const status = $('sargamLineStatus');
     const p = N.parseSargam(notes, 1);
-    if (!name) { status.textContent = 'Give the line a name first.'; $('sargamLineName').focus(); return; }
-    if (!p.notes.some((n) => n.semi !== null)) { status.textContent = 'Write some swars first.'; return; }
-    if (p.errors.length) { status.textContent = 'Fix the errors before saving.'; return; }
+    if (!name) { status.textContent = tr('Give the line a name first.'); $('sargamLineName').focus(); return; }
+    if (!p.notes.some((n) => n.semi !== null)) { status.textContent = tr('Write some swars first.'); return; }
+    if (p.errors.length) { status.textContent = tr('Fix the errors before saving.'); return; }
     // Update the selected line, or one with the same name; otherwise add a new one.
     let line = savedLine() || store.sargamLines.find((l) => l.name.toLowerCase() === name.toLowerCase());
     if (line) Object.assign(line, { name, notes });
@@ -606,21 +611,65 @@
     save(true);
     fillSargamExercise();
     applySargam();
-    status.textContent = 'Saving…';
+    status.textContent = tr('Saving…');
     writeFile('sargamLines').then((ok) => {
-      status.textContent = ok ? `Saved to ${FILES.sargamLines}.` : BROWSER_ONLY;
+      status.textContent = ok ? tr('Saved to {file}.', { file: FILES.sargamLines }) : BROWSER_ONLY;
     });
   }
 
   function deleteSargamLine() {
     const line = savedLine();
-    if (!line || !confirm(`Delete the line "${line.name}"?`)) return;
+    if (!line || !confirm(tr('Delete the line "{name}"?', { name: line.name }))) return;
     store.sargamLines = store.sargamLines.filter((l) => l !== line);
     S.sargamExercise = 'custom';
     save(true);
     writeFile('sargamLines');
     fillSargamExercise();
     selectSargamExercise('custom');
+  }
+
+  // "Selected lines" loop: picked line indexes are kept per exercise.
+  function loopLines() {
+    if (S.sargamLoop !== 'selected') return null;
+    return (S.sargamLoopLines || {})[S.sargamExercise] || [];
+  }
+
+  function toggleLoopLine(ln) {
+    const cur = (S.sargamLoopLines || {})[S.sargamExercise] || [];
+    const next = cur.includes(ln) ? cur.filter((l) => l !== ln) : cur.concat(ln).sort((a, b) => a - b);
+    S.sargamLoopLines = { ...S.sargamLoopLines, [S.sargamExercise]: next };
+    save();
+    player.setSargamLoop(loopLines());
+    showLoop();
+  }
+
+  function showLoop() {
+    const on = S.sargamLoop === 'selected';
+    // A line edited shorter may have lost picked lines; the player skips them too.
+    const picked = (loopLines() || []).filter((l) => l < sargamLineEls.length);
+    $('sargamLoopBar').hidden = !on;
+    $('sargamLines').classList.toggle('has-picks', on && picked.length > 0);
+    sargamLineEls.forEach((row, i) => {
+      row.classList.toggle('pickable', on);
+      row.classList.toggle('picked', on && picked.includes(i));
+      if (on) {
+        row.tabIndex = 0;
+        row.setAttribute('role', 'checkbox');
+        row.setAttribute('aria-checked', String(picked.includes(i)));
+        row.title = tr('Line {n}: click to add to the loop or remove', { n: i + 1 });
+      } else {
+        row.removeAttribute('tabindex');
+        row.removeAttribute('role');
+        row.removeAttribute('aria-checked');
+        row.removeAttribute('title');
+      }
+    });
+    const list = picked.map((l) => num(l + 1)).join(', ');
+    $('sargamLoopInfo').textContent = !picked.length
+      ? tr('Click lines to choose them for the loop. None chosen yet, so every line plays.')
+      : tr(picked.length === 1 ? 'Looping line {list}. Click lines to add or remove them.'
+        : 'Looping lines {list}. Click lines to add or remove them.', { list });
+    $('sargamLoopClear').hidden = !picked.length;
   }
 
   function swarSpan(semi, short) {
@@ -662,15 +711,15 @@
     const crossing = notes.filter((n) => n.semi !== null && Math.floor(n.pos / beats + eps) !== Math.floor((n.pos + n.len) / beats - eps));
     if (crossing.length) {
       const n = crossing[0];
-      $('sargamWarn').textContent = `A note at beat ${+(n.pos % beats + 1).toFixed(3)} of line ` +
-        `${Math.floor(n.pos / beats) + 1} runs past the avartan and is cut at the line end.`;
+      $('sargamWarn').textContent = tr('A note at beat {beat} of line {line} runs past the avartan and is cut at the line end.',
+        { beat: +(n.pos % beats + 1).toFixed(3), line: Math.floor(n.pos / beats) + 1 });
     }
     notes.forEach((n) => sargamLineNotes[Math.min(lines - 1, Math.floor(n.pos / beats + eps))].push(n.i));
 
     for (let ln = 0; ln < lines; ln++) {
       const row = document.createElement('div');
       row.className = 's-line';
-      row.innerHTML = `<div class="ln">${ln + 1}</div><div class="vibs"></div>`;
+      row.innerHTML = `<div class="ln">${num(ln + 1)}</div><div class="vibs"></div>`;
       let beat = 0;
       for (const vlen of taal.vibhags) {
         const vib = document.createElement('div');
@@ -689,6 +738,9 @@
             if (!starts) sp = plainSpan(n.semi === null ? 'rest held' : 'held', '–');
             else if (n.semi === null) sp = plainSpan('rest', '~');
             else sp = swarSpan(n.semi, short);
+            // Meend: a slur from the end of the swar to the swar it glides into.
+            if (n.glideTo !== undefined && Math.min(n.pos + n.len, b0 + 1) >= n.pos + n.len - eps) sp.classList.add('meend');
+            if (starts && n.slur) sp.classList.add('meend-in');
             sp.style.flexGrow = frac;
             sargamSpans[n.i].push(sp);
             cell.appendChild(sp);
@@ -703,9 +755,17 @@
         }
         row.lastChild.appendChild(vib);
       }
+      row.addEventListener('click', () => { if (S.sargamLoop === 'selected') toggleLoopLine(ln); });
+      row.addEventListener('keydown', (e) => {
+        if (S.sargamLoop !== 'selected' || (e.key !== ' ' && e.key !== 'Enter')) return;
+        e.preventDefault();
+        e.stopPropagation();   // Space here picks the line, it doesn't start playing
+        toggleLoopLine(ln);
+      });
       sargamLineEls.push(row);
       box.appendChild(row);
     }
+    showLoop();
     fitSargamLines();
   }
 
@@ -717,7 +777,7 @@
     const rows = sargamLineEls;
     const n = Math.max(1, Math.min(S.sargamVisible, rows.length));
     handle.hidden = rows.length < 2;
-    handle.lastChild.textContent = rows.length < 2 ? '' : `${n} of ${rows.length} lines`;
+    handle.lastChild.textContent = rows.length < 2 ? '' : tr('{n} of {total} lines', { n, total: rows.length });
     handle.setAttribute('aria-valuenow', n);
     handle.setAttribute('aria-valuemax', rows.length);
     if (n >= rows.length || !box.offsetParent) { box.style.maxHeight = ''; return; }
@@ -778,14 +838,14 @@
 
   function updateTurn(ev) {
     const el = $('sargamTurn');
-    let text = 'Starts on sam';
+    let text = tr('Starts on sam');
     let cls = '';
     if (ev && S.sargamOn) {
       if (S.sargamMode === 'call') {
-        text = ev.yourTurn ? 'Your turn — sing it back' : 'Listen';
+        text = ev.yourTurn ? tr('Your turn — sing it back') : tr('Listen');
         cls = ev.yourTurn ? 'yours' : 'listen';
       } else {
-        text = S.sargamMode === 'silent' ? 'Sing — line ' + (ev.line + 1) : 'Sing along — line ' + (ev.line + 1);
+        text = tr(S.sargamMode === 'silent' ? 'Sing — line {n}' : 'Sing along — line {n}', { n: ev.line + 1 });
         cls = 'yours';
       }
     }
@@ -817,13 +877,15 @@
     sargamOn.forEach((sp) => sp.classList.add('on'));
     // Pitch checking: each sung note collects pitch samples until the next note.
     finishCheck();
-    if (checking && ev.semi !== null) checkNote = { idx: ev.idx, semi: ev.semi, start: ev.time, samples: [] };
+    // A swar that slides away (meend) is checked only until the slide.
+    if (checking && ev.semi !== null) checkNote = { idx: ev.idx, semi: ev.semi, start: ev.time, until: ev.glideAt ?? null, samples: [] };
   }
 
   function sargamPitch(f) {
     if (!checkNote || !f || !player.playing) return;
     const heardAt = engine.now - ((engine.ctx && engine.ctx.outputLatency) || 0);
     if (heardAt - checkNote.start < 0.06) return;   // skip the slide into the note
+    if (checkNote.until !== null && heardAt > checkNote.until) return;   // sliding away
     const expected = engine.saFrequency() * Math.pow(2, checkNote.semi / 12);
     let cents = 1200 * Math.log2(f / expected);
     cents = ((((cents + 600) % 1200) + 1200) % 1200) - 600;   // any octave counts
@@ -848,11 +910,11 @@
   function showScore() {
     const total = score.ok + score.low + score.high + score.miss;
     $('sargamScore').innerHTML = !S.sargamCheck ? '' : `<div class="legend">
-      <span><i style="background:var(--ok)"></i>In tune ${score.ok}</span>
-      <span><i style="background:var(--khali)"></i>Low ${score.low}</span>
-      <span><i style="background:var(--danger)"></i>High ${score.high}</span>
-      <span><i style="background:var(--muted)"></i>Missed ${score.miss}</span>
-      ${total ? `<b>${Math.round((100 * score.ok) / total)}%</b>` : ''}</div>`;
+      <span><i style="background:var(--ok)"></i>${tr('In tune')} ${num(score.ok)}</span>
+      <span><i style="background:var(--khali)"></i>${tr('Low')} ${num(score.low)}</span>
+      <span><i style="background:var(--danger)"></i>${tr('High')} ${num(score.high)}</span>
+      <span><i style="background:var(--muted)"></i>${tr('Missed')} ${num(score.miss)}</span>
+      ${total ? `<b>${num(Math.round((100 * score.ok) / total))}%</b>` : ''}</div>`;
   }
 
   function resetSargamScore() {
@@ -880,7 +942,7 @@
     $('sargamExercise').addEventListener('change', (e) => selectSargamExercise(e.target.value));
     bind('sargamRaga', 'sargamRaga', { type: 'str', onChange: applySargam });
     bind('sargamCustom', 'sargamCustom', { type: 'str', onChange: () => {
-      $('sargamLineStatus').textContent = savedLine() ? 'Unsaved changes' : '';
+      $('sargamLineStatus').textContent = savedLine() ? tr('Unsaved changes') : '';
       applySargam();
     } });
     const line = savedLine();
@@ -896,6 +958,13 @@
     initSargamResize();
     bind('sargamPerBeat', 'sargamPerBeat', { onChange: applySargam });
     bind('sargamMode', 'sargamMode', { type: 'str', onChange: applySargam });
+    bind('sargamLoop', 'sargamLoop', { type: 'str', onChange: () => { player.setSargamLoop(loopLines()); showLoop(); } });
+    $('sargamLoopClear').addEventListener('click', () => {
+      S.sargamLoopLines = { ...S.sargamLoopLines, [S.sargamExercise]: [] };
+      save();
+      player.setSargamLoop(null);
+      showLoop();
+    });
     bind('sargamInst', 'sargamInst', { type: 'str', onChange: (v) => engine.ctx && engine.load(engine.melodicFiles(v)) });
     bind('sargamVol', 'sargamVol', { onChange: (v) => engine.setVolume('sargam', v) });
     $('sargamCheck').addEventListener('change', async (e) => {
@@ -903,14 +972,14 @@
       if (S.sargamCheck && !tuner.running) {
         try {
           await tuner.start();
-          $('tStart').textContent = 'Stop listening';
+          $('tStart').textContent = tr('Stop listening');
         } catch (err) {
           S.sargamCheck = e.target.checked = false;
-          alert('Microphone unavailable: ' + err.message + '\nOpen the app through ./run.sh (http://localhost) and allow the microphone.');
+          micUnavailable(err);
         }
       } else if (!S.sargamCheck && tuner.running) {
         tuner.stop();
-        $('tStart').textContent = 'Start listening';
+        $('tStart').textContent = tr('Start listening');
       }
       resetSargamScore();
     });
@@ -923,12 +992,12 @@
     const sel = $('presetSelect');
     const fill = (current) => {
       sel.innerHTML = '';
-      sel.appendChild(opt('', store.presets.length ? 'Choose…' : 'No presets yet'));
+      sel.appendChild(opt('', store.presets.length ? tr('Choose…') : tr('No presets yet')));
       store.presets.forEach((p, i) => sel.appendChild(opt(i, p.name, p.name === current)));
     };
     fill();
     $('presetSave').addEventListener('click', () => {
-      const name = prompt('Preset name', rawTaal(S.taalId).name);
+      const name = prompt(tr('Preset name'), rawTaal(S.taalId).name);
       if (!name) return;
       const snap = {};
       for (const k of Object.keys(DEFAULTS)) if (!APP_PREFS.includes(k)) snap[k] = JSON.parse(JSON.stringify(S[k]));
@@ -941,7 +1010,7 @@
     $('presetDelete').addEventListener('click', () => {
       const i = sel.value;
       if (i === '') return;
-      if (!confirm(`Delete preset "${store.presets[i].name}"?`)) return;
+      if (!confirm(tr('Delete preset "{name}"?', { name: store.presets[i].name }))) return;
       store.presets.splice(Number(i), 1);
       fill();
       save();
@@ -958,13 +1027,26 @@
 
   // ── Composer ─────────────────────────────────────────────────────────
   let editingId = null;
-  const PADS = ['Dha', 'Dhin', 'Dhi', 'Di', 'Dhe', 'Dhum', 'Na', 'Ne', 'Ta', 'Tin', 'Tun', 'Ti',
+  const PADS = ['Dha', 'Dhin', 'Dhi', 'Di', 'Dhe', 'Dhum', 'Na', 'Ne', 'Ta', 'Tin', 'Sur', 'Tun', 'Ti',
                 'Te', 'Ra', 'Tra', 'Ge', 'Gin', 'Ke', 'Kat', 'DhaGe', 'TiRaKiTa', 'TinNa', '-', '|'];
+  // Notation keys: [label, text, tooltip]. They attach to the bol before the
+  // cursor instead of starting a new beat; "( )" wraps the selection.
+  const NOTATION_KEYS = [
+    ['( )', '()', 'Group: wraps the selection, or opens a group'],
+    ['#', '#', 'Accent: play the previous bol louder'],
+    ['*', '*', 'Soft: play the previous bol softer'],
+    ['~', '~', 'Gap: a silent stroke that takes its share of the group'],
+    ['2', '2', 'Recording 2 of the previous bol'],
+    ['3', '3', 'Recording 3 of the previous bol'],
+    ['[1]', '[1]', 'Length: the previous group lasts 1 beat'],
+    ['[2]', '[2]', 'Length: the previous group lasts 2 beats'],
+    ['[0.5]', '[0.5]', 'Length: the previous group lasts half a beat'],
+  ].map(([label, text, title]) => [label, text, tr(title)]);
 
   function composerTaal() {
     return {
       id: editingId || 'draft',
-      name: $('cName').value.trim() || 'Untitled',
+      name: $('cName').value.trim() || tr('Untitled'),
       marks: $('cMarks').value.trim(),
       tempo: Number($('cTempo').value) || 100,
       drum: $('cDrum').value,
@@ -985,9 +1067,9 @@
       return null;
     }
     const markWarn = c.marks.length && c.marks.length !== c.vibhags.length
-      ? ` · ${c.marks.length} marks for ${c.vibhags.length} vibhags` : '';
+      ? tr(' · {m} marks for {v} vibhags', { m: c.marks.length, v: c.vibhags.length }) : '';
     st.className = 'status-line ' + (markWarn ? 'err' : 'ok');
-    st.textContent = `${c.beats} beats in ${c.vibhags.length} vibhags (${c.vibhags.join('+')})${markWarn}`;
+    st.textContent = tr('{b} beats in {v} vibhags ({sum})', { b: c.beats, v: c.vibhags.length, sum: num(c.vibhags.join('+')) }) + markWarn;
     return t;
   }
 
@@ -1006,24 +1088,24 @@
     const ul = $('customList');
     ul.innerHTML = '';
     if (!store.custom.length) {
-      ul.innerHTML = '<li class="empty">Nothing saved yet. Built-in taals can be opened from here too:</li>';
+      ul.innerHTML = `<li class="empty">${tr('Nothing saved yet. Built-in taals can be opened from here too:')}</li>`;
     }
     store.custom.forEach((t) => {
       const li = document.createElement('li');
       li.className = t.id === editingId ? 'sel' : '';
       li.innerHTML = `<span></span><span class="muted"></span>`;
       li.children[0].textContent = t.name;
-      li.children[1].textContent = `${N.parseBols(t.bols).beats} beats`;
+      li.children[1].textContent = tr('{n} beats', { n: N.parseBols(t.bols).beats });
       li.addEventListener('click', () => loadIntoComposer(t));
       ul.appendChild(li);
     });
     const li = document.createElement('li');
     const sel = document.createElement('select');
-    sel.appendChild(opt('', 'Open a built-in taal as a starting point…'));
+    sel.appendChild(opt('', tr('Open a built-in taal as a starting point…')));
     D.TAALS.forEach((t) => sel.appendChild(opt(t.id, t.name)));
     sel.addEventListener('change', () => {
       const t = D.TAALS.find((x) => x.id === sel.value);
-      if (t) loadIntoComposer({ ...t, id: null, kind: 'custom', name: t.name + ' (copy)' });
+      if (t) loadIntoComposer({ ...t, id: null, kind: 'custom', name: tr('{name} (copy)', { name: t.name }) });
     });
     li.className = 'empty';
     li.appendChild(sel);
@@ -1034,10 +1116,36 @@
     const ta = $('cBols');
     const { selectionStart: a, selectionEnd: b, value } = ta;
     const before = value.slice(0, a);
-    const needSpace = before && !/\s$/.test(before);
+    const needSpace = before && !/[\s(]$/.test(before);
     const ins = (needSpace ? ' ' : '') + text + ' ';
     ta.value = before + ins + value.slice(b);
     ta.selectionStart = ta.selectionEnd = a + ins.length;
+    ta.focus();
+    validateComposer();
+  }
+
+  // Insert a notation key: "()" wraps the selection (or opens an empty group
+  // with the cursor inside); the others join the previous bol, and a [length]
+  // after the cursor's closing ")" goes after it.
+  function insertNotation(text) {
+    const ta = $('cBols');
+    let { selectionStart: a, selectionEnd: b, value } = ta;
+    let ins;
+    let caret;
+    if (text === '()') {
+      const sel = value.slice(a, b).trim();
+      const before = value.slice(0, a);
+      const lead = before && !/[\s(|]$/.test(before) ? ' ' : '';
+      ins = lead + '(' + sel + ')' + (sel ? ' ' : '');
+      caret = sel ? ins.length : lead.length + 1;
+    } else {
+      if (text.startsWith('[') && value[b] === ')') a = b = b + 1;
+      while (a > 0 && /\s/.test(value[a - 1])) a--;
+      ins = text + (text.startsWith('[') ? ' ' : '');
+      caret = ins.length;
+    }
+    ta.value = value.slice(0, a) + ins + value.slice(b);
+    ta.selectionStart = ta.selectionEnd = a + caret;
     ta.focus();
     validateComposer();
   }
@@ -1063,7 +1171,7 @@
     engine.load(files).then(() => {
       const t0 = engine.now + 0.02;
       const step = 0.13;
-      groups.forEach(([g, d, p, b]) => engine.stroke(g, t0 + parts.indexOf(p) * step + d, 0.9, b || bus.dayan));
+      groups.forEach(([g, d, p, b]) => engine.stroke(g, t0 + parts.indexOf(p) * step + d, 0.9 * (p.vel || 1), b || bus.dayan, 0, p.variant));
     });
   }
 
@@ -1080,13 +1188,25 @@
       });
       pads.appendChild(b);
     });
+    NOTATION_KEYS.forEach(([label, text, title]) => {
+      const b = document.createElement('button');
+      b.className = 'notation';
+      b.textContent = label;
+      b.title = title;
+      b.addEventListener('click', () => {
+        insertNotation(text);
+        b.classList.add('flash');
+        setTimeout(() => b.classList.remove('flash'), 120);
+      });
+      pads.appendChild(b);
+    });
     ['cName', 'cMarks', 'cTempo', 'cBols', 'cDrum'].forEach((id) => $(id).addEventListener('input', validateComposer));
 
     $('cPlay').addEventListener('click', () => {
       const t = validateComposer();
       if (!t) return;
       // Play exactly what is in the editor, saved or not.
-      draftTaal = { ...t, id: 'draft', name: t.name + ' (draft)' };
+      draftTaal = { ...t, id: 'draft', name: tr('{name} (draft)', { name: t.name }) };
       player.stop(true);
       fillTaalSelect($('taalSelect'), 'draft');
       selectTaal('draft');
@@ -1108,17 +1228,17 @@
       fillTaalSelect($('taalSelect'), S.taalId);
       renderCustomList();
       const st = $('cStatus');
-      st.textContent += ' · saving…';
+      const base = st.textContent;
+      st.textContent = base + ' · ' + tr('saving…');
       writeFile('custom').then((ok) => {
-        st.textContent = st.textContent.replace(' · saving…',
-          ok ? ` · saved to ${FILES.custom}` : ' · ' + BROWSER_ONLY.toLowerCase());
+        st.textContent = base + ' · ' + (ok ? tr('saved to {file}', { file: FILES.custom }) : BROWSER_ONLY.toLowerCase());
       });
     });
     $('cNew').addEventListener('click', () => loadIntoComposer(null));
     $('cDelete').addEventListener('click', () => {
       if (!editingId) return;
       const t = store.custom.find((x) => x.id === editingId);
-      if (!confirm(`Delete "${t.name}"?`)) return;
+      if (!confirm(tr('Delete "{name}"?', { name: t.name }))) return;
       store.custom = store.custom.filter((x) => x.id !== editingId);
       store.favorites = store.favorites.filter((id) => id !== editingId);
       if (S.taalId === editingId) selectTaal('teentaal');
@@ -1154,7 +1274,7 @@
         // The files replace what is stored on load, so update them first.
         Promise.all(Object.keys(FILES).filter((k) => data[k]).map(writeFile)).then(() => location.reload());
       } catch (err) {
-        alert('Could not import: ' + err.message);
+        alert(tr('Could not import: {err}', { err: err.message }));
       }
       e.target.value = '';
     });
@@ -1172,13 +1292,13 @@
   function renderSeqList() {
     const ul = $('seqList');
     ul.innerHTML = '';
-    if (!store.sequences.length) ul.innerHTML = '<li class="empty">No sequences yet.</li>';
+    if (!store.sequences.length) ul.innerHTML = `<li class="empty">${tr('No sequences yet.')}</li>`;
     store.sequences.forEach((q) => {
       const li = document.createElement('li');
       li.className = seqDraft && q.id === seqDraft.id ? 'sel' : '';
       li.innerHTML = '<span></span><span class="muted"></span>';
       li.children[0].textContent = q.name;
-      li.children[1].textContent = `${q.steps.length} steps`;
+      li.children[1].textContent = tr('{n} steps', { n: q.steps.length });
       li.addEventListener('click', () => editSeq(JSON.parse(JSON.stringify(q))));
       ul.appendChild(li);
     });
@@ -1196,19 +1316,19 @@
     const tb = $('seqSteps');
     tb.innerHTML = '';
     seqDraft.steps.forEach((st, i) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${i + 1}</td><td></td>
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${num(i + 1)}</td><td></td>
         <td><input type="number" min="1" max="99" class="rep"></td>
         <td><input type="number" min="10" max="800" class="tmp" placeholder="—"></td>
-        <td class="row"><button class="up" title="Move up">↑</button><button class="dn" title="Move down">↓</button><button class="rm danger" title="Remove">✕</button></td>`;
+        <td class="row"><button class="up" title="${tr('Move up')}">↑</button><button class="dn" title="${tr('Move down')}">↓</button><button class="rm danger" title="${tr('Remove')}">✕</button></td>`;
       const sel = document.createElement('select');
       fillTaalSelect(sel, st.taalId);
       sel.addEventListener('change', () => { st.taalId = sel.value; });
-      tr.children[1].appendChild(sel);
-      const rep = tr.querySelector('.rep');
+      row.children[1].appendChild(sel);
+      const rep = row.querySelector('.rep');
       rep.value = st.repeats;
       rep.addEventListener('input', () => { st.repeats = Math.max(1, Number(rep.value) || 1); });
-      const tmp = tr.querySelector('.tmp');
+      const tmp = row.querySelector('.tmp');
       tmp.value = st.tempo || '';
       tmp.addEventListener('input', () => { st.tempo = Number(tmp.value) || ''; });
       const move = (d) => {
@@ -1217,17 +1337,17 @@
         [seqDraft.steps[i], seqDraft.steps[j]] = [seqDraft.steps[j], seqDraft.steps[i]];
         renderSteps();
       };
-      tr.querySelector('.up').addEventListener('click', () => move(-1));
-      tr.querySelector('.dn').addEventListener('click', () => move(1));
-      tr.querySelector('.rm').addEventListener('click', () => {
+      row.querySelector('.up').addEventListener('click', () => move(-1));
+      row.querySelector('.dn').addEventListener('click', () => move(1));
+      row.querySelector('.rm').addEventListener('click', () => {
         if (seqDraft.steps.length > 1) { seqDraft.steps.splice(i, 1); renderSteps(); }
       });
-      tb.appendChild(tr);
+      tb.appendChild(row);
     });
   }
 
   function markSeqStep(i) {
-    document.querySelectorAll('#seqSteps tr').forEach((tr, k) => tr.classList.toggle('current', k === i));
+    document.querySelectorAll('#seqSteps tr').forEach((row, k) => row.classList.toggle('current', k === i));
   }
 
   function initSequences() {
@@ -1240,7 +1360,7 @@
       renderSteps();
     });
     $('seqSave').addEventListener('click', () => {
-      if (!seqDraft.name.trim()) seqDraft.name = 'Sequence ' + (store.sequences.length + 1);
+      if (!seqDraft.name.trim()) seqDraft.name = tr('Sequence {n}', { n: store.sequences.length + 1 });
       $('seqName').value = seqDraft.name;
       if (!seqDraft.id) seqDraft.id = 's-' + Date.now().toString(36);
       // Store a copy: the step rows stay bound to seqDraft, so later edits
@@ -1252,7 +1372,7 @@
       renderSeqList();
     });
     $('seqDelete').addEventListener('click', () => {
-      if (!seqDraft.id || !confirm(`Delete "${seqDraft.name}"?`)) return;
+      if (!seqDraft.id || !confirm(tr('Delete "{name}"?', { name: seqDraft.name }))) return;
       store.sequences = store.sequences.filter((q) => q.id !== seqDraft.id);
       save();
       editSeq(newSeq());
@@ -1272,6 +1392,10 @@
     showTunerPitch(f);
   });
 
+  function micUnavailable(err) {
+    alert(tr('Microphone unavailable: {err}\nOpen the app through ./run.sh (http://localhost) and allow the microphone.', { err: err.message }));
+  }
+
   function showTunerPitch(f) {
     const needle = $('tNeedle');
     if (!f) { $('tSetSa').disabled = !lastPitch; return; }
@@ -1282,8 +1406,8 @@
     $('tNote').textContent = D.KEYS[((r % 12) + 12) % 12] + (Math.floor(r / 12) - 1);
     const rel = midi - (window.Data.SAMPLE_BASE_MIDI + engine.saSemis);
     const rr = Math.round(rel);
-    $('tSargam').textContent = `${N.swarLabel(rr, S.sargamLang).fullName} relative to your Sa (${((rel - rr) * 100).toFixed(0)}¢)`;
-    $('tFreq').textContent = `${f.toFixed(1)} Hz · ${cents >= 0 ? '+' : ''}${cents.toFixed(0)} cents`;
+    $('tSargam').textContent = tr('{swar} relative to your Sa ({c}¢)', { swar: N.swarLabel(rr, S.sargamLang).fullName, c: Math.round((rel - rr) * 100) });
+    $('tFreq').textContent = `${num(f.toFixed(1))} Hz · ${cents >= 0 ? '+' : ''}${num(cents.toFixed(0))} ${tr('cents')}`;
     needle.style.left = `calc(${50 + cents}% - 10px)`;
     needle.classList.toggle('good', Math.abs(cents) < 5);
     $('tSetSa').disabled = false;
@@ -1293,16 +1417,16 @@
     $('tStart').addEventListener('click', async () => {
       if (tuner.running) {
         tuner.stop();
-        $('tStart').textContent = 'Start listening';
+        $('tStart').textContent = tr('Start listening');
         $('sargamCheck').checked = S.sargamCheck = false;
         resetSargamScore();
         return;
       }
       try {
         await tuner.start();
-        $('tStart').textContent = 'Stop listening';
+        $('tStart').textContent = tr('Stop listening');
       } catch (e) {
-        alert('Microphone unavailable: ' + e.message + '\nOpen the app through ./run.sh (http://localhost) and allow the microphone.');
+        micUnavailable(e);
       }
     });
     $('tSetSa').addEventListener('click', () => {
@@ -1321,16 +1445,16 @@
   // ── Settings tab ─────────────────────────────────────────────────────
   // Theme button: auto (follow the system) → light → dark.
   const THEMES = {
-    auto: ['Theme: follows system', '<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/>'],
-    light: ['Theme: light', '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'],
-    dark: ['Theme: dark', '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>'],
+    auto: [tr('Theme: follows system'), '<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/>'],
+    light: [tr('Theme: light'), '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'],
+    dark: [tr('Theme: dark'), '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>'],
   };
   function applyTheme() {
     if (!THEMES[S.theme]) S.theme = 'auto';
     if (S.theme === 'auto') delete document.documentElement.dataset.theme;
     else document.documentElement.dataset.theme = S.theme;
     const [title, icon] = THEMES[S.theme];
-    $('themeBtn').title = title + ' (click to change)';
+    $('themeBtn').title = tr('{title} (click to change)', { title });
     $('themeBtn').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
       'stroke-linecap="round" stroke-linejoin="round">' + icon + '</svg>';
   }
@@ -1347,9 +1471,10 @@
     bind('stopMode', 'stopMode', { type: 'str' });
     bind('accentSam', 'accentSam');
     bind('previews', 'previews');
-    bind('sargamLang', 'sargamLang', { type: 'str', onChange: renderSargam });
+    // The whole interface is translated on load, so a new language reloads.
+    bind('sargamLang', 'sargamLang', { type: 'str', onChange: () => { save(true); location.reload(); } });
     $('resetSettings').addEventListener('click', () => {
-      if (!confirm('Reset all settings to their defaults?')) return;
+      if (!confirm(tr('Reset all settings to their defaults?'))) return;
       store.settings = { ...DEFAULTS };
       try { localStorage.setItem(STORE, JSON.stringify(store)); } catch (e) { /* ignore */ }
       location.reload();
@@ -1359,14 +1484,14 @@
   function sampleStatus() {
     const loaded = engine.buffers.size;
     const missing = engine.missing.size;
-    $('sampleStatus').textContent = `${loaded} samples loaded` +
-      (missing ? `, ${missing} missing (synthesized instead).` : '.');
+    $('sampleStatus').textContent = tr('{n} samples loaded', { n: loaded }) +
+      (missing ? tr(', {n} missing (synthesized instead).', { n: missing }) : tr('.'));
     const banner = $('banner');
     if (missing && !loaded) {
       banner.hidden = false;
-      banner.textContent = location.protocol === 'file:'
+      banner.textContent = tr(location.protocol === 'file:'
         ? 'Browsers block loading sound files from file://. Start the app with ./run.sh to use the real samples — using synthesized sounds for now.'
-        : 'No samples found in sounds/. Run ./import_sounds.sh to copy them from TaalMala — using synthesized sounds for now.';
+        : 'No samples found in sounds/. Run ./import_sounds.sh to copy them from TaalMala — using synthesized sounds for now.');
     } else banner.hidden = true;
   }
   engine.onSamplesChanged = () => {

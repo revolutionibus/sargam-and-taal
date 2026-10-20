@@ -37,6 +37,33 @@ A made-up 10-beat taal:
 
 This gives four vibhags of 2+3+2+3 beats, with sam on beat 1 and khali on beat 6.
 
+## Groups, lengths, random choices and accents
+
+These come from the notation used by other tabla apps, so you can paste such
+lines into the Composer:
+
+```
+(Dha#|Dha2#|Dha3#|Dha5#)[1] (Dhin*|Dhin2*) (Na---)[1] (Tra#Ka---)[1] (Dhin*|Dhin2*)[1] (Na---)[1]
+```
+
+- **`(…)[n]`** fits the group into `n` beats, shared evenly between its
+  strokes. Inside brackets `-` takes no time (it only marks a ringing stroke):
+  `(Na---)[1]` is one Na for the whole beat, and `(Tra#Ka---)[1]` is Tra and
+  Ka half a beat each. `(---)[1]` is a silent beat. Outside brackets `-` still
+  takes a slot, so `Dha-` is Dha for half a beat, then silence.
+  `[n]` also works without brackets (`Dha[2]`), and a length **carries on** to
+  the following beats until another `[n]` changes it.
+- **`(a|b|c)`** plays one of the choices at random each time round. Inside
+  brackets `|` means "or"; outside it still separates vibhags.
+- **A number after a bol** picks that recording: `Dha2` is the second Dha
+  sample on each hand. If a hand has fewer recordings it wraps round: Dha's
+  bayan stroke has 3, so `Dha5` uses its recording 2. Pakhawaj has one
+  recording per bol and ignores the number.
+- **`#`** plays the stroke louder (accent); **`*`** plays it softer.
+
+The grid shows the choices as `Dha#/Dha2#`, and a group longer than one beat
+leaves the following cells empty. A vibhag must end on a whole beat.
+
 ## Bols you can use
 
 ```

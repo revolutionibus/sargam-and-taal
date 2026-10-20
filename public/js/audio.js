@@ -147,9 +147,15 @@
       });
     }
 
-    // Random variant of a group, avoiding immediate repeats.
-    pickBuffer(group) {
-      const files = this.filesForGroup(group).filter((f) => this.buffers.has(f));
+    // Random variant of a group, avoiding immediate repeats. variant (1-based)
+    // asks for that recording, wrapping round when the group has fewer.
+    pickBuffer(group, variant) {
+      const all = this.filesForGroup(group);
+      if (variant && all.length > 1) {
+        const f = all[(variant - 1) % all.length];
+        if (this.buffers.has(f)) return this.buffers.get(f);
+      }
+      const files = all.filter((f) => this.buffers.has(f));
       if (!files.length) return null;
       let i = Math.floor(Math.random() * files.length);
       if (files.length > 1 && files[i] === this.lastVariant[group]) i = (i + 1) % files.length;
@@ -157,11 +163,13 @@
       return this.buffers.get(files[i]);
     }
 
-    playBuffer(buf, time, bus, { semis = 0, vel = 1, pan = 0, dur = 0, release = 0.25 } = {}) {
+    // glides: meend, [{ at, end, semis }] in seconds (see rampPitch).
+    playBuffer(buf, time, bus, { semis = 0, vel = 1, pan = 0, dur = 0, release = 0.25, glides = null } = {}) {
       const c = this.ctx;
       const src = c.createBufferSource();
       src.buffer = buf;
       src.playbackRate.value = Math.pow(2, semis / 12);
+      if (glides) this.rampPitch(src.playbackRate, glides.map((g) => ({ at: g.at, end: g.end, value: Math.pow(2, g.semis / 12) })));
       const g = c.createGain();
       g.gain.value = vel;
       let node = src.connect(g);
@@ -180,13 +188,24 @@
       return { src, gain: g };
     }
 
+    // Meend: glide a pitch param (frequency or playback rate) through
+    // [{ at, end, value }], holding each value until the next glide starts.
+    // Exponential, so the pitch moves evenly through the swars in between.
+    rampPitch(param, glides) {
+      let v = param.value;
+      for (const g of glides) {
+        param.setValueAtTime(v, g.at);
+        param.exponentialRampToValueAtTime(v = g.value, g.end);
+      }
+    }
+
     // ── Percussion ──────────────────────────────────────────────────────
-    stroke(group, time, vel, bus, extraSemis = 0) {
+    stroke(group, time, vel, bus, extraSemis = 0, variant = 0) {
       if (!group) return;
       const pitched = !D.UNPITCHED.has(group);
       const semis = pitched ? this.saSemis + this.tablaFine + extraSemis : 0;
       const v = vel * (0.92 + Math.random() * 0.12);
-      const buf = this.pickBuffer(group);
+      const buf = this.pickBuffer(group, variant);
       if (buf) this.playBuffer(buf, time, bus, { semis, vel: v });
       else if (this.filesForGroup(group).every((f) => this.missing.has(f))) {
         this.synthStroke(group, time, v, bus);
@@ -197,7 +216,8 @@
     // semi: semitones relative to Sa (0 = madhya Sa). Uses the sample nearest
     // the sounding pitch, so the key's transposition is kept small.
     // release: fade after dur (default depends on the instrument).
-    melodic(instrument, semi, time, dur, vel, bus, release) {
+    // glides: meend, [{ at, end, semi }] (seconds; semi as above).
+    melodic(instrument, semi, time, dur, vel, bus, release, glides) {
       const set = D.MELODIC[instrument];
       let best = null;
       for (const [file, off] of set) {
@@ -207,12 +227,13 @@
         if (!best || d < Math.abs(this.saSemis + semi - best[1])) best = [f, off];
       }
       if (!best) {
-        if (set.every(([f]) => this.missing.has(f + '.wav'))) this.synthMelodic(instrument, semi, time, dur, vel, bus);
+        if (set.every(([f]) => this.missing.has(f + '.wav'))) this.synthMelodic(instrument, semi, time, dur, vel, bus, glides);
         return null;
       }
       return this.playBuffer(this.buffers.get(best[0]), time, bus,
         { semis: this.saSemis + semi - best[1], vel, dur,
-          release: release ?? ({ harmonium: 0.12, piano: 0.25 }[instrument] ?? 0.6) });
+          release: release ?? ({ harmonium: 0.12, piano: 0.25 }[instrument] ?? 0.6),
+          glides: glides && glides.map((g) => ({ at: g.at, end: g.end, semis: this.saSemis + g.semi - best[1] })) });
     }
 
     melodicFiles(instrument) {
@@ -329,9 +350,11 @@
       }
     }
 
-    synthMelodic(instrument, semi, t, dur, vel, bus) {
+    synthMelodic(instrument, semi, t, dur, vel, bus, glides) {
       const c = this.ctx;
-      const f = this.saFrequency() * Math.pow(2, semi / 12);
+      const freq = (s) => this.saFrequency() * Math.pow(2, s / 12);
+      const f = freq(semi);
+      const glide = (o, mul) => glides && this.rampPitch(o.frequency, glides.map((g) => ({ at: g.at, end: g.end, value: freq(g.semi) * mul })));
       if (instrument === 'harmonium') {
         const lp = c.createBiquadFilter();
         lp.type = 'lowpass'; lp.frequency.value = 2200;
@@ -344,11 +367,12 @@
         for (const [type, mul] of [['sawtooth', 1], ['square', 1.003]]) {
           const o = c.createOscillator();
           o.type = type; o.frequency.value = f * mul;
+          glide(o, mul);
           o.connect(lp); o.start(t); o.stop(t + dur + 0.15);
         }
       } else {
-        this.tone(f, t, 0.4 * vel, instrument === 'santoor' ? 0.6 : 1.2, bus, 'triangle');
-        this.tone(f * 2, t, 0.1 * vel, 0.3, bus);
+        glide(this.tone(f, t, 0.4 * vel, instrument === 'santoor' ? 0.6 : 1.2, bus, 'triangle'), 1);
+        glide(this.tone(f * 2, t, 0.1 * vel, 0.3, bus), 2);
       }
     }
 
