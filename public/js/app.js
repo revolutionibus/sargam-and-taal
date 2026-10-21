@@ -18,15 +18,15 @@
     swarOn: false, swarRaga: 'yaman', swarEvery: 2, swarSpeed: 1, swarVol: 0.5,
     sargamPanel: true, sargamOn: true, sargamExercise: 'scale', sargamRaga: 'bilawal',
     sargamCustom: 'S R G M P - - - | P M G R S - - -', sargamPerBeat: 1, sargamMode: 'along',
-    sargamInst: 'harmonium', sargamVol: 0.7, sargamCheck: false, sargamVisible: 4,
+    sargamInst: 'harmonium', sargamVol: 0.7, sargamCheck: false, sargamVisible: 4, sargamCollapsed: {},
     sargamLoop: 'all', sargamLoopLines: {},
     fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'bn', theme: 'auto',
   };
   // Settings captured by a preset (everything except app preferences).
-  const APP_PREFS = ['fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible',
+  const APP_PREFS = ['fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamCollapsed',
                      'lehraOpen', 'tanpuraOpen', 'swarOpen', 'taalOpen'];
 
-  let store = { settings: {}, custom: [], sequences: [], presets: [], favorites: [], sargamLines: [] };
+  let store = { settings: {}, custom: [], sequences: [], presets: [], favorites: [], sargamFavorites: [], sargamLines: [] };
   try { Object.assign(store, JSON.parse(localStorage.getItem(STORE)) || {}); } catch (e) { /* fresh start */ }
   // The sargam panel used to be hidden by default; show it once for
   // settings saved before the instruments moved to the sidebar.
@@ -41,7 +41,12 @@
   function writeStore() {
     clearTimeout(saveTimer);
     saveTimer = null;
-    try { localStorage.setItem(STORE, JSON.stringify(store)); } catch (e) { /* storage unavailable */ }
+    try { localStorage.setItem(STORE, JSON.stringify(store)); } catch (e) {
+      // Over the ~5 MB quota (thousands of imported sargam lines): those live
+      // in sargam-lines.json, so keep everything else here without them.
+      if (window.TAAL_STANDALONE) return;
+      try { localStorage.setItem(STORE, JSON.stringify({ ...store, sargamLines: [] })); } catch (e2) { /* storage unavailable */ }
+    }
   }
   function save(now) {
     if (now) { writeStore(); return; }
@@ -57,15 +62,41 @@
   // The standalone build has no server: it ships the files' contents in
   // js/saved.js as a starting point, and from then on keeps them in the browser.
   const STANDALONE = !!window.TAAL_STANDALONE;
+  // The Android app (Capacitor) ships the files read-only, and keeps the
+  // user's copies in the app's private storage, where a PUT would have gone.
+  const CAP = window.Capacitor;
+  const NATIVE = !!(CAP && CAP.isNativePlatform && CAP.isNativePlatform());
+  // No bundler, so no @capacitor/core (and no registerPlugin): call the
+  // plugins through the bridge's nativePromise, which the app always injects.
+  const plugin = (name) => (NATIVE && CAP.nativePromise ? {
+    readFile: (o) => CAP.nativePromise(name, 'readFile', o),
+    writeFile: (o) => CAP.nativePromise(name, 'writeFile', o),
+    share: (o) => CAP.nativePromise(name, 'share', o),
+  } : null);
+  const FS = plugin('Filesystem');
+  const SHARE = plugin('Share');
   const BROWSER_ONLY = tr(STANDALONE ? 'Saved in this browser (Settings → Export all to back it up).'
     : 'Saved in this browser only (start the app with ./run.sh to save to the file).');
   function writeFile(key) {
     if (STANDALONE) return Promise.resolve(false);
     const body = JSON.stringify({ app: 'taal-studio', version: 1, [key]: store[key] });
+    if (FS) {
+      return FS.writeFile({ path: FILES[key], data: body, directory: 'DATA', encoding: 'utf8' })
+        .then(() => true, () => false);
+    }
     return fetch(FILES[key], { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body })
       .then((r) => r.ok, () => false);
   }
   function loadFiles() {
+    if (FS) {
+      // The device's copy wins; until there is one, use the bundled file.
+      return Promise.all(Object.keys(FILES).map((key) =>
+        FS.readFile({ path: FILES[key], directory: 'DATA', encoding: 'utf8' })
+          .then((r) => JSON.parse(r.data))
+          .catch(() => fetch(FILES[key]).then((r) => (r.ok ? r.json() : null)))
+          .then((data) => { if (data && Array.isArray(data[key])) store[key] = data[key]; })
+          .catch(() => { /* keep the copy in localStorage */ })));
+    }
     if (STANDALONE) {
       if (!store.seeded) {
         for (const key of Object.keys(FILES)) {
@@ -85,6 +116,57 @@
           if (Array.isArray(data[key])) store[key] = data[key];
         })
         .catch(() => { /* file unreachable: keep the browser's copy */ })));
+  }
+
+  // ── Sharing ──────────────────────────────────────────────────────────
+  // A shared file has the same shape as "Export all", holding only the
+  // items being shared, so either kind can be imported anywhere.
+  function fileName(name, fallback) {
+    const base = name.trim().replace(/[\\/:*?"<>|\s]+/g, '-').replace(/^-+|-+$/g, '');
+    return (base || fallback) + '.taal.json';
+  }
+  function exportFile(name, items) {
+    const json = JSON.stringify({ app: 'taal-studio', version: 1, ...items }, null, 2);
+    if (FS) {
+      // WebView can't download a blob: write it out and open the share sheet.
+      FS.writeFile({ path: name, data: json, directory: 'CACHE', encoding: 'utf8' })
+        .then((r) => SHARE.share({ title: name, url: r.uri }))
+        .catch((err) => { if (!/cancel/i.test(err.message)) alert(tr('Could not export: {err}', { err: err.message })); });
+      return;
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+    a.download = name;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+  async function importFile(input) {
+    const f = input.files[0];
+    input.value = '';
+    if (!f) return;
+    try {
+      const data = JSON.parse(await f.text());
+      const keys = ['custom', 'sequences', 'presets', 'sargamLines'].filter((k) => Array.isArray(data[k]) && data[k].length);
+      if (!keys.length) throw new Error(tr('nothing to import in this file'));
+      for (const key of keys) {
+        const k = key === 'presets' ? 'name' : 'id';
+        const at = new Map(store[key].map((x, i) => [x[k], i]));
+        for (const item of data[key]) {
+          const i = at.get(item[k]);
+          if (i !== undefined) store[key][i] = item;
+          else { at.set(item[k], store[key].length); store[key].push(item); }
+        }
+      }
+      // Open what was shared: the first sargam line, or the first composition.
+      if (data.sargamLines && data.sargamLines.length) S.sargamExercise = 'line:' + data.sargamLines[0].id;
+      else if (data.custom && data.custom.length) S.taalId = data.custom[0].id;
+      save(true);
+      // The files replace what is stored on load, so update them first.
+      await Promise.all(keys.filter((k) => FILES[k]).map(writeFile));
+      location.reload();
+    } catch (err) {
+      alert(tr('Could not import: {err}', { err: err.message }));
+    }
   }
 
   // ── Taal lookup ──────────────────────────────────────────────────────
@@ -218,6 +300,13 @@
     if (lastOn) lastOn.classList.remove('on');
     lastOn = gridCells[beat] || null;
     if (lastOn) lastOn.classList.add('on');
+    // The play button pulses with the beat; restart its ring animation.
+    const btn = $('playBtn');
+    btn.classList.remove('beat', 'sam');
+    if (beat < 0) return;
+    void btn.offsetWidth;
+    btn.classList.add('beat');
+    btn.classList.toggle('sam', beat === 0);
   }
 
   function frame() {
@@ -301,7 +390,7 @@
     if (type === 'state') {
       btn.classList.toggle('playing', data);
       btn.classList.remove('pending');
-      btn.textContent = data ? '■' : '▶';
+      btn.setAttribute('aria-label', tr(data ? 'Stop' : 'Play'));
       if (!data) { highlight(-1); markSeqStep(-1); sargamStopped(); }
       else resetSargamScore();
     } else if (type === 'loading') {
@@ -506,6 +595,11 @@
 
     // Transport
     $('playBtn').addEventListener('click', togglePlay);
+    // Float the play button once the transport scrolls out of view.
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => $('playBtn').classList.toggle('floating', !e.isIntersecting))
+        .observe(document.querySelector('.play-slot'));
+    }
     $('tempo').addEventListener('change', (e) => setTempo(e.target.value));
     $('tempoUp').addEventListener('click', () => setTempo(S.tempo + 1));
     $('tempoDown').addEventListener('click', () => setTempo(S.tempo - 1));
@@ -561,6 +655,8 @@
     $('sargamEdit').hidden = !isOwnLine();
     $('sargamEdit').setAttribute('aria-pressed', String(sargamEditing));
     $('sargamLineDelete').hidden = !savedLine();
+    $('sargamShare').hidden = !savedLine();
+    updateSargamFav();
     $('sargamRaga').disabled = isOwnLine();
     resetSargamScore();
     renderSargam();
@@ -570,12 +666,153 @@
   function fillSargamExercise() {
     const ex = $('sargamExercise');
     ex.innerHTML = '';
+    // Favourites on top (an exercise can also stay in its own group below).
+    const favs = store.sargamFavorites.map(sargamExerciseName).filter((f) => f.name);
+    if (favs.length) ex.appendChild(group(tr('★ Favourites'), favs.map((f) => opt(f.value, f.name))));
     ex.appendChild(group(tr('Alankars'), D.ALANKARS.map((a) => opt(a.id, a.name))));
     const mine = store.sargamLines.slice().sort((a, b) => a.name.localeCompare(b.name));
-    if (mine.length) ex.appendChild(group(tr('My lines'), mine.map((l) => opt('line:' + l.id, l.name))));
+    $('sargamShareAll').hidden = !mine.length;
+    // Lines without a list first, then one group per list.
+    const loose = mine.filter((l) => !l.list);
+    if (loose.length) ex.appendChild(group(tr('My lines'), loose.map((l) => opt('line:' + l.id, l.name))));
+    const lists = sargamListNames();
+    for (const name of lists) {
+      ex.appendChild(group(name, mine.filter((l) => l.list === name).map((l) => opt('line:' + l.id, l.name))));
+    }
+    $('sargamListNames').replaceChildren(...lists.map((n) => opt(n, n)));
     ex.appendChild(group(tr('Your own'), [opt('custom', tr('New custom line…'))]));
     if (isOwnLine() && S.sargamExercise !== 'custom' && !savedLine()) S.sargamExercise = 'custom';
     ex.value = S.sargamExercise;
+    renderSargamPicker();
+  }
+
+  // The picker is a custom dropdown built from the (hidden) select's groups,
+  // because a native one can't collapse groups or limit its height.
+  // Groups are collapsed unless opened, except favourites, alankars and the
+  // group holding the current exercise; the user's choice is remembered.
+  function renderSargamPicker() {
+    const ex = $('sargamExercise');
+    const menu = $('sargamPickMenu');
+    const cur = ex.selectedOptions[0];
+    $('sargamPickBtn').firstChild.textContent = cur ? cur.textContent : '';
+    menu.innerHTML = '';
+    for (const g of ex.querySelectorAll('optgroup')) {
+      const hasCur = [...g.children].some((o) => o.value === ex.value);
+      const fixed = g.label === tr('★ Favourites') || g.label === tr('Alankars') || g.label === tr('Your own');
+      const open = g.label in S.sargamCollapsed ? !S.sargamCollapsed[g.label] : fixed || hasCur;
+      const head = document.createElement('button');
+      head.type = 'button';
+      head.className = 'pk-head';
+      head.setAttribute('aria-expanded', String(open));
+      head.innerHTML = '<span class="pk-arrow">▸</span><span class="pk-label"></span><span class="pk-count"></span>';
+      head.querySelector('.pk-label').textContent = g.label;
+      head.querySelector('.pk-count').textContent = num(g.children.length);
+      const list = document.createElement('div');
+      list.className = 'pk-items';
+      list.hidden = !open;
+      // Items are made when the group first opens: imported libraries can
+      // hold thousands of lines.
+      const fill = () => {
+        if (list.firstChild) return;
+        for (const o of g.children) {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'pk-item';
+          b.dataset.value = o.value;
+          b.setAttribute('role', 'option');
+          b.setAttribute('aria-selected', String(o.value === ex.value));
+          b.textContent = o.textContent;
+          list.appendChild(b);
+        }
+      };
+      if (open) fill();
+      list.addEventListener('click', (e) => {
+        const b = e.target.closest('.pk-item');
+        if (b) { closeSargamPicker(); selectSargamExercise(b.dataset.value); }
+      });
+      head.addEventListener('click', () => {
+        const nowOpen = list.hidden;
+        if (nowOpen) fill();
+        list.hidden = !nowOpen;
+        head.setAttribute('aria-expanded', String(nowOpen));
+        S.sargamCollapsed = { ...S.sargamCollapsed, [g.label]: !nowOpen };
+        save();
+      });
+      menu.append(head, list);
+    }
+  }
+
+  function openSargamPicker() {
+    const menu = $('sargamPickMenu');
+    menu.hidden = false;
+    $('sargamPickBtn').setAttribute('aria-expanded', 'true');
+    const sel = menu.querySelector('.pk-item[aria-selected=true]');
+    if (sel && sel.offsetParent) { sel.scrollIntoView({ block: 'nearest' }); sel.focus(); }
+  }
+  function closeSargamPicker() {
+    $('sargamPickMenu').hidden = true;
+    $('sargamPickBtn').setAttribute('aria-expanded', 'false');
+  }
+
+  function initSargamPicker() {
+    const btn = $('sargamPickBtn');
+    const menu = $('sargamPickMenu');
+    btn.addEventListener('click', () => (menu.hidden ? openSargamPicker() : closeSargamPicker()));
+    document.addEventListener('pointerdown', (e) => {
+      if (!menu.hidden && !e.target.closest('.sargam-picker')) closeSargamPicker();
+    });
+    menu.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeSargamPicker(); btn.focus(); e.preventDefault(); return; }
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      // Step through the visible headers and items.
+      const all = [...menu.querySelectorAll('button')].filter((b) => b.offsetParent);
+      const i = all.indexOf(document.activeElement) + (e.key === 'ArrowDown' ? 1 : -1);
+      if (all[i]) all[i].focus();
+      e.preventDefault();
+    });
+  }
+
+  // Name of an alankar id or 'line:<id>'; empty when it no longer exists.
+  function sargamExerciseName(value) {
+    const id = value.startsWith('line:') ? value.slice(5) : null;
+    const item = id ? store.sargamLines.find((l) => l.id === id) : D.ALANKARS.find((a) => a.id === value);
+    return { value, name: item ? item.name : '' };
+  }
+
+  function updateSargamFav() {
+    const btn = $('sargamFav');
+    const fav = store.sargamFavorites.includes(S.sargamExercise);
+    btn.hidden = S.sargamExercise === 'custom';   // save the line first
+    btn.textContent = fav ? '★' : '☆';
+    btn.setAttribute('aria-pressed', String(fav));
+  }
+
+  function toggleSargamFav() {
+    const v = S.sargamExercise;
+    const i = store.sargamFavorites.indexOf(v);
+    if (i >= 0) store.sargamFavorites.splice(i, 1); else store.sargamFavorites.push(v);
+    save(true);
+    fillSargamExercise();
+    updateSargamFav();
+  }
+
+  function sargamListNames() {
+    return [...new Set(store.sargamLines.map((l) => l.list).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  }
+
+  // The editor's default-taal picker: "none" plus every taal.
+  function fillSargamLineTaal(value) {
+    const sel = $('sargamLineTaal');
+    fillTaalSelect(sel, value);
+    sel.insertBefore(opt('', tr('No default taal')), sel.firstChild);
+    sel.value = value && rawTaal(value) ? value : '';
+  }
+
+  // Show a line's fields in the editor. A new line starts on the current taal.
+  function fillSargamEditor(line) {
+    $('sargamLineName').value = line ? line.name : '';
+    $('sargamLineList').value = line ? line.list || '' : '';
+    fillSargamLineTaal(line ? line.taal : S.taalId);
   }
 
   function selectSargamExercise(value) {
@@ -584,9 +821,15 @@
     const line = savedLine();
     if (line) S.sargamCustom = line.notes;
     $('sargamCustom').value = S.sargamCustom;
-    $('sargamLineName').value = line ? line.name : '';
+    fillSargamEditor(line);
+    // Switch to the line's default taal; the taal picker can still change it.
+    if (line && line.taal && line.taal !== S.taalId && rawTaal(line.taal)) {
+      selectTaal(line.taal);
+      $('taalSelect').value = line.taal;
+    }
     $('sargamLineStatus').textContent = '';
     $('sargamExercise').value = value;
+    renderSargamPicker();
     save();
     applySargam();
   }
@@ -606,6 +849,11 @@
       line = { id: Date.now().toString(36), name, notes };
       store.sargamLines.push(line);
     }
+    // Optional fields are left out of the file when empty.
+    const list = $('sargamLineList').value.trim();
+    const taal = $('sargamLineTaal').value;
+    if (list) line.list = list; else delete line.list;
+    if (taal) line.taal = taal; else delete line.taal;
     S.sargamExercise = 'line:' + line.id;
     sargamEditing = false;   // saved: close the editor
     save(true);
@@ -621,11 +869,92 @@
     const line = savedLine();
     if (!line || !confirm(tr('Delete the line "{name}"?', { name: line.name }))) return;
     store.sargamLines = store.sargamLines.filter((l) => l !== line);
+    store.sargamFavorites = store.sargamFavorites.filter((v) => v !== 'line:' + line.id);
     S.sargamExercise = 'custom';
     save(true);
     writeFile('sargamLines');
     fillSargamExercise();
     selectSargamExercise('custom');
+  }
+
+  // Search every exercise (alankars and saved lines) by name or list name.
+  const SEARCH_MAX = 100;
+  function initSargamSearch() {
+    const input = $('sargamSearch');
+    const box = $('sargamResults');
+    let hits = [];
+    let active = -1;
+    const taalName = (id) => { const t = id && rawTaal(id); return t ? t.name : ''; };
+    const close = () => {
+      box.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+      active = -1;
+    };
+    const mark = (i) => {
+      active = i;
+      [...box.children].forEach((li, j) => li.classList.toggle('active', j === i));
+      if (box.children[i]) box.children[i].scrollIntoView({ block: 'nearest' });
+    };
+    const pick = (hit) => {
+      input.value = '';
+      close();
+      selectSargamExercise(hit.value);
+    };
+    const search = () => {
+      const q = input.value.trim().toLowerCase();
+      if (!q) { close(); return; }
+      const all = D.ALANKARS.map((a) => ({ value: a.id, name: a.name, sub: tr('Alankars') }))
+        .concat(store.sargamLines.map((l) => ({
+          value: 'line:' + l.id, name: l.name, list: l.list || '',
+          sub: [l.list || tr('My lines'), taalName(l.taal)].filter(Boolean).join(' · '),
+        })));
+      // Favourites first, then names that start with the query.
+      const rank = (h) => (store.sargamFavorites.includes(h.value) ? 0 : 2) + (h.name.toLowerCase().startsWith(q) ? 0 : 1);
+      hits = all.filter((h) => h.name.toLowerCase().includes(q) || (h.list && h.list.toLowerCase().includes(q)))
+        .sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
+      box.innerHTML = '';
+      if (!hits.length) {
+        const li = document.createElement('li');
+        li.className = 'empty';
+        li.textContent = tr('No sargam found');
+        box.appendChild(li);
+      }
+      // Only the best matches are listed; typing more narrows the rest.
+      const more = hits.length - SEARCH_MAX;
+      hits = hits.slice(0, SEARCH_MAX);
+      hits.forEach((h, i) => {
+        const li = document.createElement('li');
+        li.setAttribute('role', 'option');
+        li.textContent = (store.sargamFavorites.includes(h.value) ? '★ ' : '') + h.name;
+        const small = document.createElement('small');
+        small.textContent = h.sub;
+        li.appendChild(small);
+        // mousedown, so the input's blur doesn't close the list first.
+        li.addEventListener('mousedown', (e) => { e.preventDefault(); pick(h); });
+        li.addEventListener('mousemove', () => mark(i));
+        box.appendChild(li);
+      });
+      if (more > 0) {
+        const li = document.createElement('li');
+        li.className = 'empty';
+        li.textContent = tr('{n} more — type more to narrow the search', { n: more });
+        box.appendChild(li);
+      }
+      box.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+      mark(hits.length ? 0 : -1);
+    };
+    input.addEventListener('input', search);
+    input.addEventListener('focus', search);
+    input.addEventListener('blur', close);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' && hits.length) mark((active + 1) % hits.length);
+      else if (e.key === 'ArrowUp' && hits.length) mark((active - 1 + hits.length) % hits.length);
+      else if (e.key === 'Enter' && hits[active]) pick(hits[active]);
+      else if (e.key === 'Escape') { input.value = ''; close(); }
+      else return;
+      e.preventDefault();
+    });
   }
 
   // "Selected lines" loop: picked line indexes are kept per exercise.
@@ -836,6 +1165,59 @@
     }).observe($('sargamPanel'));
   }
 
+  // Playback keeps the current line at the top of the box, but the user's own
+  // scrolling wins: following resumes after FOLLOW_PAUSE ms without any.
+  const FOLLOW_PAUSE = 10000;
+  let sargamLine = -1;
+  let userScrolling = false;
+  let followTimer = 0;
+
+  function showSargamLine() {
+    const row = sargamLineEls[sargamLine];
+    if (!row) return;
+    const box = $('sargamLines');
+    if (box.scrollHeight > box.clientHeight) {
+      box.scrollTo({ top: box.scrollTop + row.getBoundingClientRect().top - box.getBoundingClientRect().top, behavior: 'smooth' });
+    }
+    // With many lines the row can also be off screen; bring it back only
+    // while the panel is in view, so watching the beat grid isn't disturbed.
+    const panel = $('sargamPanel').getBoundingClientRect();
+    const r = row.getBoundingClientRect();
+    const inView = panel.bottom > 0 && panel.top < innerHeight;
+    if (inView && (r.top < 0 || r.bottom > innerHeight)) {
+      scrollBy({ top: r.top - Math.min(80, innerHeight / 4), behavior: 'smooth' });
+    }
+  }
+
+  function initSargamFollow() {
+    const touched = () => {
+      userScrolling = true;
+      clearTimeout(followTimer);
+      followTimer = setTimeout(() => {
+        userScrolling = false;
+        if (player.playing) showSargamLine();
+      }, FOLLOW_PAUSE);
+    };
+    for (const t of ['wheel', 'touchstart', 'touchmove']) addEventListener(t, touched, { passive: true });
+    // Dragging a scrollbar or keyboard scrolling inside the box.
+    $('sargamLines').addEventListener('pointerdown', touched);
+    addEventListener('keydown', (e) => {
+      if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'].includes(e.key)) touched();
+    });
+
+    // Long pages: a button to jump back to the top.
+    const top = $('toTop');
+    const update = () => { top.hidden = scrollY < innerHeight; };
+    addEventListener('scroll', update, { passive: true });
+    update();
+    top.addEventListener('click', () => {
+      clearTimeout(followTimer);
+      userScrolling = true;
+      followTimer = setTimeout(() => { userScrolling = false; }, FOLLOW_PAUSE);
+      scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
   function updateTurn(ev) {
     const el = $('sargamTurn');
     let text = tr('Starts on sam');
@@ -857,11 +1239,8 @@
     const checking = S.sargamCheck && (S.sargamMode !== 'call' || ev.yourTurn);
     if (ev.kind === 'line') {
       sargamLineEls.forEach((r, i) => r.classList.toggle('current', i === ev.line));
-      const row = sargamLineEls[ev.line];
-      const box = $('sargamLines');
-      if (row && box.scrollHeight > box.clientHeight) {
-        box.scrollTo({ top: box.scrollTop + row.getBoundingClientRect().top - box.getBoundingClientRect().top, behavior: 'smooth' });
-      }
+      sargamLine = ev.line;
+      if (!userScrolling) showSargamLine();
       updateTurn(ev);
       finishCheck();
       // The line is about to be sung again: clear its old marks.
@@ -925,6 +1304,7 @@
   }
 
   function sargamStopped() {
+    sargamLine = -1;
     finishCheck();
     sargamOn.forEach((sp) => sp.classList.remove('on'));
     sargamOn = [];
@@ -945,17 +1325,49 @@
       $('sargamLineStatus').textContent = savedLine() ? tr('Unsaved changes') : '';
       applySargam();
     } });
-    const line = savedLine();
-    $('sargamLineName').value = line ? line.name : '';
+    fillSargamEditor(savedLine());
+    const changed = () => { if (savedLine()) $('sargamLineStatus').textContent = tr('Unsaved changes'); };
+    $('sargamLineList').addEventListener('input', changed);
+    $('sargamLineTaal').addEventListener('change', (e) => {
+      changed();
+      // Hear the line in the taal just picked.
+      if (e.target.value && e.target.value !== S.taalId) {
+        selectTaal(e.target.value);
+        $('taalSelect').value = e.target.value;
+      }
+    });
+    initSargamSearch();
+    initSargamPicker();
+    $('sargamFav').addEventListener('click', toggleSargamFav);
     $('sargamLineName').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveSargamLine(); });
     $('sargamLineSave').addEventListener('click', saveSargamLine);
     $('sargamLineDelete').addEventListener('click', deleteSargamLine);
+    $('sargamShare').addEventListener('click', () => {
+      const line = savedLine();
+      if (line) exportFile(fileName(line.name, 'sargam'), { sargamLines: [line] });
+    });
+    $('sargamShareAll').addEventListener('click', () => {
+      exportFile(FILES.sargamLines, { sargamLines: store.sargamLines });
+    });
+    $('sargamImport').addEventListener('change', (e) => importFile(e.target));
+    // Android's picker filters by MIME type, and shared .json files often arrive
+    // as text/plain or octet-stream: let any file be picked, importFile checks it.
+    if (NATIVE) ['sargamImport', 'importFile'].forEach((id) => $(id).removeAttribute('accept'));
+    // A blank line in the editor. An unsaved one being written is only
+    // replaced after asking.
+    $('sargamNew').addEventListener('click', () => {
+      if (S.sargamExercise === 'custom' && S.sargamCustom.trim() && !confirm(tr('Discard the unsaved line?'))) return;
+      S.sargamCustom = '';
+      selectSargamExercise('custom');
+      $('sargamLineName').focus();
+    });
     $('sargamEdit').addEventListener('click', () => {
       sargamEditing = !sargamEditing;
       applySargam();
       if (sargamEditing) $('sargamCustom').focus();
     });
     initSargamResize();
+    initSargamFollow();
     bind('sargamPerBeat', 'sargamPerBeat', { onChange: applySargam });
     bind('sargamMode', 'sargamMode', { type: 'str', onChange: applySargam });
     bind('sargamLoop', 'sargamLoop', { type: 'str', onChange: () => { player.setSargamLoop(loopLines()); showLoop(); } });
@@ -1082,11 +1494,13 @@
     $('cBols').value = t ? t.bols : '';
     validateComposer();
     renderCustomList();
+    $('cShare').hidden = !editingId;
   }
 
   function renderCustomList() {
     const ul = $('customList');
     ul.innerHTML = '';
+    $('cShareAll').hidden = !store.custom.length;
     if (!store.custom.length) {
       ul.innerHTML = `<li class="empty">${tr('Nothing saved yet. Built-in taals can be opened from here too:')}</li>`;
     }
@@ -1223,6 +1637,7 @@
         t.id = 'c-' + Date.now().toString(36);
         store.custom.push(t);
         editingId = t.id;
+        $('cShare').hidden = false;
       }
       save();
       fillTaalSelect($('taalSelect'), S.taalId);
@@ -1249,35 +1664,17 @@
     });
 
     $('exportBtn').addEventListener('click', () => {
-      const data = { app: 'taal-studio', version: 1, custom: store.custom,
-                     sequences: store.sequences, presets: store.presets, sargamLines: store.sargamLines };
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
-      a.download = 'taal-studio-export.json';
-      a.click();
-      URL.revokeObjectURL(a.href);
+      exportFile('taal-studio-export.json', { custom: store.custom, sequences: store.sequences,
+                                               presets: store.presets, sargamLines: store.sargamLines });
     });
-    $('importFile').addEventListener('change', async (e) => {
-      const f = e.target.files[0];
-      if (!f) return;
-      try {
-        const data = JSON.parse(await f.text());
-        const merge = (key) => {
-          for (const item of data[key] || []) {
-            const k = key === 'presets' ? 'name' : 'id';
-            const i = store[key].findIndex((x) => x[k] === item[k]);
-            if (i >= 0) store[key][i] = item; else store[key].push(item);
-          }
-        };
-        merge('custom'); merge('sequences'); merge('presets'); merge('sargamLines');
-        save(true);
-        // The files replace what is stored on load, so update them first.
-        Promise.all(Object.keys(FILES).filter((k) => data[k]).map(writeFile)).then(() => location.reload());
-      } catch (err) {
-        alert(tr('Could not import: {err}', { err: err.message }));
-      }
-      e.target.value = '';
+    $('cShare').addEventListener('click', () => {
+      const t = store.custom.find((x) => x.id === editingId);
+      if (t) exportFile(fileName(t.name, 'composition'), { custom: [t] });
     });
+    $('cShareAll').addEventListener('click', () => {
+      exportFile(FILES.custom, { custom: store.custom });
+    });
+    $('importFile').addEventListener('change', (e) => importFile(e.target));
 
     loadIntoComposer(null);
   }
@@ -1393,6 +1790,10 @@
   });
 
   function micUnavailable(err) {
+    if (NATIVE) {
+      alert(tr('Microphone unavailable: {err}\nAllow the microphone for Taal Studio in your phone\'s settings.', { err: err.message }));
+      return;
+    }
     alert(tr('Microphone unavailable: {err}\nOpen the app through ./run.sh (http://localhost) and allow the microphone.', { err: err.message }));
   }
 

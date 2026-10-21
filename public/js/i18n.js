@@ -20,6 +20,8 @@
     'Settings': 'সেটিংস',
     'Theme': 'থিম',
     'Play / Stop (Space)': 'বাজান / থামান (Space)',
+    'Play': 'বাজান',
+    'Stop': 'থামান',
     'Tempo': 'গতি',
     'Half tempo': 'অর্ধেক গতি',
     'Double tempo': 'দ্বিগুণ গতি',
@@ -96,10 +98,14 @@
 
     // ── Sargam practice ──
     'Starts on sam': 'সোম থেকে শুরু',
+    'Back to top': 'উপরে যান',
     'Drag to show more or fewer lines (or use the arrow keys)': 'টেনে বেশি বা কম লাইন দেখান (বা অ্যারো কী ব্যবহার করুন)',
     'One line = one avartan. Komal swars are underlined, tivra Ma has a mark above, dots show mandra (below) and taar (above) saptak. Use headphones when checking your singing.':
       'এক লাইন = এক আবর্তন। কোমল স্বরের নিচে দাগ, তীব্র মা-র উপরে চিহ্ন, আর বিন্দু দিয়ে মন্দ্র (নিচে) ও তার (উপরে) সপ্তক বোঝানো হয়। নিজের গান যাচাই করার সময় হেডফোন ব্যবহার করুন।',
     'Edit': 'সম্পাদনা',
+    '+ New': '+ নতুন',
+    'Write a new sargam line': 'নতুন সরগম লাইন লিখুন',
+    'Discard the unsaved line?': 'সেভ না করা লাইনটি বাদ দেবেন?',
     'Show the line editor': 'লাইন সম্পাদক দেখান',
     'Name': 'নাম',
     'e.g. Yaman palta 1': 'যেমন: ইমন পাল্টা ১',
@@ -127,6 +133,15 @@
     'Line {n}: click to add to the loop or remove': 'লাইন {n}: লুপে যোগ বা বাদ দিতে ক্লিক করুন',
     'Alankars': 'অলংকার',
     'My lines': 'আমার লাইন',
+    'List': 'তালিকা',
+    'e.g. Kaharba lessons': 'যেমন কাহারবা পাঠ',
+    'Default taal': 'ডিফল্ট তাল',
+    'No default taal': 'কোনো ডিফল্ট তাল নেই',
+    'Selecting this line switches to its taal; you can still change the taal afterwards': 'এই লাইন বাছলে তার তাল চালু হয়; পরে তাল বদলাতে পারবেন',
+    'Search sargams by name or list…': 'নাম বা তালিকা দিয়ে সরগম খুঁজুন…',
+    'No sargam found': 'কোনো সরগম পাওয়া যায়নি',
+    '{n} more — type more to narrow the search': 'আরও {n}টি — আরও লিখে খোঁজ ছোট করুন',
+    'Add to or remove from favourites': 'প্রিয় তালিকায় যোগ করুন বা সরান',
     'Your own': 'নিজের',
     'New custom line…': 'নতুন নিজের লাইন…',
     'Give the line a name first.': 'আগে লাইনের একটি নাম দিন।',
@@ -151,6 +166,8 @@
     'Missed': 'বাদ গেছে',
     'Microphone unavailable: {err}\nOpen the app through ./run.sh (http://localhost) and allow the microphone.':
       'মাইক্রোফোন পাওয়া যাচ্ছে না: {err}\n./run.sh (http://localhost) দিয়ে অ্যাপ খুলুন এবং মাইক্রোফোনের অনুমতি দিন।',
+    "Microphone unavailable: {err}\nAllow the microphone for Taal Studio in your phone's settings.":
+      'মাইক্রোফোন পাওয়া যাচ্ছে না: {err}\nফোনের সেটিংসে তাল স্টুডিওকে মাইক্রোফোনের অনুমতি দিন।',
 
     // ── Composer ──
     'Compose a taal or composition': 'তাল বা রচনা তৈরি করুন',
@@ -165,6 +182,16 @@
     '— click to hear and insert': '— ক্লিক করলে শোনা যাবে ও লেখায় বসবে',
     'Export all…': 'সব এক্সপোর্ট…',
     'Import…': 'ইমপোর্ট…',
+    'Share…': 'শেয়ার…',
+    'Share all lines…': 'সব লাইন শেয়ার…',
+    'Share all compositions…': 'সব রচনা শেয়ার…',
+    'Save all your sargam lines as one file to share': 'আপনার সব সরগম লাইন একটি ফাইলে শেয়ারের জন্য সেভ করুন',
+    'Save all your compositions as one file to share': 'আপনার সব রচনা একটি ফাইলে শেয়ারের জন্য সেভ করুন',
+    'Back up compositions, sequences, presets and sargam lines': 'রচনা, সিকোয়েন্স, প্রিসেট ও সরগম লাইনের ব্যাকআপ নিন',
+    'Save this line as a file to share': 'লাইনটি শেয়ার করার জন্য ফাইল হিসেবে সেভ করুন',
+    'Save this composition as a file to share': 'রচনাটি শেয়ার করার জন্য ফাইল হিসেবে সেভ করুন',
+    'Add sargam lines or compositions from a shared file': 'শেয়ার করা ফাইল থেকে সরগম লাইন বা রচনা যোগ করুন',
+    'nothing to import in this file': 'এই ফাইলে ইমপোর্ট করার মতো কিছু নেই',
     'Group: wraps the selection, or opens a group': 'দল: বাছাই করা অংশ ঘিরে দেয়, বা নতুন দল খোলে',
     'Accent: play the previous bol louder': 'ঝোঁক: আগের বোলটি জোরে বাজবে',
     'Soft: play the previous bol softer': 'নরম: আগের বোলটি আস্তে বাজবে',
@@ -185,6 +212,7 @@
     'saved to {file}': '{file}-এ সেভ হয়েছে',
     'Delete "{name}"?': '"{name}" মুছবেন?',
     'Could not import: {err}': 'ইমপোর্ট করা যায়নি: {err}',
+    'Could not export: {err}': 'এক্সপোর্ট করা যায়নি: {err}',
 
     // ── Sequences ──
     'New sequence': 'নতুন সিকোয়েন্স',
@@ -210,6 +238,7 @@
     'Stop listening': 'শোনা বন্ধ করুন',
     'Set Sa to this pitch': 'এই সুরকে সা করুন',
     'Hear current Sa': 'বর্তমান সা শুনুন',
+    'Made by': 'নির্মাতা',
     '{swar} relative to your Sa ({c}¢)': 'আপনার সা অনুযায়ী {swar} ({c}¢)',
 
     // ── Settings ──

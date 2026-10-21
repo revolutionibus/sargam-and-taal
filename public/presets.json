@@ -55,6 +55,74 @@
         "sargamInst": "harmonium",
         "sargamVol": 0.73
       }
+    },
+    {
+      "name": "আমার প্রাণের মানুষ আছে প্রাণে",
+      "settings": {
+        "taalId": "dadra",
+        "tempo": 200,
+        "key": 1,
+        "fine": 0,
+        "master": 0.56,
+        "taalOn": true,
+        "drum": "",
+        "startBeat": 1,
+        "taalVol": 0.42,
+        "dayanVol": 1,
+        "bayanVol": 1,
+        "tablaFine": 0,
+        "manjeeraOn": false,
+        "manjeeraVol": 1.23,
+        "manjeeraMode": "beats",
+        "manjeeraBeats": {
+          "keherwa": "1 5",
+          "jhaptaal": ""
+        },
+        "lehraOn": false,
+        "lehraId": "da-pahadi",
+        "lehraVol": 0.47,
+        "lehraAuto": false,
+        "tanpuraOn": false,
+        "tanpuraPattern": 1,
+        "tanpuraTone": "p3",
+        "tanpuraCount": 1,
+        "tanpuraSpeed": 0.7,
+        "tanpuraRandom": true,
+        "tanpuraVol": 0.31,
+        "tanpuraDelays": [
+          1,
+          0.9,
+          0.9,
+          1.7
+        ],
+        "swarOn": false,
+        "swarRaga": "khamaj",
+        "swarEvery": 2,
+        "swarSpeed": 1.15,
+        "swarVol": 0.94,
+        "sargamOn": true,
+        "sargamExercise": "line:mvia8kjs",
+        "sargamRaga": "malkauns",
+        "sargamCustom": "---| S S - |\n| .N S - | G G - | G G m | m P D |\n| P - G | m P - | m g - | R S - |\n| - - S | S S - | (R m) m - | P P - |\n| - - S | S S - | (R m) m - | P P - |\n| P P n | D (P m) - | P - n | D P - |\n| - - - | - S' S' | (N S') - n | D P - |\n| m G - | m P - | m g - | R S - |\n| .N S - | G G - ||\n|| - - m | P N - | S' S' - | S' (N D) N |\n| S' - G' | R' S' (R' S') | N N - | N S' (R' S') |\n| (N S') - - | - N N |\n| N N - | S' - (R' S') | N N - | S' S' - |\n| N S' - | S' S' - | N P - | N N - |\n| N S' N | D P - | - - - | - N N |\n| S' S' N | D P - | m G - | m P - ||\n|| - - m | P N - | S' S' - | S' (N D) N |\n| S' S' G' | R' S' (R' S') | N N - | N S' (R' S') |\n| (N S') - - | - N N |\n| N N - | S' - (R' S') | N N - | S' - - |\n| - - - | - N N | N S' S' | S' S' - |\n| N - P | N N - | S' S' N | D P - |\n| - - - | - N N | S' - N | D P - |\n| G - G | m P - || ||",
+        "sargamPerBeat": 1,
+        "sargamMode": "along",
+        "sargamInst": "harmonium",
+        "sargamVol": 0.68,
+        "sargamLoop": "all",
+        "sargamLoopLines": {
+          "line:mvgpnw4t": [],
+          "line:mvh3ykqy": [],
+          "line:mvh4au3w": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "custom": [],
+          "line:mvfs6j53": [],
+          "line:mvh50kha": []
+        }
+      }
     }
   ]
 }

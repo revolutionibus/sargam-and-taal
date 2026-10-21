@@ -1,0 +1,845 @@
+{
+ "app": "taal-studio",
+ "version": 1,
+ "sargamLines": [
+  {
+   "id": "s-7e061cb089",
+   "name": "অকারণে অকালে মোর পড়ল যখন ডাক",
+   "notes": "|| m P - | P P S' | (N S') n - | D P - |\n| P S S | (S R) R m | g - - | - - - |\n| (g m) m - | R S - | R R g | R S R |\n| .N - - | S - - | G - G | G G - |\n| (G m) m - | (m P) P - | (P m) m - | g R - |\n| g - - | - - - | (g P) P - | m m R |\n| (R m) g - | R S R | .N - - | S - - |\n| .N .N - | S S P | P P - | P - P |\n| P P - | - - - | (P S') n - | D n - |\n| D S' n | D (D P) n | D P - | - - - |\n| .N .N - | S - S | (S S') - S' | N S' - |\n| (S' R') S' - | n n - | D n - | - - - |\n| (n S') n - | D n - | D S' n | D P - |\n| m G P | m - - ||\n|| .N .N - | S S - | S - S | S S P |\n| P P - | (P D) P D | m (P D) (m P) | (m g) - - |\n| m P - | (P n) P N | N S' - | (S' R') S' R' |\n| N - - | S' - - | (S' R') R' - | S' S' - |\n| (S' R') S' - | n n - | (n S') n - | D (D P) (D n) |\n| D P - | - - - | (P D) P - | m m - |\n| (m P) m - | G G m | (R G) - (m P) | m - - |\n| m - P | (P n) P n | N S' - | (S' R') S' R' |\n| N S' - | - - - | N S' - | n n n |\n| (n S') n - | D P - | m G P | m - - |\n| (m m') m' - | g' g' - | m' g' - | R' S' - |\n| (S' R') S' - | n n - | (n S') n - | D P - |\n| P P D | (D R') S' - | n n - | D P - |\n| m G P | m - - ||\n|| S S - | S S P | P - P | (P M) P - |\n| S S - | R R S | (S m) g - | - - - |\n| m m - | R S - | (S R) - g | R S R |\n| .N - - | S - - | G G - | G G - |\n| (G m) - m | (m P) P - | m m - | g g - |\n| R g - | - - - | P P - | m m R |\n| (R m) g - | R S R | (R .N) - - | S - - |\n| .N .N - | S S P | P P - | P P - |\n| P P - | - - - | (P S') n n | D n - |\n| D S' n | D (P D) n | D P - | - - - |\n| .N - .N | S S - | (S S') S' - | N S' - |\n| (S' R') S' - | n n - | D n - | - - - |\n| (n S') n - | D n - | (D S') n - | D P - |\n| m G P | m - - || ||",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অকারণে অকালে মোর পড়ল যখন ডাক.xml",
+   "unknown_codes": [
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-4398ee0cae",
+   "name": "অগ্নিবীণা বাজাও তুমি কেমন",
+   "notes": "S - R | R P | g - | R S - | R g | R g |\n| S R S | .N - | S - | m P - | P - | P m |\n| (P n) n - | D - | P D | m P D | (m P) (D P) | g R\nN - N | N - | N S' | S' S' - | S' N | S' - |\n| (S' R') S' - | n D | P D | m P D | (m P) (D P) | g - |\n| S' R' - | R' - | g' - | g' - m' | R' - | S' P |\n| (P n) P - | (m P) (D P) | g R\nS G - | m - | (G m) P | m g R | g R | S - |\n| S n D | (P m) G | m - | P P - | P - | P - |\n| (P D) P - | m G | m - | (m P) m - | g R | S - |\n| N N - | N - | N S' | S' - S' | S' N | S' - |\n| (S' R') S' - | n D | P D | m P D | (m P) (D P) | g - |\n| S' S' R' | R' - | g' - | g' g' m' | R' - | S' P |\n| (P n) P - | (m P) (D P) | g R",
+   "list": "তেওড়া",
+   "letter": "অ",
+   "tala": "তেওড়া",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অগ্নিবীণা বাজাও তুমি কেমন ক’রে.xml",
+   "unknown_codes": [
+    "L",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-e900c92bb8",
+   "name": "অগ্নিশিখা,এসো এসো, আনো আনো আলো",
+   "notes": "|| P S' S' N | (D P) - P M | G m G - | - - G R |\n| .N R S - | .N S R - | S R G M | P G M P | - - |\n| G P P - | P M P - | - - P P | P M P - |\n| - - P P | P M D - | S R G - | S R G - |\n| S R G M | P G M P ||\n----|--P P |\n|| P M P - | - - P P | P M D - | - - D D |\n| D P N - | - - N N | N D S' - | - - S' S' |\n| S' G' G' R' | R' S' S' N | N D D - | P - P P |\n| P N N D | D - P - | S R G M | P G M P ||\n----|--G M |\n|| P - P - | P - P - | (P M) D P - | - M G M |\n| P - P - | (P M) D P - | - - M P | D - D - |\n| - - P D | N - N D | (D N) - - D | P - - - |\n| S - R - | G - M - | R - G - | M - P - |\n| P - P (P G) | P - - - | P - P (P M) | D - - - |\n| D D D P | (P N) - - - | N - N (N D) | (D S') - - - |\n| S' S' G' R' | S' - N D | (D N) - D - | P - P P |\n| P N N D | D - P M | (M G) m G - | - - - - |\n| S R G M | P G M P",
+   "list": "কাহারবা",
+   "taal": "keherwa",
+   "letter": "অ",
+   "tala": "কাহারবা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অগ্নিশিখা, এসো এসো.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-0bee73bf9d",
+   "name": "অচেনাকে ভয় কী আমার ওরে",
+   "notes": "|| P P S' | N (D P) - | M - G | M P (M N) |\n| D P - | - - - | S S R | G - R |\n| G P - | - - - | P P - | P - M |\n| M D - | - - S' | S' G' G' | R' R' N |\n| (N R') S' - | - - P ||\n|| S' S' - | S' S' - | S' S' - | S' N R' |\n| S' - - | - - - | S' S' G' | R' R' (G' m') |\n| G' G' R' | R' - N | S' - - | - - - |\n| S' G' G' | R' S' - | P P - | M P - |\n| (G P) - P | (P M) P N | D P - | - - - |\n| S S R | G - R | G P - | - - - |\n| P P - | P - M | M D - | - - S' |\n| S' G' G' | R' R' N | (N R') S' - | - - P ||\nN N - | D P - | M -\n|| S S R | G G - | G - (G R) | G - R |\n| S - - | - - P | P P - | M G (M P) |\n| M G - | - - - | N N - | D P M |\n| (M D) P - | M G M | P N N | N D N |\n| D P - | - - - | S' S' - | S' S' - |\n| S' S' - | S' N R' | S' - - | - - - |\n| S' S' G' | R' R' (G' m') | G' G' R' | R' - N |\n| S' - - |---| - - - | P P - | P P - |\n| P P - | (P M) P - | (G P) P - | (P M) P (N D) |\n| D P - | - - - | S S R | G - R |\n| G P - | - - - | P P - | P - M |\n| M D - | - - S' | S' G' G' | R' R' N |\n| (N R') S' - | - - P",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অচেনাকে ভয় কী আমার ওরে.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "[",
+    "]",
+    "w",
+    "x",
+    "y"
+   ]
+  },
+  {
+   "id": "s-00c6c82c41",
+   "name": "অজানা খনির নূতন মণির",
+   "notes": "N S' G' | r' S' - | n S' n | n (n d) P |\n| P - d | n (d n) d | P - - | d m - |\n| P n n | d d P | m P G | m P - |\n| G - - | m G r | S - - |---| d d m |\n| m d d | N S' r' | N S' - | S' S' m |\n| m d - | N S' r' | N S' - | N S' r' |\n| r' r' S' | n S' n | d d P | m (m G) P |\n| m - - | - - - | (S' G') G' G' | G' G' - |\n| m' P' P' | m' G' - | G' G' G' | m' m' m' |\n| G' G' R' | S' (N D) N | N S' G' | r' r' S' |\n| n S' n | d n (d P) | P (P n) d | P - m |\n| m G P | m - G\nS r m | m m - | m m m | m m m |\n| m - - | m G P | m - - | - - - |\n| S m m | m m P | G m r | G m P |\n| G r - | G (m G) r | S - - | - - - |\n| d d - | N - N | S' - - | - - - |\n| N S' r' | r' r' S' | N d - | N - S' |\n| (S' G') - - | r' S' - | S' r' (r' S') | n (n d) (d P) |\n| P - d | (n d) n (n d) | n d d | d - P |\n| m P P | P (P d) P | G - - | - - - |\n| G' G' G' | G' G' G' | m' P' (P' m') | m' P' m' |\n| P' - m' | m' m' G' | G' m' G' | G' R' S' |\n| N S' G' | r' r' S' | n S' n | d (d n) d |\n| P N (n d) | P - m | m (m G) P | m - G",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অজানা খনির নূতন মণির.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "w",
+    "x",
+    "y"
+   ]
+  },
+  {
+   "id": "s-1e27a974a4",
+   "name": "অজানা সুর কে দিয়ে যায়",
+   "notes": "----| (n d) - P -\nm G m n | n d d P | m - P - | d P m P |\n| G - - - | - - - - | m G r - | G - m - |\n| G m P d | P d m P | S - r - | G - m - |\n| G - m - | P - d - | P - d - | N - S' - |\n| P d S' N | d P m G\nd - d d | N - S' S' | r' - S' - | N - S' - |\n| S' g' g' - | g' R' g' - | g' m' g' - | r' - S' - |\n| g' - g' - | r' - S' - | r' - S' - | n - d P |\n| P d n - | n d d P | P m P - | - - - - |\n| S - r - | G - m - | G - m m | P - d - |\n| P - d - | N - S' - | P - d - | N - S' - |\n| r' - S' - | n - d P | P d n - | d - P - |\n| P d n d | P m G m",
+   "list": "কাহারবা",
+   "taal": "keherwa",
+   "letter": "অ",
+   "tala": "কাহারবা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অজানা সুর কে দিয়ে যায়.xml",
+   "unknown_codes": [
+    "L",
+    "[",
+    "]",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-091ffbcaae",
+   "name": "বলো বলো পিতা",
+   "notes": "|| - m P G | m (G m P) (P m) P | (P n d) - d d | P d P (d P) |\n| m P P (P d) | (P d n) d P (P m) | (G m) (P d) d P | (d P) m (m P m) G |\n| G m (G n) d | d d P (d P) | m - G (m P) | m G r S |\n| - r m (m P) | (G m) P (P m) P | (P n d) - d d | P d P - |\n(N S') N\n| d d d P | (P n) d P m | d d N N | S' - --| - |\n| d d d d | N - S' S' | N - S' r' | S' N d P |\n(N S') N d\n| d d - P | (P n d) - P m | d - d - | N N S'-| - |\n| d d d - | N - S' r' | N - S' r' | S' N d P",
+   "list": "তিনতালা",
+   "letter": "অ",
+   "tala": "তিনতালা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=29_30.xml",
+   "unknown_codes": [
+    "L",
+    "[",
+    "]"
+   ]
+  },
+  {
+   "id": "s-5cc56c3cdd",
+   "name": "কে জানে কোথা সে",
+   "notes": "(G P) m G (G R) | (S R) .N S - | G m P - | P D n (n D) |\n| P D n (n D) | (P D P) (m P m) G - | G P m m | G (G R) S R |\n| S .N .D .N | S R S (.N S) | (.D .N) .P - - | .P (.P m) G - |\n| S (S m) G - | - - - -\nP P S' - | S' S' S' - | S' - S' - | N (N D) P (P D P) |\n| m (G m P) G - | - - - - | G - G G | (G m) P - - |\n| m G (R .N) R | S - - - | G m P - | P D n D |\n| P (D P) m (P m) | G - - - | P - S' - | P - S' - |\n| G' - R' - | S' - N (S' N) | D N S' R' | S' N D P |\n| P N D S' | N - - D |----|----|",
+   "list": "কাওয়ালি(৪/৪/৪/৪)",
+   "letter": "অ",
+   "tala": "কাওয়ালি(৪/৪/৪/৪)",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=29_31.xml",
+   "unknown_codes": [
+    "L"
+   ]
+  },
+  {
+   "id": "s-7b1c6b7cd5",
+   "name": "এতক্ষণে বুঝি এলি রে",
+   "notes": "--|--|-(S .N) | S R | (g R) (m g) | (m g) (P m) |\n| g - | m R | - S | R g | m R | - S |\n| - (S .N) | (R S) R | - R | m R | m - | P - |\n| P D | N S' | - - | (n S' n) S' | D - | P - |\n| m n | D n | D P | - (m G) | (m G) m | - P |\n| g - | m R | - S | S g | - m | P D |\n| g - | m R | (R S) (S .N)\nP D | N S' | N S' | - R' | (N S') S' | (N S') (N R' S') |\n| n D | P D | N S' | - (S' R') | (n S' n) - | D P |\n| m n | D (S' n) | - D | (D n) P | - m | P D |\n| g - | m R | (R S) (S .N)",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=29_32.xml",
+   "unknown_codes": [
+    "L",
+    "i"
+   ]
+  },
+  {
+   "id": "s-bfd4c86853",
+   "name": "অধরা মাধুরী ধরেছি ছন্দোবন্ধনে",
+   "notes": "--P | N N -\n|| N - N | S' - N | (D P) - (P M) | D P - |\n| P N (N P) | P S' N |\n| (D P) - - | (P M) P - | P P P | P P P |\n| (P M) P - | (P m) m - | m m G | R G m |\n| G - P | N N - ||\n--- | - - -\n|| (P M) D P | N N S' | S' - S' | S' S' S' |\n| S' - S' | S' N R' | S' S' - | S' S' P |\n| P - S' | N - - | - - - | S' S' N |\n| S' S' G' | R' R' (R' S') | S' - - | S' N P |\n| P S' S' | N (P M) D | P - P | N N - ||\n--P | (m P) m -\n|| m G - | G - G | G - m | - G m |\n| P P - | M P - | P N D | (P M) P m |\n| - - - | m G - | G P P | m G - |\n| - - G | G m - | G - - | G - G |\n| m - - | - - - | (P M) D P | N N (N S') |\n| S' S' - | S' S' - | S' N R' | S' - -\n| (P S') S' S' | (S' N) R' S' | N D S' | N - - |\n| - - - | S' S' (S' N) | S' G' G' | R' R' (R' S') |\n| (S' N) S' - | S' S' N | D S' N | (D P) - - |\n| P S' S' | N P P | P N N | D P - |\n| (P M) P P | N N - || ||",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অধরা মাধুরী ধরেছি ছন্দোবন্ধনে.xml",
+   "unknown_codes": [
+    "F",
+    "w",
+    "x",
+    "y"
+   ]
+  },
+  {
+   "id": "s-9790d4dc29",
+   "name": "অনন্তসাগরমাঝে দাও তরী ভাসাইয়া",
+   "notes": "(S S) m m m | (D P) m g (R g m) | - - R - | S - - - |\n| S m m (m m) | (G m P) (m P D) (P D n) (D n S') | (N S' N) (R' S') (S' n) (D n) | (P D) (P D n) - (D n S')\n| (m m) m - (m m) | (m G m) (P m) P (m g) | (g m) (P m) (n n) (P m P) | (m g) (R g m) R S\n(m m) (n D n) (P D n) (S' S') | (S' S') (S' N S' N) S' - | (S' N S') (R' S') N (N N) | (S' N S') (R' S') (S' n D) (P D n)\n| (S' S') (S' n) (D n P) (m m) | (P m) g - (R g m) | - - R - | (S R S) - - -\n| (m m) (m m) - (m m) | (G m P) (m P D) (P D n) (D n S') | (N S') (N R' S') (S' n D) (P D n) | - - (D n) (D n S') | |\n(m m) m - (m m) | (m G m) (P m) P (m g) | (g m) (P m) (n D n) (P m P) | (m g) (R g m) R S |\n| (S S) m - (m m) | (m G m) (P m) P (m g) | (g m) (P m) (n n) (P m P) | (m g) (R g m) R S |\n| (m m) (n D n) (P D n) (S' S') | (S' S') (S' N S' N) S' - | (S' N S') (R' S') N (N N) | (S' N S') (R' S') (S' n D) (P D n)\n| (D n) P - m | - m (m D) P | - m g (R g m) | R - S -\n| m - m (m m) | (G m P) (m P D) (P D n) (D n S') | (N S' R') (S' R' g') (R' g' m') (m' m') | (g' R') (S' n D) (P D n) (D n S')",
+   "list": "তিনতালা",
+   "letter": "অ",
+   "tala": "তিনতালা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অনন্তসাগরমাঝে দাও তরী ভাসাইয়া.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "[",
+    "]",
+    "i"
+   ]
+  },
+  {
+   "id": "s-8b1ce83f88",
+   "name": "অনন্তের বাণী তুমি, বসন্তের মাধুরী-উৎসবে",
+   "notes": "N S' - | r' - | S' - | N d - | N - | S' - |\n| m m - | m - | m P | G G P | G - | r G |\n| r S - | - - | - - | m m - | m P | G - |\n| m D - | N - | S' - | N S' - | r' - | S' - |\n| N S' - | r' - | S' - | N d - | N - | d N\nd - d | d - | d - | N - (S' r') | N - | S' - |\n| N - S' | r' - | S' - | N d - | N - | S' - |\n| S' G' G' | G' - | (G' m') P' | G' m' G' | r' - | S' - |\n| N d - | N - | S' - | N S' r' | r' - | S' - |\n| N d - | N - | d N\nm - G | m - | P - | G P G | G - | r G |\n| G - G | m - | P - | G P G | G - | r G |\n| r S - | - - | - - | m - m | m P | G - |\n| m D - | D - | m - | m D - | D n | S' - |\n| D S' - | D - | M D | M m - | - - | - - |\n| d d - | d - | d - | N S' r' | N - | S' - |\n| N - S' | (S' r') - | S' - | N d - | N - | S' - |\n| S' G' - | G' - | (G' m') P' | G' m' G' | r' - | S' - |\n| N d - | N - | S' - | N S' r' | r' - | S' - |\n| N d - | N - | d N",
+   "list": "তেওড়া",
+   "letter": "অ",
+   "tala": "তেওড়া",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অনন্তের বাণী তুমি.xml",
+   "unknown_codes": [
+    "@",
+    "L",
+    "b"
+   ]
+  },
+  {
+   "id": "s-8a99900268",
+   "name": "অনিমেষ আঁখি সেই কে দেখেছে",
+   "notes": "---m || R m - m |\n| m P - - | (m P) - S' N | (S' R') n D P | m (n D) (P D P) m |\n| - - - - | - - (R G R) (S R) | - - - N | N N - N |\n| S' S' - N | (R' S') S' (S' R') (S' n) | - - - P | D (P D P) m - |\n| - - - - | - - (R G R) (S R) | - - - m ||\n- - - m | P N - N |\n| S' S' - - | N S' S' S' | - - (N S' R') S' | n D P D |\n| m P m P | (m P) (N S' R') R' R' |\n| - - (S' N) N | N N N - | S' S' - N | (R' S') S' (S' R') (S n) | - - - P |\n| D (D P) m - | - - - - | - - (R G R) (S R) | - - - m ||\n- - - R | R m G R |\n| m G R - | R - (g R) (S R) | - - - R | G m P - |\n| m - - - | m R - - | S - - m | R m - m |\n| P P - - | (m P) P S' - | (S' R') n D P | D (m P) (n D) P |\n| m - - G | (G R) S R - | - - - m | P N - N |\n| S' S' - - | N S' S' S' | - - (N S' R') S' | n D P D |\n| m P m P | (m P) (N S' R') R' R' |\n| - - (S' N) N | N N N - | S' S' - N | (R S') S' (S' R') (S' n) | - - - P\n| D (D P) m - | - - - - | - - (R G R) (S R) | - - - m || ||",
+   "list": "আড়াঠেকা",
+   "letter": "অ",
+   "tala": "আড়াঠেকা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অনিমেষ আঁখি সেই কে দেখেছে.xml",
+   "unknown_codes": [
+    "i",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-6aff0bc2a1",
+   "name": "অনেক কথা বলেছিলেম কবে তোমার কানে কানে",
+   "notes": "(P D) P - | (P m) m - | G G (R S)\n(G m) m - | G G (m G) | R S R | (.N S) (R G) (m G) |\n| R - - | - - - | R R G | m P - |\n| (P D) P - | m - G | (R G) m - | - - - |\n| (S m) m - | m m m | m - G | R P m |\n| P - - | - - - | D D S' | D P M |\n| D P - | m m (G R)\nm - P | (P N) - N | S' - - | - - - |\n| (P S') S' - | S' S' N | D R' R' | S' R' N |\n| N N S' | N S' - | (N R') S' - | n n - |\n| (D S') n - | D P m | P (P S') n | D P - |\n| (P D) P - | m m G | (R G) R P | m P P |\n| P - - | P D m | P - - | - - - |\n| (P N) N - | N S' - | (N R') S' - | n n (D P) | |\nR - R | R R - | R R - | R R - |\n| R m m | m m - | m m - | m m G |\n| R - P | m P R | R R P | m P - |\n| (P D) P - | m m - | m G - | G R G |\n| S R R | R R - | R R - | R R - |\n| m P - | N - N | (N S') - - | - - - |\n| (P S') S' - | S' S' N | D R' R' | S' R' N |\n| N N S' | N S' - | (S' R') S' - | n n - |\n| D S' n | D P m | P S' n | D P - |\n| (P D) P - | m m G | (R G) R P | m P P |\n| P - - | P D m | P - - | - - - |\n| (P N) N - | N S' - | (N R') S' - | n n (D P)",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অনেক কথা বলেছিলেম.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "Y",
+    "[",
+    "]"
+   ]
+  },
+  {
+   "id": "s-e9e9e44b8a",
+   "name": "অনেক কথা যাও যে বলে",
+   "notes": "S S d | P d P | m P m | (g R) g - |\n| m m m | g (g r) S | S (S r) g | - - - |\n| m m - | m m (M m) | R g - | R g - |\n| (g m) m m | g r g | r S - | - - -\nS S' S' | S' (S' r') S' | n S' n | n n (d P) |\n| P n d | P d P | m P m | m m - |\n| m M m | R g - | R g g | R g - |\n| (g m) m m | g g r | S S g | - - - |\n| .d .n S | S - - | .d .n S | S - - |\n| .d .n S | S g - | r S - | - - -\n.d .d .n | .n - (.d .n S) | S - - | - - - |\n| S S r | r - - | r - - | - - - |\n| S (S g) g | S (g r) S | .n S - | - - - |\n| S (S g) g | g - R | g - - | - - - |\n| .d .n S | S - - | .d .n S | r - S |\n| .n S - | - - - | S S' - | S' r' S' |\n| n S' n | n n d | P (P n) d | P d P |\n| m P m | m m - | m m (P m) | R g - |\n| R g - | R g - | (g m) m g | g r S |\n| S (S r) g | - - - | .d .n S | S - - |\n| .d .n S | S - - | .d .n S | S g - |\n| r S - | - - -",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অনেক কথা যাও যে বলে.xml",
+   "unknown_codes": [
+    "L",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-5e004ef751",
+   "name": "অনেক দিনের আমার যে গান",
+   "notes": "S S R | R R - | R - G | R m G |\n| R - - | - - - | R G - | m P - |\n| (P D) P - | m - G | R m - | - - - |\n| m m - | m m G | (R G) G - | R S - |\n| S R m | G R - | R R m | (m G) (P m) G |\n| R R (G m) | G R - | m P (P D) | P S -\nm P - | P P n | D n - | D P m |\n| P S' S' | S' S' R' | (n S') n - | D P-| - |\n| P n n | (n D) n D | P - D | P (D n) D |\n| P - - | - - - | (P D) P - | m m - |\n| (m P) m - | G R G\nm m - | m m (P m) | G G R | S (R G m G) (R G) |\n| R - - | - - - | m P - | P P n |\n| D (S' n) D | P (D n D) (P D) | P - - | - - - |\n| (P n) n - | D n - | (D S') n - | D P D |\n| m P P | P P S' | D S' n | D P m |\n| P S' n | D P - | (P D) P - | m m - |\n| m m - | m m (P m) | G G R | S (R G m G) (R G) |\n| R - - | - - - | N N - | N N S' |\n| N S' - | N S' - | (N R') n - | D P m |\n| P P R' | R' R' - | (R' m') g' - | R' S' - |\n| (S' R') n - | D P - | (P D) P - | m m - |\n| G P m | G R G",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অনেক দিনের আমার যে গান.xml",
+   "unknown_codes": [
+    "L",
+    "i",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-a25102335e",
+   "name": "অনেক দিনের মনের মানুষ জেন এলে কে",
+   "notes": "|| G M S' | N D - | (P M) (D P) M | G - m |\n| G - - | (G P) - - | S S R | G G P |\n| (M P) - - | - M G | - | - S' - | S' S' - | S' - N |\n| (R' S') (N S') - | - - N | D D N | D R' (S' N) |\n| (D P) - M | (G m) G P | (P M) P M | (D P) - (M G) ||\n--- | - - - |\n|| P - G | (G P) P - | - - - | - - - |\n| P (P M) D | D D - | - - - | - - - |\n| D (P N) N | N N - | - - - | P - - |\n| (P D) - N | (N S') - N | D - N | D N (D R') |\n| S' - - | --- | (S' G') - G' | R' R' - |\n| S' S' N | (D N) - - | D P - | - - - |\n| P N N | D P M | G - - | S S R |\n| G G P | (M P) - (M G) ||\n--- | S S - |\n|| S S r | r - P | G - - | r S .N |\n| S S r | r S - | - - - | S S - |\n| (S P) P - | P M P | d - - | M G - |\n| G - m | m G - | (G P) (M P) G | (G P) - - |\n| P - - | - - - | (G P) - P | P M D |\n| D - - | - - - | D D - | D P (D N) |\n| N - - | P - - | D - N | (N S') - N |\n| D D N | D - R' | S' (N S') - | - - - |\n| (S' G') - G' | R' R' - | S' S' N | (D N) - - |\n| D P - | - - - | (P M) P N | D P M |\n| G - - | S S R | G G P | (M P) - (M G)",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অনেক দিনের মনের মানুষ.xml",
+   "unknown_codes": [
+    "F",
+    "L"
+   ]
+  },
+  {
+   "id": "s-02d962579b",
+   "name": "অনেক দিনের শূন্যতা",
+   "notes": "(P S') S' S' | (D N) - | (D P) - | M P D | N S' | R' G' |\n| (R' G') - G' | R' - | S' - | S' N R' | S' - | N D |\n| D S' S' | (D N) - | (D P) - | M P D | N - | M - |\n| P M D | P - | m - | (S m) m - | - - | - - |\n| (G P) P - | - - | D N | S' S' - | (D N) - | (D P) -\n---|--|--\n(P M) D P | N D | N - | S' - S' | S' N | S' - |\n| S' G' R' | G' - | G' P' | G' - R' | S' - | S' - |\n| S' G' - | R' - | S' - | S' - D | S' - | - - |\n| G' G' - | R' S' | N S' | R' R' - | S' N | D N |\n| G' G' - | R' - | S' - | N R' S' | (D N) - | D P |\n| S' S' - | - - | m - | (G P) P - | - - | D N |\n| S' S' - | (D N) - | (D P) -\n---|--|--\nS S S | R - | R G | R G - | - - | - - |\n| S S S | R - | G R | G m P | (m P) - | m G |\n| (R G) R m | - - | - - | m m - | m G | R P |\n| M P - | - - | - - | (P M) D P | N D | N - |\n| S' S' - | S' N | S' - | G' G' - | R' S' | S' N |\n| (R' S') - - | N D | N - | G' G' - | R' S' | S' N |\n| (R' S') - - | N D | N - | S' G' G' | R' - | S' - |\n| N R' S' | (D N) - | D P | S' S' - | - - | m - |\n| (G P) P - | - - | D N | S' S' - | (D N) - | (D P) -",
+   "list": "তেওড়া",
+   "letter": "অ",
+   "tala": "তেওড়া",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অনেক দিনের শূন্যতা মোর.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "w",
+    "x",
+    "y"
+   ]
+  },
+  {
+   "id": "s-7c11088ef1",
+   "name": "অনেক দিয়েছ নাথ",
+   "notes": "----|----| S d - d | P (d P) m (g m P) |\n| P - - - | P d n S' | n n d d | P (d P) m (g m P) |\n| P - - - | P - P - | P - d d | P (d P) m - |\n| P n n D | (D n) (S' n) (D n) (n d P) | P - d - | m - n - |\n| d - d (n d) | P - P (d P) | m - P n | d - P (d P) |\n| m (P m) g (m g) | r - S - | S m m - | m - m - |\n| m g P m | P - P - | d - d r' | S' - S' (r' S') |\n| n (S' n) d - | g r S -\n----| - - - - | S - S - | d - d - |\n| P - d - | P - P m | P - P d | P n d (d P) |\n| m (P m) g - | g - g - | g - g R | g d (P n) (d P) |\n| m - g - | r - S - | .n - S - | m - - m |\n| P D n - | n (D n) - (n d P) | P - d - | d - d (n d) |\n| P n d (n d) | P - - - | d - d - | d S' n - |\n| S' - S' - | S' - S' - | d - d - | n S' S' g' |\n| g' - r' - | S - (S' n) d | P d d r' | S' - S' (r' S') |\n| n (S' n) n d | d - P m | P - P n | d - P (d P) |\n| m (P m) g (m g) | r - S -",
+   "list": "তিনতালা",
+   "letter": "অ",
+   "tala": "তিনতালা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অনেক দিয়েছ নাথ.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-ffe5899a8a",
+   "name": "অনেক পাওয়ার মাঝ মাঝে",
+   "notes": "S S d | d P - | - - - | - - S |\n| S S S' | S' S' - | n n d | d d P |\n| n - - | d - P | m P - | d d P |\n| m - n | d P d | P m - | - - m |\n| g - g | R (m g) - | - - - | r S - |\n| S g g | R (m g) r | S S r | m g - |\n| r S .n | d d .n | S - R | g - r\n---|---|---|--- |\nd d - | n S' - | r' - S' | N S' - |\n| r' - - | - S' N | S' - - | - - - |\n| r' S' - | n d P | m (n d) - | n S' r' |\n| n S' n | d d n | n S' - | - - - |\n| g' g' - | R' g' - | - - - | r' S' - |\n| m' m' - | R' g' - | r' g' r' | S' r' S' |\n| n S' - | - - - | r' S' - | n n d |\n| P - (d n) | d P - | - - - | S - - |\n| S S d | d d - | P - (d n) | d P - |\n| m - P | d d P | (m P) m - | P d P |\n| (m P) m - | - - - | d - d | n S' r' |\n| n n g' | r' S' - | n S' - | - - - |\n| S g g | R g - | - - - | r S - |\n| S g g | R g r | S S r | (r m) g - |\n| r S .n | .d d .n | S - R | g - r\n---|---|---|--- |\n.n S R | g m - | P d - | n S' - |\n| g' g' - | r' S' - | S' r' S' | n n d |\n| (P d) (P n) (d P) | m - (P m) | R - g | R g - |\n| - - - | r S - | S g g | R g - |\n| m - m | m m - | g r - | S - - |\n| d - d | n S' - | r' S' - | N S' - |\n| r' - - | - S' n | S' - - | - - - |\n| r' - S' | n d P | m - d | n S' - |\n| n S' - | d d n | n S' - | - - - |\n| S' g' g' | R' g' - | - - - | r' S' - |\n| S' m' m' | R' g' - | r' g' r' | S' r' S' |\n| n S' - | - - - | r' - S' | n n d |\n| P (P d) n | d P - | - - - | S - - |\n| S - d | d d - | P (P d) n | d P d |\n| P m P | d d P | P m - | P d P |\n| P m - | - - - | d - d | n S' - |\n| n - g' | r' S' (r' S') | N S' - | - - - |\n| S g g | R (m g) - | - - - | r S - |\n| S g g | R g r | S S r | m g - |\n| r S .n | .d .d .n | S - R | g - r",
+   "list": "একতালা",
+   "taal": "ektaal",
+   "letter": "অ",
+   "tala": "একতালা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অনেক পাওয়ার মাঝে মাঝে.xml",
+   "unknown_codes": [
+    "L",
+    "w",
+    "x",
+    "y"
+   ]
+  },
+  {
+   "id": "s-4fb1a8400f",
+   "name": "অন্তর মম বিকশিত করো",
+   "notes": "S - m | m m m | P (d n) (d P) | m (g R) g |\n| r S r | (g m) g r | S - - | - - r |\n| g R g | g R g | (R g) (m P) P | m (g R) (g r) |\n| S r (S r) | (g m) g r | S - - | - --| - |\n| S d d | d P (P g) | (P d) n n | d (m P) m |\n| m P g | m (d P) m | g - - | r S r\n---|---|---|--- |\nS d d | d d n | (d n) S' S' | S' S' (S' n) |\n| d g' g' | g' (g' R') (g' m') | g' - r' | (S' n) S' - |\n| d S' S' | S' r' (r' S') | n S' n | d (P d) m |\n| P n d | P (m g) m | g - - | r S r\n---|---|---|--- |\nS - S | S S r | g g g | m - m |\n| m P g | m (d P) m | g - r | S - - |\n| S d d | P P g | P (P n) d | (P m) P m |\n| m P g | m (d P) m | g - r | S - - |\n| (S d) d d | d (n d) n | n S' S' | S' (S' n) S' |\n| d g' g' | g' (g' R') (g' m') | g' - r' | (S' n) S' - |\n| d S' S' | S' r' (r' S') | n S' n | d P (P m) |\n| P n d | P (m g) m | g - r | S - r",
+   "list": "একতালা",
+   "taal": "ektaal",
+   "letter": "অ",
+   "tala": "একতালা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অন্তর মম বিকশিত.xml",
+   "unknown_codes": [
+    "L"
+   ]
+  },
+  {
+   "id": "s-76e477812a",
+   "name": "অন্তরে জাগিছ অন্তরযামী",
+   "notes": "|| .N .P | .N - .N | S - | S S - |\n| S - | G - m | P (m P m) | G --| - |\n| S S | m G m | P - | P - D |\n| (G m P) m | G - S | G - | (G m) P - |\n| (G m P) m | (G m P) m G | G R | S S - ||\n|| P - | N - N | S' N | S' - - |\n| S' S' | (S' N) (R' S') S' | N (D P) | (P N) (D S') N |\n| P - | m G m | P N | (D P) S' N |\n| P m | m G G | G - | (G m) P - |\n| (G m P) m | (m P m) - G | G R | S S - ||\n|| P P | N - N | S' - | P - N |\n| S' P | P (D P) m | m (P m) | G - - |\n| G G | P - M | P M | P (m P) m |\n| m (G m P) | m - (m P) | G R | S - - |\n| P P | N - N | S' N | (R' S') - - |\n| (P' S') S' | (S' N) (R' S') S' | N (D P) | (P N)--| - - |\n| P P | m G m | P N | (D P) S' N |\n| P m | m G G | G - | (G m) P - |\n| (P m P) m | (m P m) - G | G R | S S - || ||",
+   "list": "ঝাঁপ",
+   "taal": "jhaptaal",
+   "letter": "অ",
+   "tala": "ঝাঁপ",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অন্তরে জাগিছ অন্তরযামী.xml",
+   "unknown_codes": [
+    "i",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-8ee9e117ab",
+   "name": "অন্ধকারের উৎস হতে উৎসারিত আলো",
+   "notes": "|| .P - .P | .N .N S | S - S | (S .N) S - |\n| N - N | N N - | N - (D N) | S' - - |\n| P N N | N N - | N - (D N) | S' - - |\n| S' S' R' | S' - R' | S' n - | P P - |\n| (P n) - n | P P - | m - R | R - - |\n| R P P | m R S | R - - | S - - ||\n|| N N - | N N S' | S' - S' | (S' N) S' - |\n| m P - | N S' - | R' - S' | R' P' - |\n| m' - m' | R' S' - | R' - N | S' - - |\n| m' m' - | R' S' - | (S' R') S' - | n P - |\n| S' - S' | n P - | m - - | R - - |\n| R P P | m R S | R - - | S - - ||\n|| .P - .P | .N .N S | S S - | (S .N) S - |\n| R R S | R R P | m - - | R - - |\n| R m m | R S - | R - - | S - - |\n| m - m | R S - | R - S | N .N - |\n| .P .P - | .N .N S | S - - | - - - |\n| .P .N .N | .N .N S | S - - | - - - |\n| N - N | N N S' | S' S' - | (S' N) S' - |\n| m P - | N - S' | R' - S' | R' P' - |\n| m' - m' | R' - S' | R' - N | S' - - |\n| m' m' - | R' S' - | (S' R') S' - | n P - |\n| S' S' S' | n P - | m - - | R - - |\n| R P P | m R S | R - - | S - -",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অন্ধকারের উৎস হতে উৎসারিত আলো.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "w",
+    "x",
+    "‍"
+   ]
+  },
+  {
+   "id": "s-505b27df1c",
+   "name": "অন্ধজনে দেহো আলো   তালবদ্ধ",
+   "notes": "S m | m m | m - | m (P m) | G m | P (d P) | (m P) - | - - |\n| m (m m) | g (r S) | S (r m) | m (g r r) | S - | - - | - - | - - |\n| S r | S .n | S g | g R | g - | (R g) (m g) | - - | - S |\n| r r | S .d | .n g | r (g r) | S - | - - | - - | - -\n.n S | g m | P P | P D | (D n) n | - - | - - | - - |\n| P D | P m | G G | m (P D) | m - | - - | - - | - - |\n| m (g m g) | R (S .N) | S g | g - | (R g) (m g) | - - | - - | - S |\n| S r | r (g r) | S r | g (r g r) | S - | - - | - - | S S |\n| S r | S .n | S g | g - | (R g) (m g) | - - | - - | - S |\n| S r | r (g r) | S r | g (r g r) | S - | - - | - - | - -\nS r | S .n | S g | g R | g - | - S | r r | S .d |\n| .n g | r (g r) | S - |--| - - | .n S | g m | P d |\n| P (m P) | m - | - P | m g | r .n | S r | g (r g r) | S - |\n| - - | .n S | g m | P - | P (P D) | n - | (D n) n | - D |\n| - D | P D | P m | G G | m (P D) | P - | m - | - - |\n| - - | m (g m g) | - R | S S | S .N | S R | (R g) (m g) | - - |\n| - S | S r | - (g r) | S g | r (g r) | S - | - - | - - | - -\nS r | S .n | S g | g R | g - | - - | - - | - - |\n| g g | - R | g R | g m | r - | (S r) (g r) | S - | - - |\n| .n S | P P | P - | d n | (P n) d | - - | (m P) m | - (M m) |\n| (g m) g | - r | S r | g m | r - | (S r) (g r) | S - | - - |\n| .n S | g m | P - | P (P D) | n - | (D n) n | - - | - - |\n| P D | P m | G G | m (P D) | m - | - - | - - | - - |\n| .n S | g m | P P | P (P D) | n - | (D n) n | - - | - - |\n| P D | P m | G G | m (P D) | m - | - P | m g | R .N |\n| S g | - R | g - | - R | (R g) (m g) | - - | - - | - S |\n| r - | S .d | .n g | r (g r) | S - | S S | S r | S .n |\n| S g | - R | g - | - R | (R g) (m g) | - - | - - | - S |\n| r - | S .d | .n g | r (g r) | S - | - - | - - | - -",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=3916.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-08374fa3f5",
+   "name": "অন্ধজনে দেহো আলো   তালবদ্ধ",
+   "notes": "S m | m m | m - | m (P m) | G m | P (d P) | (m P) - | - - |\n| m (m m) | g (r S) | S (r m) | m (g r r) | S - | - - | - - | - - |\n| S r | S .n | S g | g R | g - | (R g) (m g) | - - | - S |\n| r r | S .d | .n g | r (g r) | S - | - - | - - | - -\n.n S | g m | P P | P D | (D n) n | - - | - - | - - |\n| P D | P m | G G | m (P D) | m - | - - | - - | - - |\n| m (g m g) | R (S .N) | S g | g - | (R g) (m g) | - - | - - | - S |\n| S r | r (g r) | S r | g (r g r) | S - | - - | - - | S S |\n| S r | S .n | S g | g - | (R g) (m g) | - - | - - | - S |\n| S r | r (g r) | S r | g (r g r) | S - | - - | - - | - -\nS r | S .n | S g | g R | g - | - S | r r | S .d |\n| .n g | r (g r) | S - |--| - - | .n S | g m | P d |\n| P (m P) | m - | - P | m g | r .n | S r | g (r g r) | S - |\n| - - | .n S | g m | P - | P (P D) | n - | (D n) n | - D |\n| - D | P D | P m | G G | m (P D) | P - | m - | - - |\n| - - | m (g m g) | - R | S S | S .N | S R | (R g) (m g) | - - |\n| - S | S r | - (g r) | S g | r (g r) | S - | - - | - - | - -\nS r | S .n | S g | g R | g - | - - | - - | - - |\n| g g | - R | g R | g m | r - | (S r) (g r) | S - | - - |\n| .n S | P P | P - | d n | (P n) d | - - | (m P) m | - (M m) |\n| (g m) g | - r | S r | g m | r - | (S r) (g r) | S - | - - |\n| .n S | g m | P - | P (P D) | n - | (D n) n | - - | - - |\n| P D | P m | G G | m (P D) | m - | - - | - - | - - |\n| .n S | g m | P P | P (P D) | n - | (D n) n | - - | - - |\n| P D | P m | G G | m (P D) | m - | - P | m g | R .N |\n| S g | - R | g - | - R | (R g) (m g) | - - | - - | - S |\n| r - | S .d | .n g | r (g r) | S - | S S | S r | S .n |\n| S g | - R | g - | - R | (R g) (m g) | - - | - - | - S |\n| r - | S .d | .n g | r (g r) | S - | - - | - - | - -",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অন্ধজনে দেহো আলো সুরান্তর.xml",
+   "unknown_codes": [
+    "L",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-6269435257",
+   "name": "অবেলায় যদি এসেছে আমার বনে",
+   "notes": "S - S | R - | R R | (R G) R G | m P | P - |\n| (P D) G G | m - | m P | m P g | R g | m P |\n| R m g | R - | g R | S - S | R - | R R |\n| m n n | D - | D m | (D n) S' (n D) | P - | - - |\n| P N N | N S' | S' R' | D S' n | n D | P (D P) |\n| m G G | m - | - -\n--|--| - - |\nP P P | P - | P D | N - S' | (S' R') (S' N) | (N S') - |\n| D S' n | n - | D - | - - D | (P D) m | D - |\n| D n S' | n D | P - | - - - | - - | - - |\n| P N N | (N S') - | S' R' | D S' n | D P | m - |\n| G m P | D n | S' - | D S' n | D P | m - |\n| G m P | D n | S' (R' S') | N - - | (N S') - | - D |\n| n R' S' | n - | - D | (P D) n D | P - | P m |\n| P n D | n - | - - | D S' (n D) | (S' n) D | P - |\n| P D P | m G | (P m) -\n--|--| - - |\nS g g | R g | P - | P - m | (m g) R | (m g) R |\n| S - R | .N - | S - | S G G | G - | G S |\n| G - m | m - | - - | m P P | P - | - (D n) |\n| (D n) S' (n D) | P - | P n | D D n | D D | D n |\n| (D n) (n S') (n D) | P - | - - | P - D | (P D) P | m G |\n| (R G) - (m P) | m - | - - | P P P | P - | P D |\n| N N S' | (R' S') N | (N S') - | (D S') n n | D - | D m |\n| D (D n) S' | n D | P - | P N N | (N S') - | S' R' |\n| D S' n | D P | m - | G m P | D n | S' - |\n| D S' n | D P | m - | G m P | D n | S' (R' S') |\n| N - - | (N S') - | S' D | n R' S' | n - | - D |\n| (P D) n D | P - | P m | P n D | n - | - - |\n| D S' D | (S' n) D | P - | P D P | m G | (P m) -",
+   "list": "তেওড়া",
+   "letter": "অ",
+   "tala": "তেওড়া",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অবেলায় যদি এসেছ আমার বনে.xml",
+   "unknown_codes": [
+    "L",
+    "w",
+    "x",
+    "y"
+   ]
+  },
+  {
+   "id": "s-6d860ac3a2",
+   "name": "অভয় দাও তো বলি",
+   "notes": "G m P d P (P d n) (d n d) (P d P) m - (m G) (m P)\n(d P) (m P) (m G) - S' N S' S' N (S' r') S' N\n(S r') (S' N) N r' S' S' S' N (S' r') S' (N d) P",
+   "list": "তালমুক্ত",
+   "letter": "অ",
+   "tala": "তালমুক্ত",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অভয় দাও তো বলি আমার wish কী.xml",
+   "unknown_codes": [
+    "L"
+   ]
+  },
+  {
+   "id": "s-bb41089f24",
+   "name": "না, দেখব না, আমি দেখব না",
+   "notes": "----|--S' - |\n|| S' R' R' S' | S' n n D | P D D P | m G R G |\n| m P P - | - ---| - - | m (m n) n n | D D D D |\n| D (P D) D n | - - - - | D n n D | P P P D |\n| m P P - | - - S' - | n D P (m G) | m - - - |\n| G' - G' - | G' - G' m' | (G' m') P' m' m' | G' - (R' S') - |\n| S' R' S' S' | n D P D | N - S' - | - - - - |\n| S' R' S' - | S' n n - | n n n n | D D P P |\n| P D P P | m G R G | m - P - | - - - - ||",
+   "list": "কাহারবা",
+   "taal": "keherwa",
+   "letter": "অ",
+   "tala": "কাহারবা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=18_72.xml",
+   "unknown_codes": [
+    "F",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-5994bd0a1a",
+   "name": "তোর আভিশাপ নিয়ে আসে",
+   "notes": "---| d m |\n|| m d d - | d n n S' | S' - S' S' | S' r' g r' |\n| S' - - - | - --| - -",
+   "list": "কাহারবা",
+   "taal": "keherwa",
+   "letter": "অ",
+   "tala": "কাহারবা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=18_73.xml",
+   "unknown_codes": [
+    "F",
+    "L"
+   ]
+  },
+  {
+   "id": "s-72e99d006a",
+   "name": "অভিশাপ নয় নয়",
+   "notes": "|| (S' g') g' g' - | g' R' (R' m') - | g' (m' g') g' - | r' - S' - |\n| S' g' g' (g' r') | r' - r' S' | (S' N) - S' - | - - - - |\n| S' (S' g') g' (g' r') | r' - S' - | S' g' g' r' | r' - S' - |\n| S' r' r' S' | S' - - - | S' r' r' r' | S' - - - |\n| S' r' r' r' | r' S' S' S' | S' r' S' n | d - - - | -\n| m' m' m' - | m' - - - | m' P' m' (P' m') | m' g' - - |\n| g' m' g' r' | r' - r' S' | N - S' - | - - g' m' |\n| g' m' g' r' | S' - - - | - - d - | d - d n |\n| S' (S' g') g' r' | r' S' S' N | S' - - - | - - S' - |\n| S' g' g' g' | g' - g' - | g' m' m' - | m' - m' m' |\n| m' P' m' g' | g' r' r' S' | S' - - - | - - - - ||",
+   "list": "কাহারবা",
+   "taal": "keherwa",
+   "letter": "অ",
+   "tala": "কাহারবা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=18_74.xml",
+   "unknown_codes": [
+    "F",
+    "i",
+    "w",
+    "x",
+    "y"
+   ]
+  },
+  {
+   "id": "s-5f015f3b82",
+   "name": "ও নিষ্ঠুর মেয়ে",
+   "notes": "----|--r' -\n|| r' - r' r' | r' - S' - | m - - - | - - m - |\n| m m m - | m m (P m) G | G r S - | - ---| - -",
+   "list": "কাহারবা",
+   "taal": "keherwa",
+   "letter": "অ",
+   "tala": "কাহারবা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=18_75.xml",
+   "unknown_codes": [
+    "L",
+    "w",
+    "x",
+    "y"
+   ]
+  },
+  {
+   "id": "s-edb04f6405",
+   "name": "অমন  আড়াল দিয়ে লুকিয়ে গেলে চলবে না",
+   "notes": "---|-m m |\n|| n n - | d P - | m m g | R S - |\n| m - P | n - - | d - - |---| d d - |\n| d S' n | S' S' - | n n g' | r' r' - |\n| (g' r') S' - | - g' - | g' - r' | r' S' - |\n| (S' n) - d | n - d ||\n|| d - d | d d n | n S' - | S' S' - |\n| g' - g' | R' g' (r' S') | S' (S' r') g' | g' r' - |\n| (g r') S' - |---| - d d | g' g' - | r' S' n |\n| r' S' n | S' n d | n n - | d P - |\n| P - g | d - - | |\n|| r S - | S S R | g g - | m m - |\n| m m - | P (P m) - | g R g |---| r S - |\n| - - - | S S .n | S S d | d d - |\n| P - P | P P g | m P n | d P (d P) |\n| m (P m) g | g r S | n d - | d d n |\n| S' g' g' | r' S' - | S' g' g' | R' g' (r' S') |\n| S' (S' r') g' | g' r' - | (g' r') S' - |---| - d d\n| g' g' - | r' S' n | r' - S' | n n d |\n| n n - | d P - | P - g | d - - || ||",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অমন আড়াল দিয়ে.xml",
+   "unknown_codes": [
+    "[",
+    "]",
+    "i",
+    "j",
+    "w",
+    "x",
+    "y"
+   ]
+  },
+  {
+   "id": "s-283ad94efa",
+   "name": "অমল কমল সহজে জলের কোলে",
+   "notes": "G G m | P N N | N S' S' | N N P |\n| P - M | P - m | m G - | m D P |\n| m G (G R) | S - - | S S G | m P (P m) |\n| G G m | P N - | N - - | N - - |\n| S' S' G' | R' S' - | N (N P) (M D P) | - m G\n---|---| P P N | N N N |\n| S' S' - | S' S' S' | S' - N | S' - - |\n| S' G' G' | R' R' S' | N R' S' | N (D P) P |\n| P N (D S') | N - - | S' (S' N) N | N (D P) P |\n| P (P N) (N D) | D P (P M) | P - m | m G - |\n| G m P | N N N | (N D) N S' | - - N | |\n---|---| S P P | P P P |\n| P P P | P P P | P - - | P - D |\n| n S' n | D D P | m G (R G) | m - - |\n| G G G | G G G | m P (P m) | m m m |\n| G - (G R) | S - - | G G m | P N N |\n| (D N) S' S' | N - (D P) | P P N | N N - |\n| S' S' - | S' S' S' | S' - N | S' - - |\n| S' G' G' | R' R' S' | N R' S' | N (D P) P |\n| P N (D S') | N - - | S' (S' N) N | N (D P) P |\n| P (P N) (N D) | D P (P M) | P - m | m G - |\n| G - m | P N N | (N D) N S' | - - (S' N)",
+   "list": "একতালা",
+   "taal": "ektaal",
+   "letter": "অ",
+   "tala": "একতালা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অমল কমল সহজে জলের কোলে.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "[",
+    "]",
+    "i"
+   ]
+  },
+  {
+   "id": "s-7895e449c7",
+   "name": "অমল ধবল পালে লেগেছে মন্দ মধুর হাওয়া",
+   "notes": ".d .n S | S S S | (S r) (g m) (r g) | r S S |\n| S r r | r S .n | S - .n | (S r) g - |\n| r S (S r) | (g m) m g | (S g) (r S) (.n .d) | - - .n |\n| .n S S | .n .n (.n g) | r - S | (.n S) .d .n\nS d d | P P - | P - P | P (P d) (P m) |\n| P d P | (P n) d P | m - - |---| - - - |\n| m m M | m g R | g - - | - - - |\n| m m m | (g R) (m g) r | S (S g) r | S (.n .d) .n |\n| .n S S | S (S r) .n | S r .n | (S r) g r |\n| S S (S r) | (g m) m g | (S g) (r S) (.n .d) | - - .n |\n| .n S S | .n .n (.n g) | r - S | (.n S) .d .n\nS S S | S S (S r) | g g m | m m - |\n| m m M | m g R | g - R | g - r |\n| S g R | g R g | R g m | R (m g) g |\n| .d - n | S S (S g) | r - - | S S S |\n| S d d | P P P | P P P | - P (P m) |\n| (P d) (P n) d | P m - | - - - |---| - - - |\n| m m (m M) | m g R | g - - | - - - |\n| R m m | (g R) g r | S (S g) r | S - .d |\n| .n S - | S (S r) .n | S r .n | (S r) g - |\n| S S (S r) | (g m) m g | (S g) (r S) (.n .d) | - - .n |\n| .n S S | .N .n (.n g) | r - S | (.n S) .d n",
+   "list": "একতালা",
+   "taal": "ektaal",
+   "letter": "অ",
+   "tala": "একতালা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অমল ধবল পালে লেগেছে (লেগেছে অমল ধবল পালে).xml",
+   "unknown_codes": [
+    "H",
+    "L"
+   ]
+  },
+  {
+   "id": "s-5f76732df8",
+   "name": "অমৃতের সাগরে",
+   "notes": "---|--|--|---| R (P m) P - |\n| D - n | P - | - P | m (P D) m | P m (G m) R |\n| R G - | m - | (G D) P | m G m | R - S - |\n| S - (S R) | R - | - R | R G - | G (m n) D P |\n| m - G | m R | G .N | R S -\nP S' - | - (S' D) | N S' | R' S' S' | N (S' N) (R' S') S' |\n| S' - (S' D) | S' N | R' S' | R' S' N | S' - D (n P) |\n| P R' S' | R' - | S' N | R' S' N | S' D n P |\n| m P - | (D N) S' | (S' D) P | (m P) m (G m)",
+   "list": "ধামার(৩/২/২/৩/৪)",
+   "letter": "অ",
+   "tala": "ধামার(৩/২/২/৩/৪)",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অমৃতের সাগরে.xml",
+   "unknown_codes": [
+    "L",
+    "i",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-6ea8478496",
+   "name": "অয়ি ভুবনমনোমোহিনী, মা,",
+   "notes": "----|--m G |\n(m G) (m n) (n d) d | P (m G) m P | d - - - | - ---| - - |\n| d n S' - | d (n S') r' - | (d n) (S' r') g' - | - - - - |\n| r' S' n d | P (m G) m P | d - - - | - - S R |\n| g - g R | g - g R | g R g m | g r S - |\n| S (S' n) S' (S' r') | (n S') d P d | n d - - | (d n) (S' r') S' S' |\n| n (P n) d d | P (m G) m P | (n d) - - - | - - - - |\n| d - d d | - n d n | S' - r' n | S' S' S' S' |\n| d g' R' g' | g' r' r' S' | N - S' r' | S' n d P |\n| d - d d | d - d d | (P d) (n S') S' n | (d P) n d P |\n| S - S S | d - n S' | d n d n | (S' g') r' r' S' |\n| n (P n) d d | P (m G) m P | d - - - | - - - - |\n| S S S S | g - g g | g g (g R) g | m m m (P m) |\n| g g R g | - g R g | R g m g | (r g) r S - |\n| .n S S S | d - d d | P d P n | d d P - |\n| g - m m | - n d P | g - m g | (r g) r S - |\n| d d d n | (d n) (S' r') g' r' | r' S' S' n | S' - S' - |\n| d g' g' R' | g' - r' S' | N S' r' S' | S' n n d |\n| (P d) (n S') n n | d d P (m G) | m P P P | (P m) P d - |\n| S - S d | - d d - | d n S' d | n S' g' r' |\n| S' S' n d | P (m G) m P | d - - - | - - - -",
+   "list": "কাহারবা",
+   "taal": "keherwa",
+   "letter": "অ",
+   "tala": "কাহারবা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অয়ি ভুবনমনোমোহিনী.xml",
+   "unknown_codes": [
+    "L",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-fa9a18c39e",
+   "name": "অরুপ,তোমার বাণী",
+   "notes": "-P - -\nP-(P D) - - | N D N | (R' S') - - | D P m\n| G R G | m P m | G - R | S - - |\n| S - S | (S m) G m | P - P | (P D) D N |\n| S' - G' | R' - S' | S' - N | D n D | |\nP - P | (P N) D N | S' - S' | S' S' S' |\n| (D N) D N | S' S' R' | S' N (S' N) | (N S') D N |\n| S' (S' G') G' | R' S' S' | N (R' S') - | D P - |\n| D D n | D P M | (M D) P - | m - - |\n| S - S | (S m) G m | P P P | (P D) - N |\n| (N S') (S' G') R' | S' - S' | S' - N | D n D | |\nD D n | D P - | m P - | m G m |\n| R G m | (m D) P - | m G m | R S - |\n| S - S | (S m) G m | P - P | D - N |\n| S' (S' G') R' | S' S' S' | S' S' (N S') | D P - |\n| P P P | (P N) D N | S' S' S' | S' - S' |\n| S' D N | S' S' R' | S' - N | (N S') D N |\n| S' G' G' | R' S' - | N R' S' | D P P |\n| D - n | D P M | (M D) P - | m - - |\n| S m m | m G m | P - P | D D N |\n| S' (S' G') R' | - S' S' | S' - N | D n D",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অরূপ, তোমার বাণী.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "[",
+    "]",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-23a2943653",
+   "name": "অরূপবীণা রূপের আড়ালে",
+   "notes": "P\n|| m m G m | (n d) - P d | m P - P | d P m G |\n| G G m m | m - m - | - (S m) - m | m G m d | -\n| N S - S' | r' - S' - | N S' - N | d - P - |\n----|---- |\n|| m d - d | N - S' - | r' r' S' S' | N - S' - |\n| (N S') d - d | N - S' - | N S' (N r') (S' N) | S - P - |\n| g' - - g' | g' R' g' - | (g' m') g' - g' | r' - S' - |\n| n n (P n) n | d - P - | - m - m | m G m d | |\n----|---- |\n|| S S d d | P - - d | m P (m d) P | G - - - |\n| G m n n | d - P - | d d - d | S' N d P |\n| m P - g | (P m) P (n d) P | m g m g | r - S - |\n| d d - d | N - S' - | | r' r' - S' | N - S' - |\n| d - g' g' | r' - S' - | d - g' g' | r' - S' - |\n| (S' g') g - R' | g' R' g'-| (g' m') g' - g' | r' - S' - |\n| n (n P) n n | d - P - | - m - m | m G m d || ||",
+   "list": "কাহারবা",
+   "taal": "keherwa",
+   "letter": "অ",
+   "tala": "কাহারবা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অরূপবীণা রূপের আড়ালে লুকিয়ে বাজে.xml",
+   "unknown_codes": [
+    "[",
+    "]",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-cc57322c6b",
+   "name": "অলকে কুসুম না দিয়ো",
+   "notes": "P (P n)\n(m G) (m n) n | d P (P d) | m (P d) (m P) | (m G) G G |\n| G m m | m m (m P) | G (m G) m | (G m) (P d) - | - - |\n| N S' S' | S' (S' r') S' | n S' n | d P (P m) |\n| P (P n) n | d P (d P) | m G m | (G m) (P d) - | |\n---|---|---|-- - |\ng' g' g' | g' (g' R') g' | m' g' g' | r' S' S' |\n| S' (S' g') r' | r' S' - | N' (S' r') S' | (n d) - - |\n| S' S' S' | r' S' - | n S' n | d P m |\n| P (P n) n | d P (d P) | m G m | (G m) (P d) - | |\n---|---|---|-S (S .N) |\nS - r | G m - | G (G P) G | r S .N |\n| S r (r P) | - G (r .N) | S r m | - - - |\n| g' g' g' | (g' R') g' - | m' - g' | r' S' - |\n| S' (S' g') g' | r' r' S' | N (S' r') S' | (n d) - - |\n| S' S' S' | r' S' S' | n S' n | d P (P m) |\n| P (P n) n | d P (d P) | m G m | (G m) (P d) -",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অলকে কুসুম না দিয়ো.xml",
+   "unknown_codes": [
+    "L",
+    "[",
+    "]"
+   ]
+  },
+  {
+   "id": "s-101300c39e",
+   "name": "অলি বার বার ফিরে যায়",
+   "notes": "---|-S S |\nR g (R g) | m g R | S - - | - S S |\n| S R S | P P (P D P) | m P m | (g m g) R S | - - |\n| S S' N | S' - (S' R' S') | n S' n | (D n D) (P m) P |\n| m g (R g) | m g R | S - - | - P D |\n| N S' S' | - S' (R' S') | n S' (n S' n) | (n D) P D |\n| n (D S') n | D P (P D P) | m P m | g R S |\n---|-N N |\nN - N | N (N D) N | S' (N S' R') S' | N S' - |\n| N (N S' R') S' | n D P | m (G m G) R | ---| R R |\n| (R m) R m | P S' n | (D n D) P D | m P - |\n| P D n | S' n (n D) | P (D P) m | P (m g) (R S)\n---|-G m |\nP - P | P (P D n) (n D) | P D P | P P D |\n| n (D n S') n | D P (P D P) | m (G m P) m | ---| P D |\n| n S' S' | N (N S' R') S' | n S' n | D P D |\n| n (D n S') n | D P (P D P) | m P m | (g m g) R S",
+   "list": "দাদরা(৩/৩)",
+   "letter": "অ",
+   "tala": "দাদরা(৩/৩)",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অলি বার বার ফিরে আসে.xml",
+   "unknown_codes": [
+    "L",
+    "w",
+    "x",
+    "y"
+   ]
+  },
+  {
+   "id": "s-26e87606f5",
+   "name": "অল্প লইয়া থাকি, তাই",
+   "notes": "|| D - n | D D (n D) | P (P M) P | - R G |\n| m P D | m m G | R - (G R) | (S .N) S - |\n| S m R | R S S | S m G | P P P |\n| (D N) (S' R') S' | N (D n) P | R G m | P D n\n(D P)\nP P D | D D (D N) | S' (R' G') (R' S') | (S' N) S' - |\n| S' (N S') D | N S' R' | S' N (S' N) | D D n |\n| D n D | (D P) P P | R (G m) P | m G R |\n| S m (m G) | m P P | D N S' | R' S' (N S') ||\n|| S S m | - (G m) P | P P P | P P P |\n| D n D | P P - | m (P D) P | m G (G m) |\n| R G m | P D m | m G m | R S - |\n| S m G | m P (P M) | (P D P) - - | - - - |\n(D P)\n| P P D | D D (D N) | S' (R' G') (R' S') | S' S' S' |\n| S' (N S') D | N S' (S' R') | S' N (N S') | D D (D n) |\n| D n D | P - (P D) | m (P D) P | m G (G m) |\n| R G m | P D P | D N S' | R' S' (N S') || ||",
+   "list": "একতালা",
+   "taal": "ektaal",
+   "letter": "অ",
+   "tala": "একতালা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অল্প লইয়া থাকি, তাই মোর.xml",
+   "unknown_codes": [
+    "L",
+    "[",
+    "]"
+   ]
+  },
+  {
+   "id": "s-ca5e2bedf6",
+   "name": "অশান্তি আজ হানল এ কী দহনজ্বালা",
+   "notes": "R'\nS' S' N | D P - | G - m | D - - |\n| - - n | D P - | P P - | P - M |\n| P - - | m - - | (S m) - m | m m - |\n| m m - | m - G | P - - | - - - |\n| P P - | P - M | G' - - | - - - | |\n--- | - - - |\nP - P | N D N | S' - S' | S' S' - |\n| G' - G' | R' R' - | S' S' - | (S' N) S' - |\n| D D n | D P - | P - M | D - - |\n| - - n | D P - | P P - | P - M |\n| G' - - | - - - | |\n--- | - - - |\nS S - | m m - | m m m | m m - |\n| m m - | (m G) P M | P - - | - - - |\n| D D S' | D P - | (P M) P - | D P - |\n| m m - | G m R | S - - | - - - |\n| P - P | N D N | S' S' - | S' S' - |\n| G' - G' | R' R' - | S' - S' | (S' N) S' - |\n| D D n | D P - | P - M | M D - |\n| - - n | D P - | P P - | P-M |\n| G' - - | - - -",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অশান্তি আজ হানল.xml",
+   "unknown_codes": [
+    "$",
+    "L",
+    "[",
+    "]",
+    "w",
+    "x"
+   ]
+  },
+  {
+   "id": "s-3baca6e6ec",
+   "name": "অশ্রুনদীর সুদূর পারে",
+   "notes": "S - r | (G M) (G P) M | P - - | - - M |\n| P - (M N) | P - M | G - - | - - - |\n| G - M | (G M) P M | G - r | S - (S .N) |\n| S r - | r - (S .N) | S - - | - - -\n---|---|---|-- -\nP - - | P - G | P - - | - - - |\n| P - - | P (M D) D | D - - | - - - |\n| D - - | D P D | N - - | - - - |\n| S' - G' | R' - N | S' - - | - - - |\n| S' - G' | R' - N | S' - - | - - - |\n| N - R' | S' - N | N - D | P - - |\n| P - - | P M P | d - - | M - -\n---|---|---|-- -\nG - - | G - R | S - - | - - G |\n| G - - | G - R | S - - | - - - |\n| G - P | P M P | P - M | G - - |\n| G - M | (G M) P M | G - - | - - - |\n| P - - | (M P) - G | P - - | - - - |\n| P - - | P M P | D - - | - - - |\n| D - - | D P D | N - - | - - - |\n| S' - G' | R' - N | S' - - | - - - |\n| S' - G' | R' - N | S' - - | - - - |\n| N - R' | S' N (N D) | N - D | P - - |\n| (M P) - - | P M P | d - - | - - M",
+   "list": "একতালা",
+   "taal": "ektaal",
+   "letter": "অ",
+   "tala": "একতালা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অশ্রুনদীর সুদূর পারে.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "w",
+    "x",
+    "y"
+   ]
+  },
+  {
+   "id": "s-db4bcb8ca8",
+   "name": "অশ্রুভরা বেদনা দিকে দিকে জাগে",
+   "notes": "----|--G m | P (P D) n - | D - (P m) P |\n|| (m g) R R - | - - m m | P - m P | (n d) - P - |\n| - - - - | - ---| G m | P N N N | N S' S' N |\n| (R' S') - - - | n - n D | (S' n) - - - | - d P (n d) |\n| - P P - | - - G m\n|| m P P (P N) | N N - - | N S' - - | (N S') (R' S') R' (S' N) |\n| S' - - - | - - - - | (N S') (R' S') - R' | S' - (R' S') - |\n| n (n D) n n | n D (S' n) - | - d P (n d) | - P P - |\n| - - - - | - - G m | P N N - | - S' S' N |\n| (R' S') - - - | - n n D | (S' n) - - - | - d P (n d) |\n| - P P - | - - G m",
+   "list": "তিনতালা",
+   "letter": "অ",
+   "tala": "তিনতালা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অশ্রুভরা বেদনা দিকে দিকে জাগে.xml",
+   "unknown_codes": [
+    ":",
+    "F",
+    "L",
+    "_",
+    "w",
+    "x",
+    "‍"
+   ]
+  },
+  {
+   "id": "s-86a4832153",
+   "name": "অসীম আকাশে অগণ্য কিরণ",
+   "notes": "--|--|--|--|-G | G G |\n|| M D | S' S' | S' S' | (S' N) (R' S') | S' (S' N) | S' S' |\n| - S' | N D | N D | P P | P (P M) | P (P m) |\n| m - | m (D P) | (P M) (P m) | m m | (m G) M | P P |\n| m m | (m G) (P M) | (P m) (m G) | (m G) (m R) | R (R .N) | R S |\n| S - | m m | R S | S .N | R S | - S |\n| S - | m m | R S | m (m G) | M P | - - |\n| P M | P D | D P | m m | m G | G G ||\n|| (P M) D | P S' | S' S' | S' S' | N R' | S' S' |\n| S' - | S' S' | - S' | S' S' | (S' N) (R' S') | S' S' |\n| S' (S' N) | S' S' | S' (S' N) | R' (S' N) | (D N) S' | (N D) P |\n| P S' | N D | P m | - (m m) | (P m) (P G) | m - |\n| D P | P (m G) | m R | R G | S .N | R S |\n| S .N | S (m G) | m R | R - | S .N | R S |\n| (P M) D | P S | S' S' | S' - | - S' | - S' |\n| S' - | R' S' | N D | P m | G G | G G || ||",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অসীম আকাশে অগণ্য কিরণ.xml",
+   "unknown_codes": [
+    "[",
+    "i"
+   ]
+  },
+  {
+   "id": "s-c823556a32",
+   "name": "অসীম কালসাগরে ভুবন",
+   "notes": "--|---|--|-- -\nS - | S d - | P - | - P P |\n| P d | (P d) n (d P) | g - | - - m |\n| n - | - d P | g - | m g r |\n| S - | - - - | r .n | S g m |\n| d P | g - m | S - | - - - |\n| .n - | S - - | g - | m S -\nd m | d - n | S' - | S' - n |\n| S' R' | g' - m' | g' r' | S' --| n |\n| d - | - - d | P - | - - - |\n| P P | d n n | S' - | S' S' - |\n| S' S' | R' g' - | m' m' | - - - |\n| d' - | P' m' - | P' S' | - - - |\n| n - | d P - | m m | P S -",
+   "list": "ঝাঁপ",
+   "taal": "jhaptaal",
+   "letter": "অ",
+   "tala": "ঝাঁপ",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অসীম কালসাগরে ভুবন ভেসে চলেছে.xml",
+   "unknown_codes": [
+    "F",
+    "L",
+    "[",
+    "]"
+   ]
+  },
+  {
+   "id": "s-f95480e5b9",
+   "name": "অসীম ধন তো আছে তোমার",
+   "notes": "m P - | (P D) n D | G m - | n D N |\n| N S' - | (N S') (R' G') (R' S') | (S' N) (S' R' S') n | (D n) D - |\n| n (n R' S') - | n D P | m (G S) G | G m - |\n| n D m | P (m G) m | (P D) P S' | (n S' n) (D P) (m G)\nN N - | N (N P) N | N (S' R' S') - | S' S' - |\n| N N - | N (N P) N | N (S' R' S') - | - - - |\n| (S' m') m' G' | (R' S') N S' | (S' N) (S' R' S') n | (D P) D n |\n| R' S' - | (D S') n D | P (m G) (R G) | m P - |\n| G m - | P D - | (D n) (n R' S') (n S') | n (D P) (m G)\nR' S' n | (D P) m G | S - R | G m - |\n| m P P | (P D) P S' | n D - | - - - |\n| N - N | N S' - | (N S') (R' G') (G' R') | (S' N) (S' R' S') n |\n| (D n) (n R' S') n | (n D) (P D) S' | n D - | - N N |\n| N - N | N (N P) N | N (S' R' S') - | - - - |\n| S' m' (m' G') | R' S' - | (S' N) (S' R S') n |---| (D P) D - |\n| n (n R') S' | n D P | m (G S) G | m P - |\n| G - m | - P D | D n (R' S') | n D P",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=অসীম ধন তো আছে তোমার.xml",
+   "unknown_codes": [
+    "L",
+    "i"
+   ]
+  },
+  {
+   "id": "s-d273f13622",
+   "name": "আছে তোমার বিদ্যে সাধ্যি জানা",
+   "notes": "|| S m G G | m m P D | N - - - | S' - - - |\n| N S' - S' | n D P D | m P D P | m m G - |\n| D P m G | m m P D | N - - - | S' - - - |\n| (S' G') G' (G' G') (G' G') | (S' R') (S' S') (n n) (P P) | (m D) (D N) (S' S') (R' S') | (N S') N (S' G') (G' G') |\n| (G' G') G' (m' P') (m' G') | - - - - | S' - m G | m m P D |\n| N - - - | S' - - - | N S' - S' | n D P P |\n| m P D P | m m G - || ||",
+   "list": "কাহারবা",
+   "taal": "keherwa",
+   "letter": "অ",
+   "tala": "কাহারবা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=49_24.xml",
+   "unknown_codes": [
+    "i"
+   ]
+  },
+  {
+   "id": "s-5082fb47f8",
+   "name": "আঃ কাজ কি গোলমালে",
+   "notes": "---|-S - |\n|| D - D | D n D | P - - | - P P |\n| m P - | m g - | R - - | - g R |\n| S - S | R R - | R - g | m P - |\n| - - D | D P - | R - m | g - R |\n| S - - | - S - ||\n|| S - D | D - D | D n - | D P - |\n| D n S' | - R' - | S' n - | D P - |\n| m P - | P P - | m - P | D P - |\n| R - m | g R - | S - - | - S S |\n| D - D | D D n | D P - | P P - |\n| m P - | m g - | g R - | - - - |\n| S S - | R R - | R - g | m P - |\n| R - m | g g - | R S - | - - - || ||",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=49_25.xml",
+   "unknown_codes": []
+  },
+  {
+   "id": "s-66bc364caa",
+   "name": "হায়্ কী দশা হল আমার",
+   "notes": "|| S .n - (.d .P) | .d .d - .n | (S r) (.n S r g) (m g r g) r | S - - - |\n| g g R g | - - r S | g r S (r S) | .n S - - |\n| g (r S) .d .d | - - P .d | (.n S r) g (m g) (r g) | r S - (r S) ||\n|| S S g - | g m - - | (g r) (S r g) r S | (r S) .n S - |\n| g r (g r) S | .d .d .n - | (g g) (.P d) (.n S r g) (m g r) |\n| r S - (r S) || ||",
+   "list": "তিনতালা",
+   "letter": "অ",
+   "tala": "তিনতালা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=49_26.xml",
+   "unknown_codes": []
+  },
+  {
+   "id": "s-951b456bb2",
+   "name": "এত রঙ্গ শিখেছ কোথা মুণ্ডমালিনী",
+   "notes": "---| R .N - |\n|| S - G | - S - | G G - | m P - |\n| m - R | g - R | S - - |---| - m G |\n| m - d | d d - | P - d | P m - |\n| P P n | d P - | m G - | r S .N ||\n---| - - - |\n|| m - m | m m - | P - P | P P - |\n| d - d | d - m | P P - |---| m G - |\n| m m d | d d - | P P d | P m - |\n| P P n | d P (d P) | m G - | r S .N || ||",
+   "list": "দাদরা",
+   "taal": "dadra",
+   "letter": "অ",
+   "tala": "দাদরা",
+   "avartan": "২",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=49_27.xml",
+   "unknown_codes": []
+  },
+  {
+   "id": "s-5a925a4a6a",
+   "name": "গুরুগুরু গুরুগুরু ঘন মেঘ গরজে",
+   "notes": "m R m m | P P m P | D (D S') S' S' | D D P - |\n| P m P D | P P m G | R R G R | (R P) m (G m) R |\n| S - - - | - - - -\nm m m - | m - m (m G) | R (R P) P - | P - P - |\n| m P P P | N N N S' | N R' S' S' | n - D P |\n| P D P m | - G R - | S' - R' - | R'-g' - |\n| g' (g' m') m' m' | R' - R' R' | S' N N - | S' - - - |\n| S' (S' R') R' R' | S' n n n | (n D) S' n D | P - - - |\n| P D n D | D D D P | P P D P | m G R -",
+   "list": "কাহারবা",
+   "taal": "keherwa",
+   "letter": "অ",
+   "tala": "কাহারবা",
+   "avartan": "১",
+   "url": "https://rabindra-rachanabali.nltr.org/node/16053?gaan=17_2_guru_guru.xml",
+   "unknown_codes": [
+    "L",
+    "w",
+    "x"
+   ]
+  }
+ ]
+}

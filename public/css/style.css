@@ -84,7 +84,7 @@ kbd { border: 1px solid var(--line-strong); border-bottom-width: 2px; }
 .small { font-size: .85rem; }
 
 /* ── Controls ── */
-button, .button, select, input[type=text], input[type=number], textarea {
+button, .button, select, input[type=text], input[type=search], input[type=number], textarea {
   background: var(--panel);
   color: var(--text);
   border: 1px solid var(--line-strong);
@@ -113,14 +113,14 @@ button.icon {
 button.icon:hover { color: var(--accent); background: none; }
 #favBtn { color: var(--accent); }
 
-select {
+select, .pk-btn, .pk-btn:hover {
   appearance: none; -webkit-appearance: none;
   padding-right: 32px; cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238f8f8a' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 12px center;
 }
 input[type=number] { width: 76px; }
-input[type=text], textarea { min-width: 0; }
+input[type=text], input[type=search], textarea { min-width: 0; }
 input::placeholder, textarea::placeholder { color: var(--muted); opacity: .8; }
 textarea { width: 100%; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: .88rem; resize: vertical; line-height: 1.5; }
 select:focus-visible, input:focus-visible, textarea:focus-visible, button:focus-visible {
@@ -157,10 +157,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px va
   position: sticky; top: 0; z-index: 20;
 }
 #brand { font-weight: 700; font-size: 1.05rem; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
-#brand::before {
-  content: ''; width: 18px; height: 18px; border-radius: 50%; flex: 0 0 auto;
-  background: radial-gradient(circle, var(--bg) 0 3px, var(--accent) 3.5px);
-}
+#brand img { flex: none; display: block; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .12)); }
 #themeBtn {
   margin-left: auto; flex: 0 0 auto; width: 36px; height: 36px; padding: 0;
   border-radius: 50%; border-color: transparent; background: none; color: var(--muted);
@@ -202,19 +199,59 @@ input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px va
 #tempo, #key { border-radius: 0; position: relative; z-index: 1; }
 #tempoDown, #tempoUp, #keyDown, #keyUp { width: 36px; padding: 0; font-size: 1.05rem; }
 #tempoHalf { margin-left: 6px; }
+/* Play: a glossy orange disc; while playing it turns dark with a stop
+   square, and a ring pulses out on every beat (stronger on sam). */
 .play {
-  width: 56px; height: 56px; border-radius: 50%; font-size: 1.35rem; padding: 0;
-  background: var(--accent); color: var(--on-accent); border: none;
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent);
-  transition: transform .1s, background .15s, box-shadow .15s;
+  position: relative; width: 56px; height: 56px; border-radius: 50%; padding: 0;
+  background: linear-gradient(150deg, #f8ad45, var(--accent) 50%, #d26a06);
+  color: #fff; border: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), inset 0 -2px 4px rgba(120, 50, 0, .25),
+              0 6px 16px color-mix(in srgb, var(--accent) 40%, transparent);
+  transition: transform .12s, box-shadow .15s, filter .15s;
 }
-.play:hover { background: var(--accent); transform: scale(1.04); }
-.play:active { transform: scale(.97); }
-.play.playing { background: var(--text); color: var(--bg); box-shadow: none; }
-.play.playing:hover { background: var(--text); }
+.play svg { width: 46%; height: 46%; fill: currentColor; filter: drop-shadow(0 1px 1px rgba(90, 40, 0, .3)); }
+.play .i-stop, .play.playing .i-play { display: none; }
+.play.playing .i-stop { display: block; }
+.play:hover { background: linear-gradient(150deg, #f8ad45, var(--accent) 50%, #d26a06); transform: scale(1.05); filter: brightness(1.04); }
+.play:active { transform: scale(.95); }
+.play:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 3px; }
+.play.playing, .play.playing:hover {
+  background: linear-gradient(150deg, #3a3a37, #1c1c1a); color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), inset 0 0 0 1px rgba(255, 255, 255, .08), 0 6px 16px rgba(0, 0, 0, .22);
+}
+.play.playing svg { filter: none; }
+.play::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  box-shadow: 0 0 0 0 transparent;
+}
+.play.beat::after { animation: beat-ring .45s ease-out; }
+.play.beat.sam::after { animation: sam-ring .6s ease-out; }
+@keyframes beat-ring {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); }
+  to { box-shadow: 0 0 0 10px transparent; }
+}
+@keyframes sam-ring {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 80%, transparent); }
+  to { box-shadow: 0 0 0 18px transparent; }
+}
 .play.pending { animation: pulse 0.8s infinite alternate; }
 .play.loading { opacity: .6; }
 @keyframes pulse { to { opacity: .55; } }
+.play-slot { width: 56px; height: 56px; flex: 0 0 auto; }
+.play.floating {
+  position: fixed; z-index: 30;
+  right: calc(24px + env(safe-area-inset-right, 0px)); bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+}
+.to-top {
+  position: fixed; z-index: 30; width: 44px; height: 44px; border-radius: 50%; padding: 0; font-size: 1.2rem;
+  left: calc(24px + env(safe-area-inset-left, 0px)); bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .2);
+}
+.to-top[hidden] { display: none; }
+
+#credit { text-align: center; font-size: .8rem; color: var(--muted); padding: 0 24px 32px; }
+#credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+#credit a:hover { color: var(--accent-2); }
 
 main { padding: 20px 24px 48px; max-width: 1768px; margin: 0 auto; }
 @media (min-width: 1768px) { #transport { margin-left: auto; margin-right: auto; } }
@@ -226,14 +263,14 @@ main { padding: 20px 24px 48px; max-width: 1768px; margin: 0 auto; }
 .presets select { min-width: 160px; }
 
 /* ── Beat grid ── */
-.beat-grid { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 22px; }
-.vibhag { display: flex; flex-direction: column; gap: 6px; }
+.beat-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.vibhag { display: flex; flex-direction: column; gap: 5px; }
 .vibhag .mark { font-weight: 700; color: var(--accent); font-size: .85rem; padding-left: 2px; }
 .vibhag .mark.khali { color: var(--khali); }
-.vibhag .cells { display: flex; gap: 5px; }
+.vibhag .cells { display: flex; gap: 4px; }
 .cell {
-  min-width: 64px; padding: 10px 8px 11px; text-align: center;
-  background: var(--panel); border: 1px solid var(--line); border-radius: 11px;
+  min-width: 52px; padding: 7px 6px 8px; text-align: center; font-size: .9rem;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 9px;
   transition: background .06s, color .06s, transform .06s;
 }
 .cell .num { font-size: .68rem; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -242,7 +279,7 @@ main { padding: 20px 24px 48px; max-width: 1768px; margin: 0 auto; }
 .cell.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); transform: translateY(-2px); }
 .cell.on .num { color: var(--on-accent); opacity: .8; }
 .cell.error { border-color: var(--danger); color: var(--danger); }
-.beat-grid.small .cell { min-width: 48px; padding: 6px; font-size: .85rem; }
+.beat-grid.small .cell { min-width: 42px; padding: 5px; font-size: .8rem; }
 
 /* ── Channel cards ── */
 .card {
@@ -289,10 +326,9 @@ details summary:hover { color: var(--text); }
 .player-layout > .card { margin: 0; }
 .push-right { margin-left: auto; }
 #card-taal { flex: 0 0 300px; min-width: 0; }
-#sargamPanel {
-  flex: 1 1 0; min-width: 0; position: sticky; top: 72px;
-  max-height: calc(100vh - 92px); overflow-y: auto;
-}
+/* The panel is as tall as its content: resizing the notation box grows or
+   shrinks the whole card, and the page scrolls to everything under it. */
+#sargamPanel { flex: 1 1 0; min-width: 0; }
 .inst-open #sargamPanel { flex: 0 0 370px; }
 .instruments {
   flex: 1 1 0; min-width: 0;
@@ -342,6 +378,7 @@ details summary:hover { color: var(--text); }
 .pane-close { font-size: 1rem !important; flex: 0 0 auto; }
 .inst #strumBtn { min-height: 28px; padding: 2px 9px; font-size: .8rem; flex: 0 0 auto; }
 @media (prefers-reduced-motion: reduce) {
+  .play.beat::after { animation: none; }
   .pane, .inst.open { transition: none; animation: none; }
 }
 .field[hidden] { display: none; }
@@ -350,9 +387,48 @@ details summary:hover { color: var(--text); }
 #sargamPanel .turn { margin-top: 0; }
 .sargam-help { margin: 12px 0 0; }
 .sargam-settings { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 16px; }
+/* Search box with a dropdown of matching sargams under it. */
+.sargam-search { position: relative; margin-bottom: 8px; }
+.sargam-search input { width: 100%; }
+.sargam-results {
+  position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + 4px);
+  list-style: none; margin: 0; padding: 4px; max-height: var(--menu-rows); overflow-y: auto;
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+}
+.sargam-results[hidden] { display: none; }
+/* Sargam picker: about eight rows tall, then it scrolls. */
+.sargam-search, .sargam-picker { --menu-rows: 300px; }
+.sargam-picker { position: relative; flex: 1; min-width: 0; }
+.pk-btn { width: 100%; justify-content: space-between; font-weight: 400; text-align: left; }
+.pk-btn > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-menu {
+  position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + 4px);
+  padding: 4px; max-height: var(--menu-rows); overflow-y: auto; overscroll-behavior: contain;
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+}
+.pk-menu[hidden], .pk-items[hidden] { display: none; }
+.pk-menu button {
+  display: flex; width: 100%; justify-content: flex-start; text-align: left;
+  border: none; background: none; min-height: 34px; padding: 6px 8px; border-radius: 6px;
+}
+.pk-head { gap: 6px; font-weight: 600; color: var(--muted); font-size: .8rem; position: sticky; top: -4px; background: var(--panel) !important; }
+.pk-head:hover { color: var(--text); }
+.pk-arrow { display: inline-block; transition: transform .12s; }
+.pk-head[aria-expanded=true] .pk-arrow { transform: rotate(90deg); }
+.pk-count { margin-left: auto; font-weight: 400; }
+.pk-item { font-weight: 400; padding-left: 26px !important; }
+.pk-item:hover, .pk-item:focus-visible { background: var(--panel-2); }
+.pk-item[aria-selected=true] { background: var(--accent-soft); color: var(--accent-2); }
+.sargam-results li { padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+.sargam-results li.active, .sargam-results li:hover { background: var(--accent-soft); }
+.sargam-results li.empty { cursor: default; color: var(--muted); background: none; }
+.sargam-results small { display: block; color: var(--muted); font-size: .75rem; }
 .sargam-pick { margin-bottom: 10px; gap: 8px; }
 .sargam-pick select { flex: 1; min-width: 0; }
-.sargam-pick button { flex: 0 0 auto; }
+.sargam-pick button, .sargam-pick .button { flex: 0 0 auto; }
+.sargam-files { flex-wrap: wrap; margin: -4px 0 10px; }
 .sargam-pick button[aria-pressed=true] { background: var(--accent-soft); color: var(--accent-2); border-color: var(--accent); }
 button[hidden] { display: none; }
 #sargamError:empty, #sargamWarn:empty { display: none; }
@@ -370,7 +446,7 @@ button[hidden] { display: none; }
 .turn.yours { background: var(--accent-soft); color: var(--accent-2); }
 .sargam-lines {
   display: flex; flex-direction: column; gap: 6px; padding-top: 4px;
-  overflow-y: auto; overscroll-behavior: contain;
+  overflow-y: auto;
 }
 /* Drag handle under the lines: sets how many lines are visible. */
 .sargam-resize {
@@ -459,7 +535,6 @@ button[hidden] { display: none; }
   /* Stacked: every block takes its natural height. (The desktop flex sizes
      would squash the sargam panel to a sliver that scrolls inside itself.) */
   .player-layout > *, #sargamPanel, .inst-open #sargamPanel, .instruments { flex: none; width: 100%; }
-  #sargamPanel { position: static; max-height: none; overflow: visible; }
   .inst-rail { flex-direction: row; position: static; width: auto; align-self: flex-start; }
   .rail-sep { width: 1px; height: 24px; margin: 0 4px; }
   .instruments { margin: 0; grid-template-columns: 1fr; }
@@ -521,7 +596,7 @@ button[hidden] { display: none; }
   #transport { margin: 12px 12px 0; padding: 14px; gap: 14px 18px; }
   #transport .status { margin-left: 0; text-align: left; }
   main { padding: 14px 12px 40px; }
-  .cell { min-width: 52px; }
+  .cell { min-width: 44px; }
 }
 @media (max-width: 560px) {
   #brand { display: none; }
@@ -532,8 +607,16 @@ button[hidden] { display: none; }
   #transport .tgroup input[type=range] { width: 100%; }
   #transport .row { flex-wrap: wrap; row-gap: 8px; }
   #tempo { flex: 1; min-width: 56px; }
-  .play { width: 52px; height: 52px; }
-  #transport > .play { flex: 0 0 auto; order: -2; }
+  /* Phones: the play button always sits at the bottom, in thumb reach. */
+  .play-slot { display: contents; }
+  .play {
+    position: fixed; z-index: 30; width: 64px; height: 64px;
+    left: 50%; right: auto; margin-left: -32px; bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  }
+  .play:hover, .play:active { transform: none; }
+  .to-top { left: calc(16px + env(safe-area-inset-left, 0px)); bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
+  main { padding-bottom: 72px; }
+  #credit { padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); }
   #transport .status { flex: 1 1 0; order: -1; text-align: right; }
   .cell { min-width: 0; flex: 1; }
   .vibhag { flex: 1 1 100%; }

@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Taal Studio</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%23e8890c'/%3E%3Ccircle cx='8' cy='8' r='3' fill='%23ffffff'/%3E%3C/svg%3E">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="logo.svg">
 <link rel="stylesheet" href="css/style.css">
 <script>
   // Apply the saved theme before the page paints (no light/dark flash).
@@ -17,7 +18,7 @@
 <body>
 
 <header id="topbar">
-  <div id="brand">Taal Studio</div>
+  <div id="brand"><img src="logo.svg" alt="" width="28" height="28">Taal Studio</div>
   <nav id="tabs">
     <button class="tab-btn active" data-tab="player">Player</button>
     <button class="tab-btn" data-tab="composer">Composer</button>
@@ -32,7 +33,12 @@
 
 <!-- Transport: always visible -->
 <section id="transport">
-  <button id="playBtn" class="play" title="Play / Stop (Space)">▶</button>
+  <!-- The slot keeps the button's place; once it scrolls out of view (and
+       always on phones) the button floats at the bottom of the screen. -->
+  <div class="play-slot"><button id="playBtn" class="play" title="Play / Stop (Space)" aria-label="Play">
+    <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 5.3v13.4a1.1 1.1 0 0 0 1.7.93l10.3-6.7a1.1 1.1 0 0 0 0-1.86L9.9 4.37a1.1 1.1 0 0 0-1.7.93z"/></svg>
+    <svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6.3" y="6.3" width="11.4" height="11.4" rx="2.6"/></svg>
+  </button></div>
 
   <div class="tgroup">
     <label>Tempo <span id="laya" class="muted"></span></label>
@@ -209,13 +215,35 @@
         <p class="muted small sargam-help">One line = one avartan. Komal swars are underlined, tivra Ma has a mark above,
           dots show mandra (below) and taar (above) saptak. Use headphones when checking your singing.</p>
         <div class="sargam-settings">
+          <div class="sargam-search">
+            <input id="sargamSearch" type="search" placeholder="Search sargams by name or list…" autocomplete="off"
+              role="combobox" aria-expanded="false" aria-controls="sargamResults">
+            <ul id="sargamResults" class="sargam-results" role="listbox" hidden></ul>
+          </div>
           <div class="row sargam-pick">
-            <select id="sargamExercise"></select>
+            <select id="sargamExercise" hidden></select>
+            <div class="sargam-picker">
+              <button id="sargamPickBtn" type="button" class="pk-btn" aria-haspopup="listbox" aria-expanded="false"
+                aria-controls="sargamPickMenu"><span></span></button>
+              <div id="sargamPickMenu" class="pk-menu" role="listbox" hidden></div>
+            </div>
+            <button id="sargamFav" class="icon" aria-pressed="false" title="Add to or remove from favourites">☆</button>
+            <button id="sargamNew" title="Write a new sargam line">+ New</button>
             <button id="sargamEdit" aria-pressed="false" title="Show the line editor">Edit</button>
+            <button id="sargamShare" title="Save this line as a file to share">Share…</button>
+          </div>
+          <div class="row sargam-files">
+            <button id="sargamShareAll" class="small" title="Save all your sargam lines as one file to share">Share all lines…</button>
+            <label class="button small" title="Add sargam lines or compositions from a shared file">Import… <input id="sargamImport" type="file" accept=".json,application/json" hidden></label>
           </div>
           <div id="sargamEditor" hidden>
             <div class="field"><label>Name</label>
               <input id="sargamLineName" type="text" placeholder="e.g. Yaman palta 1"></div>
+            <div class="field"><label>List</label>
+              <input id="sargamLineList" type="text" list="sargamListNames" placeholder="e.g. Kaharba lessons">
+              <datalist id="sargamListNames"></datalist></div>
+            <div class="field" title="Selecting this line switches to its taal; you can still change the taal afterwards">
+              <label>Default taal</label><select id="sargamLineTaal"></select></div>
             <textarea id="sargamCustom" rows="3" spellcheck="false"
               placeholder="S R G M P - - - | P M G R S - - -"></textarea>
             <p class="muted small hint" data-i18n="sargamHint">Brackets share one beat: <code>S R (GM) P (DNS')</code>.
@@ -278,6 +306,7 @@
           <button id="cPlay" class="primary">Play in player</button>
           <button id="cSave">Save</button>
           <button id="cNew">New</button>
+          <button id="cShare" title="Save this composition as a file to share">Share…</button>
           <button id="cDelete" class="danger">Delete</button>
         </div>
       </div>
@@ -290,8 +319,9 @@
           <h3>My compositions</h3>
           <ul id="customList" class="list"></ul>
           <div class="row wrap">
-            <button id="exportBtn">Export all…</button>
-            <label class="button">Import… <input id="importFile" type="file" accept=".json" hidden></label>
+            <button id="cShareAll" title="Save all your compositions as one file to share">Share all compositions…</button>
+            <button id="exportBtn" title="Back up compositions, sequences, presets and sargam lines">Export all…</button>
+            <label class="button">Import… <input id="importFile" type="file" accept=".json,application/json" hidden></label>
           </div>
         </div>
       </div>
@@ -380,6 +410,13 @@
     </div>
   </section>
 </main>
+
+<button id="toTop" class="to-top" title="Back to top" aria-label="Back to top" hidden>↑</button>
+
+<footer id="credit">
+  <span>Made by</span> <a href="https://revolutionibus.net" target="_blank" rel="noopener">revolutionibus</a>
+  · <a href="mailto:me@revolutionibus.net">me@revolutionibus.net</a>
+</footer>
 
 <script src="js/i18n.js"></script>
 <script src="js/notation.js"></script>

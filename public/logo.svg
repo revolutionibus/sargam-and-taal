@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Taal Studio: a tabla pair (bayan behind, dayan in front) under an arc
+       of beats, sam marked by the larger dot. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6a53a"/>
+      <stop offset="1" stop-color="#d9700a"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5a3a26"/>
+      <stop offset=".45" stop-color="#9a6a45"/>
+      <stop offset="1" stop-color="#3e2618"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3b2214"/>
+      <stop offset=".4" stop-color="#7a4a2a"/>
+      <stop offset="1" stop-color="#2e1a0f"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#bg)"/>
+  <g transform="translate(32 33) scale(.93) translate(-32 -33)">
+
+  <!-- beats -->
+  <g fill="#fff">
+    <circle cx="13" cy="20" r="2.6"/>
+    <g opacity=".6">
+      <circle cx="18.4" cy="14.3" r="1.4"/><circle cx="25.2" cy="10.6" r="1.4"/>
+      <circle cx="32.8" cy="9.4" r="1.4"/><circle cx="40.4" cy="10.6" r="1.4"/>
+      <circle cx="47.2" cy="14.3" r="1.4"/><circle cx="52.6" cy="20" r="1.4"/>
+    </g>
+  </g>
+
+  <ellipse cx="31.5" cy="55.4" rx="23" ry="2.4" fill="#6b3307" opacity=".3"/>
+
+  <!-- bayan: round metal bowl -->
+  <path d="M8.5 37 C8.5 47 13 54.5 23 54.5 C33 54.5 37.5 47 37.5 37 Z" fill="url(#metal)"/>
+  <ellipse cx="23" cy="37" rx="14.5" ry="4.2" fill="#f7e7cc"/>
+  <ellipse cx="23" cy="37" rx="14.5" ry="4.2" fill="none" stroke="#2a180d" stroke-width="1"/>
+  <ellipse cx="19.5" cy="37.3" rx="4.6" ry="1.5" fill="#1c1410"/>
+
+  <!-- dayan: tall wooden drum with straps -->
+  <path d="M33 29 C32.4 38 32.6 47 34.2 55 L51.8 55 C53.4 47 53.6 38 53 29 Z" fill="url(#wood)"/>
+  <g stroke="#f3d9b0" stroke-width=".9" opacity=".55" fill="none">
+    <path d="M36.2 30.5 L37.4 54.5"/><path d="M40.6 31.6 L41.2 55"/>
+    <path d="M45.4 31.6 L44.8 55"/><path d="M49.8 30.5 L48.6 54.5"/>
+  </g>
+  <ellipse cx="43" cy="29" rx="10" ry="3.4" fill="#f7e7cc"/>
+  <ellipse cx="43" cy="29" rx="10" ry="3.4" fill="none" stroke="#2a180d" stroke-width="1"/>
+  <ellipse cx="43" cy="29" rx="3.6" ry="1.2" fill="#1c1410"/>
+  </g>
+</svg>

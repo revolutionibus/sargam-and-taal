@@ -53,6 +53,22 @@ Settings → Export all to back them up).
   so they can be committed or shared.
 - **Settings**: stop immediately or on sam, fade out, accent sam.
 
+### Importing a song library
+
+`tools/convert-sargams.js` turns song-notation JSON files (arrays of
+`{ title, tala, notation: [...], raw, ... }`) into one file for the Sargam
+panel's **Import…** button. Each song becomes a sargam line grouped in a list
+by its taal, with that taal as its default; `raw` is dropped, other keys kept.
+
+```sh
+node tools/convert-sargams.js -o songs.taal.json data/        # every .json in data/
+node tools/convert-sargams.js --help                           # list options, taal mapping
+python3 tools/convert_sargams.py -o songs.taal.json data/      # same, in Python (no packages needed)
+```
+
+It prints how many songs have notation errors and which taal names have no
+matching taal in the app (create them in the Composer, or pass `--map`).
+
 ## Notation
 
 See [CREATING_TAALS.md](CREATING_TAALS.md) for a step-by-step guide to making
@@ -85,3 +101,21 @@ warns about it).
 All under `public/`: `js/notation.js` parsing · `js/data.js` taals/lehras/ragas/alankars/sample map ·
 `js/audio.js` engine · `js/player.js` scheduler · `js/tuner.js` pitch ·
 `js/app.js` UI.
+
+## Android app
+
+`public/` is also packaged as an offline Android app with Capacitor (`android/`).
+The sound samples and saved JSON ship inside the app. Your compositions, presets and
+sargam lines are saved as the same three JSON files in the app's private storage
+(the bundled ones are the starting point); settings stay in the WebView's
+localStorage. Settings → Export all opens the share sheet.
+
+```sh
+npm install
+npm run sync      # copy public/ into android/ after every change
+npm run open      # open in Android Studio, then Run, or Build → Build APK(s)
+```
+
+Needs Android Studio (it installs the SDK). Without it:
+`cd android && ./gradlew assembleDebug` (with `ANDROID_HOME` set) writes
+`android/app/build/outputs/apk/debug/app-debug.apk`.
