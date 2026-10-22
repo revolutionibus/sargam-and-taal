@@ -19,11 +19,11 @@
     sargamPanel: true, sargamOn: true, sargamExercise: 'scale', sargamRaga: 'bilawal',
     sargamCustom: 'S R G M P - - - | P M G R S - - -', sargamPerBeat: 1, sargamMode: 'along',
     sargamInst: 'harmonium', sargamVol: 0.7, sargamCheck: false, sargamVisible: 4, sargamCollapsed: {},
-    sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true,
+    sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true, midiSaNote: null,
     fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'bn', theme: 'auto',
   };
   // Settings captured by a preset (everything except app preferences).
-  const APP_PREFS = ['keysOn', 'keysWrite', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamCollapsed',
+  const APP_PREFS = ['keysOn', 'keysWrite', 'midiSaNote', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamCollapsed',
                      'lehraOpen', 'tanpuraOpen', 'swarOpen', 'taalOpen'];
 
   let store = { settings: {}, custom: [], sequences: [], presets: [], favorites: [], sargamFavorites: [], sargamLines: [] };
@@ -1911,7 +1911,7 @@
   const KEY_RELEASE = { harmonium: 0.12, piano: 0.25 };   // santoor rings on
   const held = new Map();      // key code or 'm' + MIDI note -> { voice, release }
   const sustained = new Map(); // notes let go while the sustain pedal is down
-  let keyOctave = 0, pedal = false, midi = null, midiError = '';
+  let keyOctave = 0, pedal = false, learningSa = false, midiStarted = false, midiNames = null, midiError = '';
 
   function noteOn(id, semi, vel) {
     writeSwar(semi);
@@ -2008,36 +2008,72 @@
     const [status, a, b] = e.data;
     const cmd = status & 0xf0;
     if (cmd === 0x90 && b > 0) {
-      noteOn('m' + a, a - D.SAMPLE_BASE_MIDI - Math.round(engine.saSemis), 0.15 + 0.85 * b / 127);
+      if (learningSa) { setMidiSa(a); return; }
+      // midiSaNote: the physical key chosen as madhya Sa; otherwise real pitch.
+      const sa = S.midiSaNote ?? D.SAMPLE_BASE_MIDI + Math.round(engine.saSemis);
+      noteOn('m' + a, a - sa, 0.15 + 0.85 * b / 127);
     } else if (cmd === 0x80 || cmd === 0x90) noteOff('m' + a);
     else if (cmd === 0xb0 && a === 64) setPedal(b >= 64);
   }
 
+  function setMidiSa(note) {
+    learningSa = false;
+    S.midiSaNote = note;
+    save();
+    showMidiSa();
+  }
+
+  // Middle C is C4.
+  function showMidiSa() {
+    const n = S.midiSaNote;
+    $('midiSaKey').textContent = learningSa ? tr('Press the key you want as Sa…')
+      : n === null ? tr('Real pitch: the key matching your Sa plays Sa')
+      : tr('Sa is on {key}', { key: D.KEYS[n % 12] + (Math.floor(n / 12) - 1) });
+    $('midiSaLearn').textContent = tr(learningSa ? 'Cancel' : 'Choose key…');
+    $('midiSaReset').hidden = n === null || learningSa;
+  }
+
+  // midiNames: connected keyboards, null until MIDI is ready.
   function initMidi() {
-    if (midi || midiError) return;
-    if (!navigator.requestMIDIAccess) {
-      midiError = tr("This browser can't use MIDI keyboards (Chrome and Edge can). The computer keys still work.");
-      showKeysStatus();
-      return;
+    if (midiStarted) return;
+    midiStarted = true;
+    if (navigator.requestMIDIAccess) {
+      navigator.requestMIDIAccess().then((m) => {
+        const hook = () => {
+          m.inputs.forEach((i) => { i.onmidimessage = onMidi; });
+          midiNames = [...m.inputs.values()].map((i) => i.name);
+          showKeysStatus();
+        };
+        m.onstatechange = hook;
+        hook();
+      }, () => midiFailed(tr('MIDI access was blocked. The computer keys still work.')));
+    } else if (NATIVE && CAP.addListener) {
+      // The Android app's WebView has no Web MIDI: its Midi plugin
+      // (MidiPlugin.java) forwards the keyboard's messages instead.
+      CAP.addListener('Midi', 'message', (m) => m && onMidi(m));
+      CAP.addListener('Midi', 'devices', (m) => { if (m) { midiNames = m.devices; showKeysStatus(); } });
+      CAP.nativePromise('Midi', 'start').then((r) => { midiNames = r.devices; showKeysStatus(); },
+        () => midiFailed(tr("This device can't use MIDI keyboards.")));
+    } else {
+      midiFailed(tr("This browser can't use MIDI keyboards. Use Chrome, Edge or Firefox on a computer or " +
+        'Android phone (no iPhone or iPad browser can). The computer keys still work here.'));
     }
-    navigator.requestMIDIAccess().then((m) => {
-      midi = m;
-      const hook = () => { m.inputs.forEach((i) => { i.onmidimessage = onMidi; }); showKeysStatus(); };
-      m.onstatechange = hook;
-      hook();
-    }, () => {
-      midiError = tr('MIDI access was blocked. The computer keys still work.');
-      showKeysStatus();
-    });
+  }
+
+  function midiFailed(msg) {
+    midiError = msg;
+    showKeysStatus();
   }
 
   function showKeysStatus() {
     const parts = [];
     if (keyOctave) parts.push(tr(keyOctave > 0 ? 'Octave up {n}' : 'Octave down {n}', { n: Math.abs(keyOctave) }));
-    const names = midi ? [...midi.inputs.values()].map((i) => i.name) : [];
     if (midiError) parts.push(midiError);
-    else if (names.length) parts.push(tr('MIDI: {names}', { names: names.join(', ') }));
-    else if (midi) parts.push(tr('No MIDI keyboard connected. The computer keys still work.'));
+    else if (midiNames && midiNames.length) parts.push(tr('MIDI: {names}', { names: midiNames.join(', ') }));
+    else if (midiNames) {
+      parts.push(NATIVE ? tr('No MIDI keyboard connected. Plug one in with a USB OTG cable.')
+        : tr('No MIDI keyboard connected. The computer keys still work.'));
+    }
     $('keysStatus').textContent = parts.join(' · ');
   }
 
@@ -2049,6 +2085,9 @@
     };
     bind('keysOn', 'keysOn', { onChange: on });
     bind('keysWrite', 'keysWrite');
+    $('midiSaLearn').addEventListener('click', () => { learningSa = !learningSa; showMidiSa(); });
+    $('midiSaReset').addEventListener('click', () => setMidiSa(null));
+    showMidiSa();
     $('keysInfo').hidden = !S.keysOn;
     if (S.keysOn) initMidi();
     document.addEventListener('keyup', (e) => noteOff(e.code));

@@ -125,11 +125,22 @@
     'Play swars from the keyboard': 'কিবোর্ড দিয়ে স্বর বাজান',
     'MIDI: {names}': 'MIDI: {names}',
     'No MIDI keyboard connected. The computer keys still work.': 'কোনো MIDI কিবোর্ড যুক্ত নেই। কম্পিউটারের কি দিয়ে বাজানো যাবে।',
-    "This browser can't use MIDI keyboards (Chrome and Edge can). The computer keys still work.":
-      'এই ব্রাউজারে MIDI কিবোর্ড চলে না (Chrome ও Edge-এ চলে)। কম্পিউটারের কি দিয়ে বাজানো যাবে।',
+    "This browser can't use MIDI keyboards. Use Chrome, Edge or Firefox on a computer or Android phone (no iPhone or iPad browser can). The computer keys still work here.":
+      'এই ব্রাউজারে MIDI কিবোর্ড চলে না। কম্পিউটার বা অ্যান্ড্রয়েড ফোনে Chrome, Edge বা Firefox ব্যবহার করুন ' +
+      '(আইফোন বা আইপ্যাডের কোনো ব্রাউজারে চলে না)। কম্পিউটারের কি দিয়ে এখানেও বাজানো যাবে।',
+    "This device can't use MIDI keyboards.": 'এই ডিভাইসে MIDI কিবোর্ড চলে না।',
+    'No MIDI keyboard connected. Plug one in with a USB OTG cable.':
+      'কোনো MIDI কিবোর্ড যুক্ত নেই। USB OTG কেবল দিয়ে একটি লাগান।',
     'MIDI access was blocked. The computer keys still work.': 'MIDI ব্যবহারের অনুমতি দেওয়া হয়নি। কম্পিউটারের কি দিয়ে বাজানো যাবে।',
     'Octave up {n}': '{n} সপ্তক উপরে',
     'Octave down {n}': '{n} সপ্তক নিচে',
+    'Sa on the MIDI keyboard': 'MIDI কিবোর্ডে সা',
+    'Choose key…': 'কি বাছুন…',
+    'Cancel': 'বাতিল',
+    'Real pitch': 'আসল সুর',
+    'Press the key you want as Sa…': 'যে কি-টি সা হবে সেটি চাপুন…',
+    'Real pitch: the key matching your Sa plays Sa': 'আসল সুর: আপনার সা-এর সুরের কি-টি সা বাজায়',
+    'Sa is on {key}': 'সা আছে {key} কি-তে',
     'Write what I play into the line editor': 'যা বাজাই তা লাইন এডিটরে লিখে রাখুন',
     'Loop': 'লুপ',
     'All lines': 'সব লাইন',
@@ -364,7 +375,7 @@
     keysHelp: 'ওপরে বাছাই করা বাদ্যযন্ত্র বাজবে। <kbd>A</kbd> হলো সা, <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd> ' +
       '<kbd>H</kbd> <kbd>J</kbd> হলো রে গা মা পা ধা নি, আর <kbd>K</kbd> তার সা; ওপরের সারির কিগুলো (<kbd>W</kbd> <kbd>E</kbd> ' +
       '<kbd>T</kbd> <kbd>Y</kbd> <kbd>U</kbd>) কোমল স্বর ও তীব্র মা। <kbd>Z</kbd>/<kbd>X</kbd> দিয়ে এক সপ্তক নিচে/উপরে। ' +
-      'MIDI কিবোর্ড নিজের সুরেই বাজে, সাসটেইন প্যাডেলসহ।',
+      'MIDI কিবোর্ড নিজের সুরেই বাজে, যদি না নিচে তার জন্য সা-এর কি বেছে নেন; সাসটেইন প্যাডেলও চলে।',
     keysWriteHelp: 'লাইন এডিটর খোলা থাকলে যে স্বর বাজাবেন তা কার্সরের জায়গায় লেখা হবে। কম্পিউটারের কি দিয়ে বাজাতে ' +
       'লেখার বাক্সের বাইরে ক্লিক করুন; তখন <kbd>-</kbd> স্বর ধরে রাখে, <kbd>\\</kbd> একটি <code>|</code> বসায় ' +
       'আর <kbd>Backspace</kbd> শেষ স্বরটি মুছে দেয়।',
