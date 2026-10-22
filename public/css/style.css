@@ -629,6 +629,7 @@ button[hidden] { display: none; }
   font-family: var(--font-notation); font-weight: 400; font-synthesis: none;
   font-size: 1.12rem; line-height: 1.35; padding: 1px 2px; border-radius: 4px;
 }
+.sw .gr { font-size: .58em; vertical-align: .7em; margin-right: 1px; opacity: .8; }
 .sw.pad { color: var(--line-strong); }
 .sw.held { color: var(--muted); }
 .sw.rest { color: var(--muted); }
@@ -641,8 +642,8 @@ button[hidden] { display: none; }
 .sw.taar::after { top: -2px; }
 .sw.mandra::after { bottom: -3px; }
 .sw.taar2::after { box-shadow: 4px 0 0 currentColor; margin-left: -3.5px; }
-/* Meend: a slur from the swar to the swar it glides into. Each span draws its
-   piece; a swar in the middle of a chain of glides draws a straight one. */
+/* Join ("^"): a slur from the swar to the next one. Each span draws its
+   piece; a swar in the middle of a chain draws a straight one. */
 .sw.meend::before, .sw.meend-in::before {
   content: ''; position: absolute; top: -6px; height: 5px;
   border-top: 1.5px solid var(--accent); pointer-events: none;

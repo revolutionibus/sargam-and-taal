@@ -121,8 +121,8 @@
     'Starts on sam': 'সম থেকে শুরু',
     'Back to top': 'উপরে যান',
     'Drag to show more or fewer lines (or use the arrow keys)': 'টেনে বেশি বা কম লাইন দেখান (বা অ্যারো কী ব্যবহার করুন)',
-    'One line = one avartan. Komal swars are underlined, tivra Ma has a mark above, dots show mandra (below) and taar (above) saptak. Use headphones when checking your singing.':
-      'এক লাইন = এক আবর্তন। তীব্র মা-র উপরে চিহ্ন, আর স্বরের নিচে ফোটা দিয়ে মন্দ্র বা উদারা সপ্তক (lower octave) ও উপরে ফোটা দিয়ে তারা সপ্তক বোঝানো হয়। নিজের গান যাচাই করার সময় হেডফোন ব্যবহার করুন।',
+    'One line = one avartan. Komal swars are underlined, tivra Ma has a mark above, dots show mandra (below) and taar (above) saptak, small raised swars are grace swars. Use headphones when checking your singing.':
+      'এক লাইন = এক আবর্তন। তীব্র মা-র উপরে চিহ্ন, আর স্বরের নিচে ফোটা দিয়ে মন্দ্র বা উদারা সপ্তক (lower octave) ও উপরে ফোটা দিয়ে তারা সপ্তক বোঝানো হয়। ছোট করে উপরে লেখা স্বর হলো স্পর্শ স্বর। নিজের গান যাচাই করার সময় হেডফোন ব্যবহার করুন।',
     'Edit': 'সম্পাদনা',
     '+ New': '+ নতুন',
     'Write a new sargam line': 'নতুন সরগম লাইন লিখুন',
@@ -142,6 +142,8 @@
     'Call & response': 'শুনুন এবং নিজে চেষ্টা করুন',
     'Notes only (you sing)': 'শুধু স্বরলিপি (আপনি গাইবেন)',
     'Instrument': 'বাদ্যযন্ত্র',
+    'Play grace swars (kan)': 'স্পর্শ স্বর বাজান',
+    'Grace swars are the small raised swars, written <P>G': 'স্পর্শ স্বর হলো ছোট করে উপরে লেখা স্বর, লেখা হয় <P>G',
     'Check my singing (mic)': 'আমার গান যাচাই করুন (মাইক)',
     'Play swars from the keyboard': 'কিবোর্ড দিয়ে স্বর বাজান',
     'MIDI: {names}': 'MIDI: {names}',
@@ -327,6 +329,8 @@
     '"^" in "{tok}" needs a swar before it': '"{tok}"-এ "^"-এর আগে একটি স্বর লাগবে',
     '"^" must be followed by a swar, not "{tok}"': '"^"-এর পরে একটি স্বর লাগবে, "{tok}" নয়',
     '"^" at the end needs a swar after it': 'শেষের "^"-এর পরে একটি স্বর লাগবে',
+    '"<…>" must be followed by a swar, not "{tok}"': '"<…>"-এর পরে একটি স্বর লাগবে, "{tok}" নয়',
+    '"<…>" at the end needs a swar after it': 'শেষের "<…>"-এর পরে একটি স্বর লাগবে',
     'Bad position "{tok}"': 'ভুল জায়গা "{tok}"',
 
     // ── Built-in names (data.js) ──

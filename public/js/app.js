@@ -18,7 +18,7 @@
     swarOn: false, swarRaga: 'yaman', swarEvery: 2, swarSpeed: 1, swarVol: 0.5,
     sargamPanel: true, sargamOn: true, sargamExercise: 'scale', sargamRaga: 'bilawal',
     sargamCustom: 'S R G M P - - - | P M G R S - - -', sargamPerBeat: 1, sargamMode: 'along',
-    sargamInst: 'harmonium', sargamVol: 0.7, sargamCheck: false, sargamVisible: 4, sargamCollapsed: {},
+    sargamInst: 'harmonium', sargamVol: 0.7, sargamGrace: true, sargamCheck: false, sargamVisible: 4, sargamCollapsed: {},
     sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true, keysShow: true, midiSaNote: null,
     fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'bn', theme: 'auto',
     focusPlay: false,
@@ -755,6 +755,8 @@
     if (isOwnLine()) {
       const p = N.parseSargam(S.sargamCustom, step);
       $('sargamError').textContent = p.errors.join(' · ');
+      // Grace swars off: practise the plain line (they are neither played nor shown).
+      if (!S.sargamGrace) p.notes.forEach((n) => delete n.grace);
       return p.notes;
     }
     const a = D.ALANKARS.find((x) => x.id === S.sargamExercise) || D.ALANKARS[0];
@@ -1181,8 +1183,15 @@
             if (!starts) sp = plainSpan(n.semi === null ? 'rest held' : 'held', '–');
             else if (n.semi === null) sp = plainSpan('rest', '~');
             else sp = swarSpan(n.semi, short);
-            // Meend: a slur from the end of the swar to the swar it glides into.
-            if (n.glideTo !== undefined && Math.min(n.pos + n.len, b0 + 1) >= n.pos + n.len - eps) sp.classList.add('meend');
+            // Grace swars ("<P>G"): small and raised, before the swar's name.
+            if (starts && n.grace) {
+              const gr = document.createElement('span');
+              gr.className = 'gr';
+              gr.textContent = n.grace.map((g) => N.swarLabel(g, S.sargamLang).short).join('');
+              sp.insertBefore(gr, sp.firstChild);
+            }
+            // Join ("^"): a slur from the end of the swar to the next one.
+            if (n.ringOn && Math.min(n.pos + n.len, b0 + 1) >= n.pos + n.len - eps) sp.classList.add('meend');
             if (starts && n.slur) sp.classList.add('meend-in');
             sp.style.flexGrow = frac;
             sargamSpans[n.i].push(sp);
@@ -1390,15 +1399,13 @@
     sargamOn.forEach((sp) => sp.classList.add('on'));
     // Pitch checking: each sung note collects pitch samples until the next note.
     finishCheck();
-    // A swar that slides away (meend) is checked only until the slide.
-    if (checking && ev.semi !== null) checkNote = { idx: ev.idx, semi: ev.semi, start: ev.time, until: ev.glideAt ?? null, samples: [] };
+    if (checking && ev.semi !== null) checkNote = { idx: ev.idx, semi: ev.semi, start: ev.time, samples: [] };
   }
 
   function sargamPitch(f) {
     if (!checkNote || !f || !player.playing) return;
     const heardAt = engine.now - ((engine.ctx && engine.ctx.outputLatency) || 0);
     if (heardAt - checkNote.start < 0.06) return;   // skip the slide into the note
-    if (checkNote.until !== null && heardAt > checkNote.until) return;   // sliding away
     const expected = engine.saFrequency() * Math.pow(2, checkNote.semi / 12);
     let cents = 1200 * Math.log2(f / expected);
     cents = ((((cents + 600) % 1200) + 1200) % 1200) - 600;   // any octave counts
@@ -1522,6 +1529,7 @@
     bind('sargamInst', 'sargamInst', { type: 'str', onChange: setInst });
     bind('keysInst', 'sargamInst', { type: 'str', onChange: setInst });
     bind('sargamVol', 'sargamVol', { onChange: (v) => engine.setVolume('sargam', v) });
+    bind('sargamGrace', 'sargamGrace', { onChange: applySargam });
     $('sargamCheck').addEventListener('change', async (e) => {
       S.sargamCheck = e.target.checked;
       if (S.sargamCheck && !tuner.running) {

@@ -4,6 +4,8 @@
   'use strict';
   const D = root.Data;
   const BUSES = ['taal', 'dayan', 'bayan', 'manjeera', 'lehra', 'tanpura', 'swar', 'sargam'];
+  const LEGATO_OFFSET = 0.3;  // seconds into the sample a legato note starts
+  const LEGATO_FADE = 0.04;   // its fade-in, in place of the attack
 
   class Engine {
     constructor() {
@@ -163,15 +165,19 @@
       return this.buffers.get(files[i]);
     }
 
-    // glides: meend, [{ at, end, semis }] in seconds (see rampPitch).
-    playBuffer(buf, time, bus, { semis = 0, vel = 1, pan = 0, dur = 0, release = 0.25, glides = null } = {}) {
+    // legato: start past the sample's attack and fade in, so the note comes
+    // in without a new strike.
+    playBuffer(buf, time, bus, { semis = 0, vel = 1, pan = 0, dur = 0, release = 0.25, legato = false } = {}) {
       const c = this.ctx;
       const src = c.createBufferSource();
       src.buffer = buf;
       src.playbackRate.value = Math.pow(2, semis / 12);
-      if (glides) this.rampPitch(src.playbackRate, glides.map((g) => ({ at: g.at, end: g.end, value: Math.pow(2, g.semis / 12) })));
       const g = c.createGain();
       g.gain.value = vel;
+      if (legato) {
+        g.gain.setValueAtTime(0, time);
+        g.gain.linearRampToValueAtTime(vel, time + LEGATO_FADE);
+      }
       let node = src.connect(g);
       if (pan && c.createStereoPanner) {
         const p = c.createStereoPanner();
@@ -179,24 +185,13 @@
         node = node.connect(p);
       }
       node.connect(bus);
-      src.start(time);
+      src.start(time, legato ? LEGATO_OFFSET : 0);
       if (dur > 0) {
         g.gain.setValueAtTime(vel, time + dur);
         g.gain.linearRampToValueAtTime(0, time + dur + release);
         src.stop(time + dur + release + 0.05);
       }
       return { src, gain: g };
-    }
-
-    // Meend: glide a pitch param (frequency or playback rate) through
-    // [{ at, end, value }], holding each value until the next glide starts.
-    // Exponential, so the pitch moves evenly through the swars in between.
-    rampPitch(param, glides) {
-      let v = param.value;
-      for (const g of glides) {
-        param.setValueAtTime(v, g.at);
-        param.exponentialRampToValueAtTime(v = g.value, g.end);
-      }
     }
 
     // ── Percussion ──────────────────────────────────────────────────────
@@ -216,8 +211,8 @@
     // semi: semitones relative to Sa (0 = madhya Sa). Uses the sample nearest
     // the sounding pitch, so the key's transposition is kept small.
     // release: fade after dur (default depends on the instrument).
-    // glides: meend, [{ at, end, semi }] (seconds; semi as above).
-    melodic(instrument, semi, time, dur, vel, bus, release, glides) {
+    // legato: no new attack (see playBuffer).
+    melodic(instrument, semi, time, dur, vel, bus, release, legato = false) {
       const set = D.MELODIC[instrument];
       let best = null;
       for (const [file, off] of set) {
@@ -227,13 +222,12 @@
         if (!best || d < Math.abs(this.saSemis + semi - best[1])) best = [f, off];
       }
       if (!best) {
-        if (set.every(([f]) => this.missing.has(f + '.wav'))) this.synthMelodic(instrument, semi, time, dur, vel, bus, glides);
+        if (set.every(([f]) => this.missing.has(f + '.wav'))) this.synthMelodic(instrument, semi, time, dur, vel, bus);
         return null;
       }
       return this.playBuffer(this.buffers.get(best[0]), time, bus,
         { semis: this.saSemis + semi - best[1], vel, dur,
-          release: release ?? ({ harmonium: 0.12, piano: 0.25 }[instrument] ?? 0.6),
-          glides: glides && glides.map((g) => ({ at: g.at, end: g.end, semis: this.saSemis + g.semi - best[1] })) });
+          release: release ?? ({ harmonium: 0.12, piano: 0.25 }[instrument] ?? 0.6), legato });
     }
 
     melodicFiles(instrument) {
@@ -350,11 +344,10 @@
       }
     }
 
-    synthMelodic(instrument, semi, t, dur, vel, bus, glides) {
+    synthMelodic(instrument, semi, t, dur, vel, bus) {
       const c = this.ctx;
       const freq = (s) => this.saFrequency() * Math.pow(2, s / 12);
       const f = freq(semi);
-      const glide = (o, mul) => glides && this.rampPitch(o.frequency, glides.map((g) => ({ at: g.at, end: g.end, value: freq(g.semi) * mul })));
       if (instrument === 'harmonium') {
         const lp = c.createBiquadFilter();
         lp.type = 'lowpass'; lp.frequency.value = 2200;
@@ -367,12 +360,11 @@
         for (const [type, mul] of [['sawtooth', 1], ['square', 1.003]]) {
           const o = c.createOscillator();
           o.type = type; o.frequency.value = f * mul;
-          glide(o, mul);
           o.connect(lp); o.start(t); o.stop(t + dur + 0.15);
         }
       } else {
-        glide(this.tone(f, t, 0.4 * vel, instrument === 'santoor' ? 0.6 : 1.2, bus, 'triangle'), 1);
-        glide(this.tone(f * 2, t, 0.1 * vel, 0.3, bus), 2);
+        this.tone(f, t, 0.4 * vel, instrument === 'santoor' ? 0.6 : 1.2, bus, 'triangle');
+        this.tone(f * 2, t, 0.1 * vel, 0.3, bus);
       }
     }
 
