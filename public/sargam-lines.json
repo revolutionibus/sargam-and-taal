@@ -32093,6 +32093,11 @@
       "name": "শ্রাবনের ধারার মত",
       "notes": "S | G G m ||| P P S' | S' N - ||\n|| (P M) P - | m G - || G - m | P - m ||\n|| G - S | G G m || P - - | (P N) D (N S') ||\n|| N - - | - - - || P P - | (P M) P - ||\n|| m m G | R G - || - - S | G G m |||\n P | P (P N) - ||| S' S' - | S' S' - ||\n|| (P S') S' - | (S' R') S' - || N - (N D) | P N - ||\n|| - -  P | P P - || P - P | (P M) P - ||\n|| P P (M N) | D P - || m m G | R - (G m) ||\n|| G - S' | (S' G') G' - || (G' m') P' (G' m') | G' G' - ||\n|| (G' m') G' - | R' R' N || (N R') S' - | S' N - ||\n|| - - S | G G m |||\n S | S .N - ||| S - S | (S G) G - ||\n|| (G S) - S | G G - || G - m | P - m ||\n|| G - P | P P - || (P M) P - | (P M) P M ||\n|| P (M N) N | D P - || m - G | R G m ||\n|| G -  P | P N - || (N S') - S' | S' S' - ||\n|| (P S') - S' | (S' R') S' - || N N D | P N - ||\n|| - -  P | P P - || P P - | (P M) P - ||\n|| P P (M N) | D P - || m m G | R G m ||\n|| G - S' | G' G' - || (G' m') P' (G' m') | G' G' - ||\n|| (G' m') G' - | R' R' N || (N R') S' - | S' N - ||\n|| - - S | G G m ||| |||",
       "taal": "dadra"
+    },
+    {
+      "id": "mvgpnw4t",
+      "name": "তোমার হলো শুরু আমার হলো সারা",
+      "notes": "(SG) ^G G - | - - R S | .N S R - | - - - - |\n.P .D .N - | - - S R | G R S - | - - - - |\nG ^M G ^P | - - P P | P M D - | - - - - |\nP (DN) N - | - - D (PM) | P S' S' - | - - - - |\n\n(GP) - P - | - G P D | D S' S' - | - - - - |\nS' N R' - | - - R' R' | S' G' G' - | - - - - |\nR' - S' - | - - N D | N D P - | - - - - |\nS - S - | - - S S | (S.N) R R - | - - - - |\n\n(SG) - G - | - - R S | .N S R - | - - - - |\n.P .D .N - | - - S R | G R S - | - - - - |\nG M G P | - - P P | P M D - | - - - - |\nP (DN) N - | - - D (PM) | P S' S' - | - - - - |\n\nG M G P | - - P P | P M P - | - - - - |\nD - D - | - - P M | P - - - | - - - - |\n(PN) - N - | - - D P | M P D - | - - - - |\nP - M - | - - G R | G - - - | - - - - |\n(GP) - P - | - G P D | (DS') - - - | - - - - |\nS - S - | - - .N S | R - - - | - - - - |\nG M G P | - - P M | P - - - | - - - - |\n(PN) - N - | - - D (PM) | P S' S' - | - - - - |\n\n(SG) - G - | - - R S | .N S R - | - - - - |\n.P .D .N - | - - S R | G R S - | - - - - |\nG M G P | - - P P | P M D - | - - - - |\nP (DN) N - | - - D (PM) | P S' S' - | - - - - |"
     }
   ]
 }

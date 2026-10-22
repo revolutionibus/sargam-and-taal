@@ -279,6 +279,19 @@
           <div class="field"><label>Instrument</label><select id="sargamInst"></select></div>
           <div class="field"><label>Volume</label><input id="sargamVol" type="range" min="0" max="1.5" step="0.01"></div>
           <div class="field"><label><input type="checkbox" id="sargamCheck"> Check my singing (mic)</label></div>
+          <div class="field"><label><input type="checkbox" id="keysOn"> Play swars from the keyboard</label></div>
+          <div id="keysInfo" hidden>
+            <p class="muted small hint" data-i18n="keysHelp">Uses the instrument above. <kbd>A</kbd> is Sa and
+              <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd> <kbd>H</kbd> <kbd>J</kbd> are Re Ga Ma Pa Dha Ni, up to
+              <kbd>K</kbd> for taar Sa; the row above (<kbd>W</kbd> <kbd>E</kbd> <kbd>T</kbd> <kbd>Y</kbd> <kbd>U</kbd>)
+              gives the komal swars and tivra Ma. <kbd>Z</kbd>/<kbd>X</kbd> move an octave down/up. A MIDI keyboard
+              plays at its own pitch, with the sustain pedal.</p>
+            <div class="field"><label><input type="checkbox" id="keysWrite"> Write what I play into the line editor</label></div>
+            <p class="muted small hint" data-i18n="keysWriteHelp">While the line editor is open, each swar you play is
+              added at its cursor. Click outside the text box to play from the computer keys; there <kbd>-</kbd> holds
+              the swar, <kbd>\</kbd> adds a <code>|</code> and <kbd>Backspace</kbd> removes the last swar.</p>
+            <div id="keysStatus" class="status-line"></div>
+          </div>
         </div>
       </aside>
     </div>
@@ -401,7 +414,7 @@
       <h3>Keyboard shortcuts</h3>
       <p class="small" data-i18n="shortcuts"><kbd>Space</kbd> play/stop · <kbd>↑</kbd>/<kbd>↓</kbd> tempo ±1 (<kbd>Shift</kbd> ±10) ·
         <kbd>T</kbd> tap tempo · <kbd>S</kbd> strum swarmandal · <kbd>[</kbd>/<kbd>]</kbd> Sa down/up ·
-        <kbd>G</kbd> sargam panel</p>
+        <kbd>G</kbd> sargam panel · with “Play swars from the keyboard” on, the letter keys play swars instead</p>
     </div>
     <div class="card">
       <h3>Reset</h3>

@@ -16,7 +16,7 @@ else in the app.
    - Separate beats with spaces and vibhags with `|`.
    - Bols written together share one beat. `TiRaKiTa` is 4 strokes in one beat;
      `DhaGe` is 2.
-   - `-` is a rest. `Dha-` is Dha for half a beat, then silence.
+   - `-` is a rest. `Dha-` is Dha, then half a beat with no new stroke.
    - You can also click the **bol keyboard** on the right. It plays the sound and
      inserts the bol at the cursor.
 4. Check the line under the box. Green shows the beat and vibhag count, e.g.
@@ -39,6 +39,9 @@ This gives four vibhags of 2+3+2+3 beats, with sam on beat 1 and khali on beat 6
 
 ## Groups, lengths, random choices and accents
 
+[BOL_NOTATION.md](BOL_NOTATION.md) covers all of this in more detail, with
+timings for each example.
+
 These come from the notation used by other tabla apps, so you can paste such
 lines into the Composer:
 
@@ -49,8 +52,11 @@ lines into the Composer:
 - **`(…)[n]`** fits the group into `n` beats, shared evenly between its
   strokes. Inside brackets `-` takes no time (it only marks a ringing stroke):
   `(Na---)[1]` is one Na for the whole beat, and `(Tra#Ka---)[1]` is Tra and
-  Ka half a beat each. `(---)[1]` is a silent beat. Outside brackets `-` still
-  takes a slot, so `Dha-` is Dha for half a beat, then silence.
+  Ka half a beat each. `(---)[1]` is a silent beat.
+  **`~`** is a silent stroke that does take its share of the group:
+  `(Dha--~Tra----Ka-------)[1]` is Dha, a gap, Tra and Ka, a quarter beat
+  each. Dha keeps ringing through the gap. Outside brackets `-` still
+  takes a slot, so `Dha-` is Dha, then half a beat with no new stroke.
   `[n]` also works without brackets (`Dha[2]`), and a length **carries on** to
   the following beats until another `[n]` changes it.
 - **`(a|b|c)`** plays one of the choices at random each time round. Inside
@@ -67,12 +73,13 @@ leaves the following cells empty. A vibhag must end on a whole beat.
 ## Bols you can use
 
 ```
-Dha Dhin Dhi Din Di Dhe Dhum Na Ne Ta Tin Tun Tu Ti Te Ra Re Tr Tra
+Dha Dhin Dhi Din Di Dhe Dhum Na Ne Ta Tin Sur Tun Tu Ti Te Ra Re Tr Tra
 Ge Ghe Ga Gi Gin Ke Ka Ki Kat
 ```
 
 Upper or lower case both work, and they combine freely: `DhaGe`, `TinNa`,
-`KaTa`, `GaDi`, `DhaTiDhaGe`.
+`KaTa`, `GaDi`, `DhaTiDhaGe`. `Sur` is Dhin's open right-hand stroke on its
+own, without the bayan.
 
 ## Other things you can do
 
@@ -84,6 +91,67 @@ Upper or lower case both work, and they combine freely: `DhaGe`, `TinNa`,
   sequences and presets to a JSON file, and **Import…** loads them back.
 - **Manjeera:** it follows your marks automatically: open strokes on taali and a
   closed stroke on khali.
+
+## Where taals are stored
+
+Taals live in one of two places:
+
+| Kind | Stored in | Added by |
+|---|---|---|
+| Your own (**My compositions**) | `compositions.json`, in the `custom` list | Saving in the Composer, or editing the file |
+| Built-in (Teentaal, Dadra…) | `js/data.js`, in the `TAALS` list | Editing the code |
+
+Use the Composer for your own taals: you can rename and delete them in the
+app, and back them up with **Export all…**. Add a built-in taal only for a
+standard taal that should always be there, even in a fresh browser.
+
+### Editing compositions.json by hand
+
+Each saved taal is one entry in `custom`:
+
+```json
+{
+  "id": "c-mvgfilg4",
+  "name": "Dadra-3",
+  "marks": "X 0",
+  "tempo": 100,
+  "drum": "tabla",
+  "bols": "Dha Tu Tu Na | Dhin Na",
+  "kind": "custom"
+}
+```
+
+- **`id`** must be unique. Any text works; the app makes ids like `c-mvgfilg4`.
+- **`marks`**, **`tempo`** and **`bols`** are the Composer's fields.
+  `marks` can be empty.
+- **`drum`** is `tabla` or `pakhawaj`.
+- **`kind`** is always `custom`.
+
+Reload the app after saving the file. A mistake in the JSON (a missing comma
+or quote) stops the whole file from loading.
+
+### Adding a built-in taal
+
+Add a line to `TAALS` in `js/data.js`, in the same form as the others:
+
+```js
+{ id: 'rupak', name: 'Rupak', tempo: 110, marks: '0 1 2',
+  bols: 'Tin Tin Na | Dhi Na | Dhi Na' },
+```
+
+The `id` must be different from every other taal's. It shows up in the
+Player's **Taals** group. Add `kind: 'composition'` to list it under
+**Compositions** instead, like the built-in kaydas.
+
+### Copying to taal_app_up
+
+- `js/data.js` is code: copy it as-is.
+- `compositions.json` is saved data: merge it with the script in
+  [SYNC_TO_UP.md](SYNC_TO_UP.md). Copying it would lose the taals saved only
+  in `taal_app_up`.
+
+The deployed site can't write files, so a taal saved in its Composer stays in
+that browser only. Use **Export all…** to keep it.
 
 ## Limitations
 

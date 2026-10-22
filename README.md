@@ -119,3 +119,6 @@ npm run open      # open in Android Studio, then Run, or Build → Build APK(s)
 Needs Android Studio (it installs the SDK). Without it:
 `cd android && ./gradlew assembleDebug` (with `ANDROID_HOME` set) writes
 `android/app/build/outputs/apk/debug/app-debug.apk`.
+
+See [ANDROID_BUILD.md](ANDROID_BUILD.md) for the full update, versioning and
+signed release build steps.

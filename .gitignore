@@ -1,6 +1,7 @@
 dist/
 *.py
 *.sh
-
+android/
 .wrangler/
 node_modules/
+keytool_details.txt

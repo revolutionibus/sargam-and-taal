@@ -122,6 +122,15 @@
     'Notes only (you sing)': 'শুধু স্বরলিপি (আপনি গাইবেন)',
     'Instrument': 'বাদ্যযন্ত্র',
     'Check my singing (mic)': 'আমার গান যাচাই করুন (মাইক)',
+    'Play swars from the keyboard': 'কিবোর্ড দিয়ে স্বর বাজান',
+    'MIDI: {names}': 'MIDI: {names}',
+    'No MIDI keyboard connected. The computer keys still work.': 'কোনো MIDI কিবোর্ড যুক্ত নেই। কম্পিউটারের কি দিয়ে বাজানো যাবে।',
+    "This browser can't use MIDI keyboards (Chrome and Edge can). The computer keys still work.":
+      'এই ব্রাউজারে MIDI কিবোর্ড চলে না (Chrome ও Edge-এ চলে)। কম্পিউটারের কি দিয়ে বাজানো যাবে।',
+    'MIDI access was blocked. The computer keys still work.': 'MIDI ব্যবহারের অনুমতি দেওয়া হয়নি। কম্পিউটারের কি দিয়ে বাজানো যাবে।',
+    'Octave up {n}': '{n} সপ্তক উপরে',
+    'Octave down {n}': '{n} সপ্তক নিচে',
+    'Write what I play into the line editor': 'যা বাজাই তা লাইন এডিটরে লিখে রাখুন',
     'Loop': 'লুপ',
     'All lines': 'সব লাইন',
     'Selected lines': 'বাছাই করা লাইন',
@@ -351,7 +360,14 @@
       '<code>(Dha|Dha2)</code> এলোমেলোভাবে একটি বাছে, <code>Dha2</code> = ২ নম্বর রেকর্ডিং, <code>#</code> জোরে, <code>*</code> আস্তে।',
     shortcuts: '<kbd>Space</kbd> বাজান/থামান · <kbd>↑</kbd>/<kbd>↓</kbd> গতি ±১ (<kbd>Shift</kbd> ±১০) · ' +
       '<kbd>T</kbd> ট্যাপ করে গতি · <kbd>S</kbd> স্বরমণ্ডল বাজান · <kbd>[</kbd>/<kbd>]</kbd> সা নিচে/উপরে · ' +
-      '<kbd>G</kbd> সরগম প্যানেল',
+      '<kbd>G</kbd> সরগম প্যানেল · “কিবোর্ড দিয়ে স্বর বাজান” চালু থাকলে অক্ষরের কিগুলো স্বর বাজায়',
+    keysHelp: 'ওপরে বাছাই করা বাদ্যযন্ত্র বাজবে। <kbd>A</kbd> হলো সা, <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd> ' +
+      '<kbd>H</kbd> <kbd>J</kbd> হলো রে গা মা পা ধা নি, আর <kbd>K</kbd> তার সা; ওপরের সারির কিগুলো (<kbd>W</kbd> <kbd>E</kbd> ' +
+      '<kbd>T</kbd> <kbd>Y</kbd> <kbd>U</kbd>) কোমল স্বর ও তীব্র মা। <kbd>Z</kbd>/<kbd>X</kbd> দিয়ে এক সপ্তক নিচে/উপরে। ' +
+      'MIDI কিবোর্ড নিজের সুরেই বাজে, সাসটেইন প্যাডেলসহ।',
+    keysWriteHelp: 'লাইন এডিটর খোলা থাকলে যে স্বর বাজাবেন তা কার্সরের জায়গায় লেখা হবে। কম্পিউটারের কি দিয়ে বাজাতে ' +
+      'লেখার বাক্সের বাইরে ক্লিক করুন; তখন <kbd>-</kbd> স্বর ধরে রাখে, <kbd>\\</kbd> একটি <code>|</code> বসায় ' +
+      'আর <kbd>Backspace</kbd> শেষ স্বরটি মুছে দেয়।',
   };
 
   const BN_DIGITS = '০১২৩৪৫৬৭৮৯';

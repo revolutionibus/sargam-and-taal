@@ -19,11 +19,11 @@
     sargamPanel: true, sargamOn: true, sargamExercise: 'scale', sargamRaga: 'bilawal',
     sargamCustom: 'S R G M P - - - | P M G R S - - -', sargamPerBeat: 1, sargamMode: 'along',
     sargamInst: 'harmonium', sargamVol: 0.7, sargamCheck: false, sargamVisible: 4, sargamCollapsed: {},
-    sargamLoop: 'all', sargamLoopLines: {},
+    sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true,
     fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'bn', theme: 'auto',
   };
   // Settings captured by a preset (everything except app preferences).
-  const APP_PREFS = ['fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamCollapsed',
+  const APP_PREFS = ['keysOn', 'keysWrite', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamCollapsed',
                      'lehraOpen', 'tanpuraOpen', 'swarOpen', 'taalOpen'];
 
   let store = { settings: {}, custom: [], sequences: [], presets: [], favorites: [], sargamFavorites: [], sargamLines: [] };
@@ -1900,6 +1900,161 @@
     sampleStatus.t = setTimeout(sampleStatus, 100);
   };
 
+  // ── Playing swars from the keyboard ──────────────────────────────────
+  // Computer keys are laid out like a harmonium from A (Sa), by physical
+  // position (e.code) so any keyboard layout works. A MIDI keyboard plays at
+  // its own pitch, keeping the Sa fine tune in cents.
+  const KEY_SEMI = {
+    KeyA: 0, KeyW: 1, KeyS: 2, KeyE: 3, KeyD: 4, KeyF: 5, KeyT: 6, KeyG: 7, KeyY: 8, KeyH: 9,
+    KeyU: 10, KeyJ: 11, KeyK: 12, KeyO: 13, KeyL: 14, KeyP: 15, Semicolon: 16, Quote: 17,
+  };
+  const KEY_RELEASE = { harmonium: 0.12, piano: 0.25 };   // santoor rings on
+  const held = new Map();      // key code or 'm' + MIDI note -> { voice, release }
+  const sustained = new Map(); // notes let go while the sustain pedal is down
+  let keyOctave = 0, pedal = false, midi = null, midiError = '';
+
+  function noteOn(id, semi, vel) {
+    writeSwar(semi);
+    noteOff(id);
+    if (sustained.has(id)) { releaseNote(sustained.get(id)); sustained.delete(id); }
+    const inst = S.sargamInst;
+    const n = { voice: null, release: KEY_RELEASE[inst] };
+    held.set(id, n);
+    engine.ensure();
+    engine.load(engine.melodicFiles(inst)).then(() => {
+      if (held.get(id) !== n) return;   // let go while the samples loaded
+      n.voice = engine.melodic(inst, semi, engine.now, 6.5, vel, engine.preview.sargam);
+    });
+  }
+
+  function noteOff(id) {
+    const n = held.get(id);
+    if (!n) return;
+    held.delete(id);
+    if (pedal) sustained.set(id, n); else releaseNote(n);
+  }
+
+  function releaseNote(n) {
+    if (!n.voice || !n.release) return;
+    const t = engine.now, g = n.voice.gain.gain;
+    g.cancelScheduledValues(t);
+    g.setValueAtTime(g.value, t);
+    g.setTargetAtTime(0, t, n.release / 3);
+    try { n.voice.src.stop(t + n.release * 2); } catch (e) { /* already stopped */ }
+  }
+
+  function setPedal(down) {
+    pedal = down;
+    if (down) return;
+    sustained.forEach(releaseNote);
+    sustained.clear();
+  }
+
+  function allNotesOff() {
+    [...held.keys()].forEach(noteOff);
+    setPedal(false);
+  }
+
+  // Writing: while the line editor is open, played swars go in at its cursor
+  // (the text box keeps its cursor without focus, so the keys keep playing).
+  const SWAR_CHARS = 'SrRgGmMPdDnN';
+  function writing() {
+    return S.keysWrite && !$('sargamEditor').hidden;
+  }
+
+  function writeSwar(semi) {
+    if (!writing()) return;
+    const oct = Math.floor(semi / 12);
+    editLine((before) => {
+      const sep = before && !/[\s(]$/.test(before) ? ' ' : '';
+      return before + sep + '.'.repeat(Math.max(0, -oct)) + SWAR_CHARS[semi - 12 * oct] + "'".repeat(Math.max(0, oct));
+    });
+  }
+
+  // Replaces the text before the cursor with edit(before), as if typed.
+  function editLine(edit) {
+    const ta = $('sargamCustom');
+    const { selectionStart: a, selectionEnd: b, value } = ta;
+    const before = edit(value.slice(0, a));
+    const after = value.slice(b);
+    ta.value = before + (after && !/^\s/.test(after) ? ' ' : '') + after;
+    ta.selectionStart = ta.selectionEnd = before.length;
+    ta.dispatchEvent(new Event('input'));
+  }
+
+  // Handles a keydown while keyboard play is on; true if it was a swar key.
+  // Letter keys don't type into checkboxes or sliders, so those still play.
+  function playKey(e) {
+    const t = e.target;
+    if (e.metaKey || e.ctrlKey || e.altKey || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' ||
+        (t.tagName === 'INPUT' && !['checkbox', 'radio', 'range', 'button'].includes(t.type))) return false;
+    if (e.code === 'KeyZ' || e.code === 'KeyX') {
+      keyOctave = Math.max(-2, Math.min(1, keyOctave + (e.code === 'KeyX' ? 1 : -1)));
+      showKeysStatus();
+    } else if (e.code in KEY_SEMI) {
+      if (!e.repeat) noteOn(e.code, KEY_SEMI[e.code] + 12 * keyOctave, 0.8);
+    } else if (writing() && (e.code === 'Minus' || e.code === 'Backslash')) {
+      const mark = e.code === 'Minus' ? '-' : '|';
+      editLine((before) => before + (before && !/\s$/.test(before) ? ' ' : '') + mark);
+    } else if (writing() && e.code === 'Backspace') {
+      editLine((before) => before.replace(/\s*\S+\s*$/, ''));
+    } else return false;
+    e.preventDefault();
+    return true;
+  }
+
+  function onMidi(e) {
+    if (!S.keysOn) return;
+    const [status, a, b] = e.data;
+    const cmd = status & 0xf0;
+    if (cmd === 0x90 && b > 0) {
+      noteOn('m' + a, a - D.SAMPLE_BASE_MIDI - Math.round(engine.saSemis), 0.15 + 0.85 * b / 127);
+    } else if (cmd === 0x80 || cmd === 0x90) noteOff('m' + a);
+    else if (cmd === 0xb0 && a === 64) setPedal(b >= 64);
+  }
+
+  function initMidi() {
+    if (midi || midiError) return;
+    if (!navigator.requestMIDIAccess) {
+      midiError = tr("This browser can't use MIDI keyboards (Chrome and Edge can). The computer keys still work.");
+      showKeysStatus();
+      return;
+    }
+    navigator.requestMIDIAccess().then((m) => {
+      midi = m;
+      const hook = () => { m.inputs.forEach((i) => { i.onmidimessage = onMidi; }); showKeysStatus(); };
+      m.onstatechange = hook;
+      hook();
+    }, () => {
+      midiError = tr('MIDI access was blocked. The computer keys still work.');
+      showKeysStatus();
+    });
+  }
+
+  function showKeysStatus() {
+    const parts = [];
+    if (keyOctave) parts.push(tr(keyOctave > 0 ? 'Octave up {n}' : 'Octave down {n}', { n: Math.abs(keyOctave) }));
+    const names = midi ? [...midi.inputs.values()].map((i) => i.name) : [];
+    if (midiError) parts.push(midiError);
+    else if (names.length) parts.push(tr('MIDI: {names}', { names: names.join(', ') }));
+    else if (midi) parts.push(tr('No MIDI keyboard connected. The computer keys still work.'));
+    $('keysStatus').textContent = parts.join(' · ');
+  }
+
+  function initKeys() {
+    const on = () => {
+      $('keysInfo').hidden = !S.keysOn;
+      if (S.keysOn) { initMidi(); engine.ensure(); engine.load(engine.melodicFiles(S.sargamInst)); }
+      else allNotesOff();
+    };
+    bind('keysOn', 'keysOn', { onChange: on });
+    bind('keysWrite', 'keysWrite');
+    $('keysInfo').hidden = !S.keysOn;
+    if (S.keysOn) initMidi();
+    document.addEventListener('keyup', (e) => noteOff(e.code));
+    addEventListener('blur', allNotesOff);
+  }
+
   // ── Tabs & keyboard ──────────────────────────────────────────────────
   function switchTab(name) {
     document.querySelectorAll('.tab-btn').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
@@ -1909,6 +2064,7 @@
 
   document.addEventListener('keydown', (e) => {
     const tag = e.target.tagName;
+    if (S.keysOn && playKey(e)) return;
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.metaKey || e.ctrlKey) return;
     const step = e.shiftKey ? 10 : 1;
     switch (e.key) {
@@ -1933,6 +2089,7 @@
   loadFiles().then(() => {
     save();
     initSargam();
+    initKeys();
     initPlayerTab();
     initComposer();
     initSequences();
