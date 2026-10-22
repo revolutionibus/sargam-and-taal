@@ -398,7 +398,10 @@
   // line being sung is shown large.
   function updateFocus() {
     const on = !!(S.focusPlay && player.playing);
+    const entering = on && !document.body.classList.contains('focus');
     document.body.classList.toggle('focus', on);
+    // The line box is sized to the screen from the top of the page.
+    if (entering) scrollTo({ top: 0 });
     $('focusBtn').setAttribute('aria-pressed', String(!!S.focusPlay));
     $('focusPlay').checked = !!S.focusPlay;
     fitSargamLines();
@@ -1213,7 +1216,7 @@
     const box = $('sargamLines');
     const handle = $('sargamResize');
     const rows = sargamLineEls;
-    const want = document.body.classList.contains('focus') ? 2 : S.sargamVisible;
+    const want = document.body.classList.contains('focus') ? focusLineCount() : S.sargamVisible;
     const n = Math.max(1, Math.min(want, rows.length));
     handle.hidden = rows.length < 2;
     handle.lastChild.textContent = rows.length < 2 ? '' : tr('{n} of {total} lines', { n, total: rows.length });
@@ -1222,6 +1225,23 @@
     if (n >= rows.length || !box.offsetParent) { box.style.maxHeight = ''; return; }
     const top = rows[0].getBoundingClientRect().top;
     box.style.maxHeight = Math.ceil(rows[n].getBoundingClientRect().top - top) + 'px';
+  }
+
+  // Focus view: as many whole lines as fit between the top of the box (with
+  // the page scrolled to the top) and the bottom of the screen, or the
+  // phone dock.
+  function focusLineCount() {
+    const rows = sargamLineEls;
+    const box = $('sargamLines');
+    if (!rows.length || !box.offsetParent) return 1;
+    const dock = $('dock');
+    const bottom = dock.offsetParent ? dock.getBoundingClientRect().top : innerHeight;
+    const pad = parseFloat(getComputedStyle($('sargamPanel')).paddingBottom) || 0;
+    const room = bottom - pad - 12 - (box.getBoundingClientRect().top + scrollY);
+    const top = rows[0].getBoundingClientRect().top;
+    let n = 0;
+    while (n < rows.length && rows[n].getBoundingClientRect().bottom - top <= room) n++;
+    return n;
   }
 
   function setSargamVisible(n) {
@@ -1273,6 +1293,8 @@
       const w = Math.round(entry.contentRect.width);
       if (w !== width) { width = w; fitSargamLines(); }
     }).observe($('sargamPanel'));
+    // Focus view fills the screen height, so a rotation or resize refits it.
+    addEventListener('resize', () => { if (document.body.classList.contains('focus')) fitSargamLines(); });
   }
 
   // Playback keeps the current line at the top of the box, but the user's own

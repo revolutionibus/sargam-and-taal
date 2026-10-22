@@ -23,11 +23,13 @@
   --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 2px 8px rgba(0, 0, 0, .03);
   --topbar-bg: rgba(246, 246, 244, .82);
   --play-drop: 0 6px 16px color-mix(in srgb, var(--accent) 40%, transparent);
-  --font-ui: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  /* Kona sets the Bangla everywhere (400 and 700 only, so Bangla at 500 renders
+     as 400 and at 600 as 700); English keeps the face each stack had before. */
+  --font-ui: 'Kona', 'Hind Siliguri', 'Kalpurush', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   /* Swaralipi: sargam set like a printed notation book. */
-  --font-notation: 'Kalpurush', 'Hind Siliguri', Georgia, serif;
-  /* The beat grid keeps the system face it was designed with. */
-  --font-grid: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-notation: 'Kona', 'Kalpurush', Georgia, serif;
+  /* The beat grid keeps the system face it was designed with for its English bols. */
+  --font-grid: 'Kona', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Kalpurush', sans-serif;
 }
 /* Dark: when the system asks for it (unless the theme button forces light),
    or when the theme button forces it. */
@@ -473,7 +475,7 @@ details[data-keep][open] > summary::after { transform: rotate(-135deg); margin-t
 
 /* ── Focus view: while playing, only the beat, the cue and the line ── */
 .focus .inst-rail, .focus .side-col, .focus #instruments, .focus #card-taal,
-.focus .sargam-settings, .focus #sargamResize, .focus #sargamPanel .switch { display: none !important; }
+.focus .sargam-settings, .focus #sargamResize, .focus #sargamPanel .switch, .focus #credit { display: none !important; }
 .focus #sargamPanel { flex: 1 1 0 !important; }
 .focus .turn { font-size: 1.3rem; padding: 14px; }
 .focus .s-line { padding: 12px 8px; }
