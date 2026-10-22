@@ -60,11 +60,18 @@
     'Lehra': 'লহরা',
     'Tanpura': 'তানপুরা',
     'Swarmandal': 'স্বরমণ্ডল',
+    'Keys': 'কিবোর্ড',
+    'Keyboard and MIDI': 'কিবোর্ড ও MIDI',
+    'Show the keyboard': 'কিবোর্ড দেখান',
+    'Ati-mandra saptak': 'অতিমন্দ্র সপ্তক',
+    'Mandra saptak': 'মন্দ্র সপ্তক',
+    'Madhya saptak': 'মধ্য সপ্তক',
+    'Taar saptak': 'তার সপ্তক',
+    'Ati-taar saptak': 'অতিতার সপ্তক',
     'Taal': 'তাল',
     'Sargam practice': 'সারগাম অনুশীলন',
     'Sargam': 'সারগাম',
     'Swars of the line': 'লাইনের স্বর',
-    'More options': 'আরও বিকল্প',
     'Drum mix and manjeera': 'বাদ্যের মিশ্রণ ও মন্দিরা',
     'Sargam practice (G)': 'সারগাম অনুশীলন (G)',
     'Close': 'বন্ধ করুন',
@@ -389,7 +396,7 @@
       '<code>(Dha|Dha2)</code> এলোমেলোভাবে একটি বাছে, <code>Dha2</code> = ২ নম্বর রেকর্ডিং, <code>#</code> জোরে, <code>*</code> আস্তে।',
     shortcuts: '<kbd>Space</kbd> বাজান/থামান · <kbd>↑</kbd>/<kbd>↓</kbd> গতি ±১ (<kbd>Shift</kbd> ±১০) · ' +
       '<kbd>T</kbd> ট্যাপ করে গতি · <kbd>S</kbd> স্বরমণ্ডল বাজান · <kbd>[</kbd>/<kbd>]</kbd> সা নিচে/উপরে · ' +
-      '<kbd>G</kbd> সরগম প্যানেল · “কিবোর্ড দিয়ে স্বর বাজান” চালু থাকলে অক্ষরের কিগুলো স্বর বাজায়',
+      '<kbd>G</kbd> সরগম প্যানেল · “কিবোর্ড” চালু থাকলে অক্ষরের কিগুলো স্বর বাজায়',
     keysHelp: 'ওপরে বাছাই করা বাদ্যযন্ত্র বাজবে। <kbd>A</kbd> হলো সা, <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd> ' +
       '<kbd>H</kbd> <kbd>J</kbd> হলো রে গা মা পা ধা নি, আর <kbd>K</kbd> তার সা; ওপরের সারির কিগুলো (<kbd>W</kbd> <kbd>E</kbd> ' +
       '<kbd>T</kbd> <kbd>Y</kbd> <kbd>U</kbd>) কোমল স্বর ও তীব্র মা। <kbd>Z</kbd>/<kbd>X</kbd> দিয়ে এক সপ্তক নিচে/উপরে। ' +

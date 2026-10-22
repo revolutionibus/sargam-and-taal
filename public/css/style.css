@@ -463,6 +463,24 @@ details[data-keep][open] > summary::after { transform: rotate(-135deg); margin-t
 .pane-close { font-size: 1rem !important; flex: 0 0 auto; }
 .pane-close, #favBtn, #sargamFav { min-width: 44px; min-height: 44px !important; margin: -10px -8px; }
 #sargamFav { margin: 0; }
+/* Keys: the on-screen keyboard. Black keys sit inside the white key before
+   them, straddling its right edge. */
+.kb { margin: 4px 0 10px; }
+.kb-cap { margin-bottom: 6px; }
+.kb-keys { display: flex; height: 92px; }
+.kb-key { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 1px;
+  font-size: .72rem; line-height: 1.1; padding-bottom: 6px; user-select: none; transition: background .06s; }
+.kb-key i { font: 600 .62rem/1 var(--font-grid); font-style: normal; opacity: .55; }
+.kb-key b { font-family: var(--font-notation); font-weight: 400; }
+.kb-key.white { position: relative; flex: 1 1 0; min-width: 0; background: #fbfbf8; color: #222;
+  border: 1px solid #b9b9b3; border-left-width: 0; border-radius: 0 0 5px 5px; }
+.kb-key.white:first-child { border-left-width: 1px; }
+.kb-key.black { position: absolute; z-index: 1; top: -1px; right: -32%; width: 64%; height: 60%;
+  background: #2b2b2b; color: #eee; border-radius: 0 0 4px 4px; padding-bottom: 4px; font-size: .62rem; }
+.kb-key.sa:not(.down) { box-shadow: inset 0 -3px 0 var(--accent); }
+.kb-key.down { background: var(--accent); color: var(--on-accent); }
+.kb-key.sus { background: color-mix(in srgb, var(--accent) 40%, #fbfbf8); }
+.kb-key.black.sus { background: color-mix(in srgb, var(--accent) 55%, #2b2b2b); }
 .inst #strumBtn { min-height: 28px; padding: 2px 9px; font-size: .8rem; flex: 0 0 auto; }
 @media (prefers-reduced-motion: reduce) {
   .play.beat::after { animation: none; }

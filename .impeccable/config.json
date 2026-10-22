@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "public/css/style.css"
+        ],
+        "createdAt": "2026-10-22T14:25:34.955Z",
+        "reason": "Claude: L480 is the Sa marker inset along the bottom edge of a piano key in the on-screen keyboard (.kb-key.sa), not a side accent on a card"
+      }
+    ]
+  }
+}

@@ -14,18 +14,18 @@
     lehraOn: false, lehraId: 'tt-yaman', lehraVol: 0.6, lehraAuto: true,
     tanpuraOn: true, tanpuraPattern: 0, tanpuraTone: 'k1', tanpuraCount: 1, tanpuraSpeed: 1,
     tanpuraRandom: true, tanpuraVol: 0.6, tanpuraDelays: [1.0, 0.9, 0.9, 1.7],
-    lehraOpen: false, tanpuraOpen: false, swarOpen: false, taalOpen: true,
+    lehraOpen: false, tanpuraOpen: false, swarOpen: false, keysOpen: false, taalOpen: true,
     swarOn: false, swarRaga: 'yaman', swarEvery: 2, swarSpeed: 1, swarVol: 0.5,
     sargamPanel: true, sargamOn: true, sargamExercise: 'scale', sargamRaga: 'bilawal',
     sargamCustom: 'S R G M P - - - | P M G R S - - -', sargamPerBeat: 1, sargamMode: 'along',
     sargamInst: 'harmonium', sargamVol: 0.7, sargamCheck: false, sargamVisible: 4, sargamCollapsed: {},
-    sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true, midiSaNote: null,
+    sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true, keysShow: true, midiSaNote: null,
     fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'bn', theme: 'auto',
     focusPlay: false,
   };
   // Settings captured by a preset (everything except app preferences).
-  const APP_PREFS = ['keysOn', 'keysWrite', 'midiSaNote', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamCollapsed',
-                     'lehraOpen', 'tanpuraOpen', 'swarOpen', 'taalOpen', 'focusPlay'];
+  const APP_PREFS = ['keysOn', 'keysWrite', 'keysShow', 'midiSaNote', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamCollapsed',
+                     'lehraOpen', 'tanpuraOpen', 'swarOpen', 'keysOpen', 'taalOpen', 'focusPlay'];
 
   let store = { settings: {}, custom: [], sequences: [], presets: [], favorites: [], sargamFavorites: [], sargamLines: [] };
   try { Object.assign(store, JSON.parse(localStorage.getItem(STORE)) || {}); } catch (e) { /* fresh start */ }
@@ -360,6 +360,7 @@
     $('saInfo').textContent = `· ${num(engine.saFrequency().toFixed(1))} Hz`;
     $('saBtn').innerHTML = `<span class="muted">${tr('Sa')}</span> <b>${D.KEYS[S.key]}</b>` +
       `<span class="muted">${S.fine ? ` ${S.fine > 0 ? '+' : '−'}${num(Math.abs(S.fine))}¢` : ''} · ${num(engine.saFrequency().toFixed(1))} Hz</span>`;
+    drawBoard();
     save();
   }
 
@@ -504,14 +505,14 @@
     });
   }
 
-  // Rail: Lehra, Tanpura, Swarmandal, Taal and Sargam each have an icon that
+  // Rail: Lehra, Tanpura, Swarmandal, Keys, Taal and Sargam each have an icon that
   // opens or closes their pane, and the layout slides (CSS transitions on the
   // flex sizes). While an instrument is open the sargam pane shrinks to make room.
   const PANES = {   // open-state setting -> element
-    lehraOpen: 'card-lehra', tanpuraOpen: 'card-tanpura', swarOpen: 'card-swar',
+    lehraOpen: 'card-lehra', tanpuraOpen: 'card-tanpura', swarOpen: 'card-swar', keysOpen: 'card-keys',
     taalOpen: 'card-taal', sargamPanel: 'sargamPanel',
   };
-  const INSTRUMENTS = ['lehraOpen', 'tanpuraOpen', 'swarOpen'];
+  const INSTRUMENTS = ['lehraOpen', 'tanpuraOpen', 'swarOpen', 'keysOpen'];
   const SLIDE_MS = 350;   // matches the CSS transition
   const slideTimers = new Map();
   // A closed pane is display:none; .moving keeps it rendered while it slides.
@@ -557,6 +558,7 @@
     $('card-lehra').classList.toggle('off', !S.lehraOn);
     $('card-tanpura').classList.toggle('off', !S.tanpuraOn);
     $('card-swar').classList.toggle('off', !S.swarOn);
+    $('card-keys').classList.toggle('off', !S.keysOn);
     // Rail icons show which parts are switched on (the dot), and say so in
     // their names; the highlight means the pane is open.
     document.querySelectorAll('.inst-btn').forEach((b) => {
@@ -1448,7 +1450,10 @@
   function initSargam() {
     fillSargamExercise();
     D.RAGAS.forEach((r) => $('sargamRaga').appendChild(opt(r.id, r.name)));
-    D.SARGAM_INSTRUMENTS.forEach((i) => $('sargamInst').appendChild(opt(i.id, i.name)));
+    D.SARGAM_INSTRUMENTS.forEach((i) => {
+      $('sargamInst').appendChild(opt(i.id, i.name));
+      $('keysInst').appendChild(opt(i.id, i.name));
+    });
 
     bind('sargamOn', 'sargamOn', { onChange: () => { applySargam(); sargamStopped(); cardState(); } });
     $('sargamExercise').addEventListener('change', (e) => selectSargamExercise(e.target.value));
@@ -1509,7 +1514,13 @@
       player.setSargamLoop(null);
       showLoop();
     });
-    bind('sargamInst', 'sargamInst', { type: 'str', onChange: (v) => engine.ctx && engine.load(engine.melodicFiles(v)) });
+    // One instrument for the line and the keys; the Keys pane shows the same choice.
+    const setInst = (v) => {
+      $('sargamInst').value = $('keysInst').value = v;
+      if (engine.ctx) engine.load(engine.melodicFiles(v));
+    };
+    bind('sargamInst', 'sargamInst', { type: 'str', onChange: setInst });
+    bind('keysInst', 'sargamInst', { type: 'str', onChange: setInst });
     bind('sargamVol', 'sargamVol', { onChange: (v) => engine.setVolume('sargam', v) });
     $('sargamCheck').addEventListener('change', async (e) => {
       S.sargamCheck = e.target.checked;
@@ -2068,7 +2079,9 @@
     if (sustained.has(id)) { releaseNote(sustained.get(id)); sustained.delete(id); }
     const inst = S.sargamInst;
     const n = { voice: null, release: KEY_RELEASE[inst] };
+    n.note = keysSa() + semi;
     held.set(id, n);
+    showBoard();
     engine.ensure();
     engine.load(engine.melodicFiles(inst)).then(() => {
       if (held.get(id) !== n) return;   // let go while the samples loaded
@@ -2081,6 +2094,7 @@
     if (!n) return;
     held.delete(id);
     if (pedal) sustained.set(id, n); else releaseNote(n);
+    showBoard();
   }
 
   function releaseNote(n) {
@@ -2097,6 +2111,7 @@
     if (down) return;
     sustained.forEach(releaseNote);
     sustained.clear();
+    showBoard();
   }
 
   function allNotesOff() {
@@ -2139,6 +2154,8 @@
         (t.tagName === 'INPUT' && !['checkbox', 'radio', 'range', 'button'].includes(t.type))) return false;
     if (e.code === 'KeyZ' || e.code === 'KeyX') {
       keyOctave = Math.max(-2, Math.min(1, keyOctave + (e.code === 'KeyX' ? 1 : -1)));
+      boardOct = keyOctave;
+      drawBoard();
       showKeysStatus();
     } else if (e.code in KEY_SEMI) {
       if (!e.repeat) noteOn(e.code, KEY_SEMI[e.code] + 12 * keyOctave, 0.8);
@@ -2169,11 +2186,14 @@
     const cmd = status & 0xf0;
     if (cmd === 0x90 && b > 0) {
       if (learningSa) { setMidiSa(a); return; }
-      // midiSaNote: the physical key chosen as madhya Sa; otherwise real pitch.
-      const sa = S.midiSaNote ?? D.SAMPLE_BASE_MIDI + Math.round(engine.saSemis);
-      noteOn('m' + a, a - sa, 0.15 + 0.85 * b / 127);
+      noteOn('m' + a, a - keysSa(), 0.15 + 0.85 * b / 127);
     } else if (cmd === 0x80 || cmd === 0x90) noteOff('m' + a);
     else if (cmd === 0xb0 && a === 64) setPedal(b >= 64);
+  }
+
+  // midiSaNote: the physical key chosen as madhya Sa; otherwise real pitch.
+  function keysSa() {
+    return S.midiSaNote ?? D.SAMPLE_BASE_MIDI + Math.round(engine.saSemis);
   }
 
   function setMidiSa(note) {
@@ -2181,6 +2201,67 @@
     S.midiSaNote = note;
     save();
     showMidiSa();
+    drawBoard();
+  }
+
+  // On-screen keyboard: from the white key at or below Sa up to taar Ma (what
+  // the computer keys reach), lighting the keys being played. It moves an
+  // octave at a time to follow Z/X and MIDI keys played outside it.
+  const BLACK = [1, 3, 6, 8, 10];
+  const SAPTAK = ['Ati-mandra saptak', 'Mandra saptak', 'Madhya saptak', 'Taar saptak', 'Ati-taar saptak'];
+  const KEY_LETTER = { Semicolon: ';', Quote: "'" };
+  let boardOct = 0, boardRange = null;
+
+  function drawBoard() {
+    const box = $('keysBoard');
+    box.hidden = !S.keysShow;
+    if (box.hidden) return;
+    const sa = keysSa(), base = sa + 12 * boardOct;
+    const lo = BLACK.includes(base % 12) ? base - 1 : base;
+    const hi = BLACK.includes((base + 17) % 12) ? base + 18 : base + 17;
+    boardRange = [lo, hi];
+    const letters = {};
+    for (const [code, semi] of Object.entries(KEY_SEMI)) {
+      letters[sa + semi + 12 * keyOctave] = KEY_LETTER[code] || code.slice(3);
+    }
+    const keys = document.createElement('div');
+    keys.className = 'kb-keys';
+    let white = null;
+    for (let n = lo; n <= hi; n++) {
+      const k = document.createElement('div');
+      const black = BLACK.includes(n % 12);
+      const l = N.swarLabel(n - sa, S.sargamLang);
+      k.className = 'kb-key ' + (black ? 'black' : 'white') + ((n - sa) % 12 === 0 ? ' sa' : '');
+      k.dataset.note = n;
+      k.innerHTML = (letters[n] ? `<i>${letters[n]}</i>` : '') + `<b>${l.short}</b>`;
+      if (black && white) white.appendChild(k);
+      else { keys.appendChild(k); white = k; }
+    }
+    const oct = Math.floor((base - sa) / 12);
+    box.replaceChildren(Object.assign(document.createElement('div'), {
+      className: 'kb-cap small muted',
+      textContent: tr(SAPTAK[Math.max(-2, Math.min(2, oct)) + 2]) + ' · ' + tr('Sa') + ' = ' + D.KEYS[((sa % 12) + 12) % 12],
+    }), keys);
+    showBoard();
+  }
+
+  function showBoard() {
+    if (!S.keysShow || !boardRange) return;
+    const down = new Set([...held.values()].map((n) => n.note));
+    const sus = new Set([...sustained.values()].map((n) => n.note));
+    // A key played outside the keyboard moves it to that key's octave.
+    for (const note of down) {
+      if (note < boardRange[0] || note > boardRange[1]) {
+        boardOct = Math.floor((note - keysSa()) / 12);
+        drawBoard();
+        return;
+      }
+    }
+    $('keysBoard').querySelectorAll('.kb-key').forEach((k) => {
+      const n = Number(k.dataset.note);
+      k.classList.toggle('down', down.has(n));
+      k.classList.toggle('sus', !down.has(n) && sus.has(n));
+    });
   }
 
   // Middle C is C4.
@@ -2239,16 +2320,19 @@
 
   function initKeys() {
     const on = () => {
-      $('keysInfo').hidden = !S.keysOn;
+      $('keysWriteBox').hidden = !S.keysOn;
+      cardState();
       if (S.keysOn) { initMidi(); engine.ensure(); engine.load(engine.melodicFiles(S.sargamInst)); }
       else allNotesOff();
     };
     bind('keysOn', 'keysOn', { onChange: on });
     bind('keysWrite', 'keysWrite');
+    bind('keysShow', 'keysShow', { onChange: drawBoard });
+    drawBoard();
     $('midiSaLearn').addEventListener('click', () => { learningSa = !learningSa; showMidiSa(); });
     $('midiSaReset').addEventListener('click', () => setMidiSa(null));
     showMidiSa();
-    $('keysInfo').hidden = !S.keysOn;
+    $('keysWriteBox').hidden = !S.keysOn;
     if (S.keysOn) initMidi();
     claimMidi();
     addEventListener('focus', claimMidi);
