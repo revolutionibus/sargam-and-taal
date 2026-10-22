@@ -2003,8 +2003,19 @@
     return true;
   }
 
+  // Web MIDI sends every key to every open tab, unlike the computer keys, so
+  // a second tab (still on the default harmonium) would play along. The tab
+  // focused last owns the MIDI keyboard.
+  const midiTabs = window.BroadcastChannel ? new BroadcastChannel('taal-midi') : null;
+  let midiOwner = true;
+  function claimMidi() {
+    midiOwner = true;
+    if (midiTabs) midiTabs.postMessage('claim');
+  }
+  if (midiTabs) midiTabs.onmessage = () => { midiOwner = false; allNotesOff(); };
+
   function onMidi(e) {
-    if (!S.keysOn) return;
+    if (!S.keysOn || !midiOwner) return;
     const [status, a, b] = e.data;
     const cmd = status & 0xf0;
     if (cmd === 0x90 && b > 0) {
@@ -2026,7 +2037,7 @@
   // Middle C is C4.
   function showMidiSa() {
     const n = S.midiSaNote;
-    $('midiSaKey').textContent = learningSa ? tr('Press the key you want as Sa…')
+    $('midiSaKey').textContent = learningSa ? tr('Press the key you want to be Sa in MIDI')
       : n === null ? tr('Real pitch: the key matching your Sa plays Sa')
       : tr('Sa is on {key}', { key: D.KEYS[n % 12] + (Math.floor(n / 12) - 1) });
     $('midiSaLearn').textContent = tr(learningSa ? 'Cancel' : 'Choose key…');
@@ -2090,6 +2101,8 @@
     showMidiSa();
     $('keysInfo').hidden = !S.keysOn;
     if (S.keysOn) initMidi();
+    claimMidi();
+    addEventListener('focus', claimMidi);
     document.addEventListener('keyup', (e) => noteOff(e.code));
     addEventListener('blur', allNotesOff);
   }

@@ -64,7 +64,7 @@
     'String delays (seconds)': 'তারের মাঝের বিরতি (সেকেন্ড)',
     'Strum': 'বাজান',
     'Strum now (S)': 'এখনই বাজান (S)',
-    'Auto-strum on sam every': 'সোমে নিজে বাজবে, প্রতি',
+    'Auto-strum on son every': 'সোমে নিজে বাজবে, প্রতি',
     'avartans': 'আবর্তনে',
     'Favourite': 'প্রিয়',
     'Drum': 'বাদ্য',
@@ -85,7 +85,7 @@
     'No lehra for {n} beats': '{n} মাত্রার কোনো লহরা নেই',
     '{name} ({n} beats)': '{name} ({n} মাত্রা)',
     '{n} beats': '{n} মাত্রা',
-    '{from} → {to} (on sam)': '{from} → {to} (সমে)',
+    '{from} → {to} (on son)': '{from} → {to} (সমে)',
     '★ Favourites': '★ প্রিয়',
     'Taals': 'তাল',
     'Compositions': 'কম্পজিশন',
@@ -97,11 +97,11 @@
     'Delete preset "{name}"?': 'প্রিসেট "{name}" মুছবেন?',
 
     // ── Sargam practice ──
-    'Starts on sam': 'সোম থেকে শুরু',
+    'Starts on son': 'সোম থেকে শুরু',
     'Back to top': 'উপরে যান',
     'Drag to show more or fewer lines (or use the arrow keys)': 'টেনে বেশি বা কম লাইন দেখান (বা অ্যারো কী ব্যবহার করুন)',
     'One line = one avartan. Komal swars are underlined, tivra Ma has a mark above, dots show mandra (below) and taar (above) saptak. Use headphones when checking your singing.':
-      'এক লাইন = এক আবর্তন। কোমল স্বরের নিচে দাগ, তীব্র মা-র উপরে চিহ্ন, আর বিন্দু দিয়ে মন্দ্র (নিচে) ও তার (উপরে) সপ্তক বোঝানো হয়। নিজের গান যাচাই করার সময় হেডফোন ব্যবহার করুন।',
+      'এক লাইন = এক আবর্তন। তীব্র মা-র উপরে চিহ্ন, আর স্বরের নিচে ফোটা দিয়ে মন্দ্র বা উদারা সপ্তক (lower octave) ও উপরে ফোটা দিয়ে তারা সপ্তক বোঝানো হয়। নিজের গান যাচাই করার সময় হেডফোন ব্যবহার করুন।',
     'Edit': 'সম্পাদনা',
     '+ New': '+ নতুন',
     'Write a new sargam line': 'নতুন সরগম লাইন লিখুন',
@@ -138,7 +138,7 @@
     'Choose key…': 'কি বাছুন…',
     'Cancel': 'বাতিল',
     'Real pitch': 'আসল সুর',
-    'Press the key you want as Sa…': 'যে কি-টি সা হবে সেটি চাপুন…',
+    'Press the key you want to be Sa in MIDI': 'MIDI তে যে বোতামটিকে সা বানাতে চান সেটি চাপুন…',
     'Real pitch: the key matching your Sa plays Sa': 'আসল সুর: আপনার সা-এর সুরের কি-টি সা বাজায়',
     'Sa is on {key}': 'সা আছে {key} কি-তে',
     'Write what I play into the line editor': 'যা বাজাই তা লাইন এডিটরে লিখে রাখুন',
@@ -243,7 +243,7 @@
     'Repeat': 'পুনরাবৃত্তি',
     '+ Add step': '+ ধাপ যোগ করুন',
     'Play sequence': 'সিকোয়েন্স বাজান',
-    'Leave tempo blank to keep the current tempo. Steps change on sam.': 'বর্তমান গতি রাখতে গতির ঘর ফাঁকা রাখুন। ধাপ বদলায় সমে।',
+    'Leave tempo blank to keep the current tempo. Steps change on son.': 'বর্তমান গতি রাখতে গতির ঘর ফাঁকা রাখুন। ধাপ বদলায় সমে।',
     'No sequences yet.': 'এখনো কোনো সিকোয়েন্স নেই।',
     '{n} steps': '{n}টি ধাপ',
     'Move up': 'উপরে সরান',
@@ -258,20 +258,20 @@
     'Stop listening': 'শোনা বন্ধ করুন',
     'Set Sa to this pitch': 'এই সুরকে সা করুন',
     'Hear current Sa': 'বর্তমান সা শুনুন',
-    'Made by': 'নির্মাতা',
+    'Made by': '',
     '{swar} relative to your Sa ({c}¢)': 'আপনার সা অনুযায়ী {swar} ({c}¢)',
 
     // ── Settings ──
     'Playback': 'বাজানো',
     'Fade out audio when stopping': 'থামানোর সময় আওয়াজ ধীরে মিলিয়ে যাবে',
     'Stop button': 'থামানোর বোতাম',
-    'Stops immediately': 'সঙ্গে সঙ্গে থামে',
-    'Finishes the avartan and ends on sam': 'আবর্তন শেষ করে সমে থামে',
-    'Accent the sam': 'সমে ঝোঁক দিন',
+    'Stops immediately': 'সঙ্গে সঙ্গে থামবে',
+    'Finishes the avartan and ends on som': 'আবর্তন শেষ করে সমে থামে',
+    'Accent the son': 'সমে ঝোঁক দিন',
     'Sound previews in the bol keyboard': 'বোল কিবোর্ডে শব্দ শোনাবে',
     'Language': 'ভাষা',
     'App and sargam names': 'অ্যাপ ও সরগমের নাম',
-    'Samples': 'স্যাম্পল',
+    'Samples': 'নমুনা',
     'Keyboard shortcuts': 'কিবোর্ড শর্টকাট',
     'Reset': 'রিসেট',
     'Reset all settings to default': 'সব সেটিংস শুরুর অবস্থায় ফেরান',
@@ -281,13 +281,13 @@
     'Theme: light': 'থিম: হালকা',
     'Theme: dark': 'থিম: গাঢ়',
     '{title} (click to change)': '{title} (বদলাতে ক্লিক করুন)',
-    '{n} samples loaded': '{n}টি স্যাম্পল লোড হয়েছে',
+    '{n} samples loaded': '{n}টি নমুনা লোড হয়েছে',
     ', {n} missing (synthesized instead).': ', {n}টি পাওয়া যায়নি (তার বদলে কৃত্রিম শব্দ)।',
     '.': '।',
     'Browsers block loading sound files from file://. Start the app with ./run.sh to use the real samples — using synthesized sounds for now.':
-      'ব্রাউজার file:// থেকে সাউন্ড ফাইল লোড করতে দেয় না। আসল স্যাম্পল পেতে ./run.sh দিয়ে অ্যাপ চালু করুন — আপাতত কৃত্রিম শব্দ বাজছে।',
+      'ব্রাউজার file:// থেকে সাউন্ড ফাইল লোড করতে দেয় না। আসল নমুনা পেতে ./run.sh দিয়ে অ্যাপ চালু করুন — আপাতত কৃত্রিম শব্দ বাজছে।',
     'No samples found in sounds/. Run ./import_sounds.sh to copy them from TaalMala — using synthesized sounds for now.':
-      'sounds/ ফোল্ডারে কোনো স্যাম্পল নেই। TaalMala থেকে কপি করতে ./import_sounds.sh চালান — আপাতত কৃত্রিম শব্দ বাজছে।',
+      'sounds/ ফোল্ডারে কোনো নমুনা নেই। TaalMala থেকে কপি করতে ./import_sounds.sh চালান — আপাতত কৃত্রিম শব্দ বাজছে।',
 
     // ── Notation errors ──
     '{msg} in beat {beat}': '{beat} নম্বর মাত্রায় {msg}',
@@ -375,7 +375,7 @@
     keysHelp: 'ওপরে বাছাই করা বাদ্যযন্ত্র বাজবে। <kbd>A</kbd> হলো সা, <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd> ' +
       '<kbd>H</kbd> <kbd>J</kbd> হলো রে গা মা পা ধা নি, আর <kbd>K</kbd> তার সা; ওপরের সারির কিগুলো (<kbd>W</kbd> <kbd>E</kbd> ' +
       '<kbd>T</kbd> <kbd>Y</kbd> <kbd>U</kbd>) কোমল স্বর ও তীব্র মা। <kbd>Z</kbd>/<kbd>X</kbd> দিয়ে এক সপ্তক নিচে/উপরে। ' +
-      'MIDI কিবোর্ড নিজের সুরেই বাজে, যদি না নিচে তার জন্য সা-এর কি বেছে নেন; সাসটেইন প্যাডেলও চলে।',
+      'MIDI কিবোর্ড নিজের সুরেই বাজে, যদি না নিচে তার জন্য সা-এর কি বেছে নিন। সাসটেইন প্যাডেলও ব্যবহার করা যাবে ।',
     keysWriteHelp: 'লাইন এডিটর খোলা থাকলে যে স্বর বাজাবেন তা কার্সরের জায়গায় লেখা হবে। কম্পিউটারের কি দিয়ে বাজাতে ' +
       'লেখার বাক্সের বাইরে ক্লিক করুন; তখন <kbd>-</kbd> স্বর ধরে রাখে, <kbd>\\</kbd> একটি <code>|</code> বসায় ' +
       'আর <kbd>Backspace</kbd> শেষ স্বরটি মুছে দেয়।',
