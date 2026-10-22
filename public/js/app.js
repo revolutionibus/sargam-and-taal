@@ -21,10 +21,11 @@
     sargamInst: 'harmonium', sargamVol: 0.7, sargamCheck: false, sargamVisible: 4, sargamCollapsed: {},
     sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true, midiSaNote: null,
     fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'bn', theme: 'auto',
+    focusPlay: false,
   };
   // Settings captured by a preset (everything except app preferences).
   const APP_PREFS = ['keysOn', 'keysWrite', 'midiSaNote', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamCollapsed',
-                     'lehraOpen', 'tanpuraOpen', 'swarOpen', 'taalOpen'];
+                     'lehraOpen', 'tanpuraOpen', 'swarOpen', 'taalOpen', 'focusPlay'];
 
   let store = { settings: {}, custom: [], sequences: [], presets: [], favorites: [], sargamFavorites: [], sargamLines: [] };
   try { Object.assign(store, JSON.parse(localStorage.getItem(STORE)) || {}); } catch (e) { /* fresh start */ }
@@ -267,6 +268,7 @@
     taal.vibhags.forEach((len, vi) => {
       const v = document.createElement('div');
       v.className = 'vibhag';
+      v.style.setProperty('--cells', len);   // phones size vibhags by their beat count
       const m = document.createElement('div');
       const mark = taal.marks[vi] || '';
       m.className = 'mark' + (mark === '0' ? ' khali' : '');
@@ -317,7 +319,7 @@
       const ev = q.shift();
       if (ev.taal !== gridTaal) showTaalGrid(ev.taal);
       highlight(ev.beat);
-      $('avartan').textContent = num(ev.avartan + 1);
+      $('avartan').textContent = $('dockAvartan').textContent = num(ev.avartan + 1);
       if (ev.seq) markSeqStep(ev.seq.i);
       if (ev.final) {
         setTimeout(() => { if (!player.playing) { highlight(-1); markSeqStep(-1); } }, 600);
@@ -327,7 +329,8 @@
     while (sq.length && sq[0].time <= now) sargamNote(sq.shift());
     if (player.playing) {
       const t = Math.max(0, now - player.startTime);
-      $('elapsed').textContent = num(`${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`);
+      $('elapsed').textContent = $('dockElapsed').textContent =
+        num(`${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`);
     }
     requestAnimationFrame(frame);
   }
@@ -344,6 +347,8 @@
     S.tempo = v;
     $('tempo').value = v;
     $('laya').textContent = '· ' + layaName(v);
+    $('dockTempoVal').textContent = num(v);
+    $('dockLaya').textContent = layaName(v);
     save();
   }
   function setKey(key, fine = S.fine) {
@@ -353,6 +358,8 @@
     $('fine').value = S.fine;
     engine.setSa(S.key, S.fine);
     $('saInfo').textContent = `· ${num(engine.saFrequency().toFixed(1))} Hz`;
+    $('saBtn').innerHTML = `<span class="muted">${tr('Sa')}</span> <b>${D.KEYS[S.key]}</b>` +
+      `<span class="muted">${S.fine ? ` ${S.fine > 0 ? '+' : '−'}${num(Math.abs(S.fine))}¢` : ''} · ${num(engine.saFrequency().toFixed(1))} Hz</span>`;
     save();
   }
 
@@ -366,6 +373,76 @@
       const avg = (taps[taps.length - 1] - taps[0]) / (taps.length - 1);
       setTempo(60000 / avg);
     }
+  }
+
+  // While playing, keep a phone's screen from sleeping mid-avartan.
+  let wakeLock = null;
+  function keepAwake(on) {
+    if (!('wakeLock' in navigator)) return;
+    if (on && !wakeLock) {
+      navigator.wakeLock.request('screen').then((l) => {
+        wakeLock = l;
+        l.addEventListener('release', () => { if (wakeLock === l) wakeLock = null; });
+      }).catch(() => { /* not allowed (hidden tab, battery saver) */ });
+    } else if (!on && wakeLock) {
+      wakeLock.release().catch(() => {});
+      wakeLock = null;
+    }
+  }
+  // The lock is dropped when the page is hidden; take it again on return.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && player.playing) keepAwake(true);
+  });
+
+  // Focus view (an option): while playing, the settings step aside and the
+  // line being sung is shown large.
+  function updateFocus() {
+    const on = !!(S.focusPlay && player.playing);
+    document.body.classList.toggle('focus', on);
+    $('focusBtn').setAttribute('aria-pressed', String(!!S.focusPlay));
+    $('focusPlay').checked = !!S.focusPlay;
+    fitSargamLines();
+    if (on) showSargamLine();
+  }
+  function setFocusPlay(on) {
+    S.focusPlay = on;
+    save();
+    updateFocus();
+  }
+
+  // Press and hold to repeat, faster the longer it is held. Keyboard
+  // activation (a click with no pointer) steps once.
+  function holdRepeat(btn, fn) {
+    let timer = 0;
+    const stop = () => { clearTimeout(timer); timer = 0; };
+    btn.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      fn();
+      let delay = 120;
+      const again = () => { fn(); delay = Math.max(35, delay * 0.9); timer = setTimeout(again, delay); };
+      timer = setTimeout(again, 350);   // a tap is one step; holding starts after a pause
+    });
+    for (const t of ['pointerup', 'pointerleave', 'pointercancel']) btn.addEventListener(t, stop);
+    btn.addEventListener('click', (e) => { if (e.detail === 0) fn(); });
+    btn.addEventListener('contextmenu', (e) => e.preventDefault());   // long press on touch
+  }
+
+  // A button that shows a panel, closed again by the button, Escape or a tap
+  // elsewhere. With bodyClass the panel's visibility is left to CSS.
+  function popover(btn, panel, bodyClass) {
+    const isOpen = () => btn.getAttribute('aria-expanded') === 'true';
+    const set = (open) => {
+      btn.setAttribute('aria-expanded', String(open));
+      if (bodyClass) document.body.classList.toggle(bodyClass, open);
+      else panel.hidden = !open;
+    };
+    btn.addEventListener('click', () => set(!isOpen()));
+    document.addEventListener('pointerdown', (e) => {
+      if (isOpen() && !panel.contains(e.target) && !btn.contains(e.target)) set(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) { set(false); btn.focus(); }
+    });
   }
 
   function togglePlay() {
@@ -391,6 +468,8 @@
       btn.classList.toggle('playing', data);
       btn.classList.remove('pending');
       btn.setAttribute('aria-label', tr(data ? 'Stop' : 'Play'));
+      keepAwake(data);
+      updateFocus();
       if (!data) { highlight(-1); markSeqStep(-1); sargamStopped(); }
       else resetSargamScore();
     } else if (type === 'loading') {
@@ -454,7 +533,9 @@
       b.setAttribute('aria-expanded', String(!!S[key]));
     }
     slide($('instruments'), anyInst, animate);
-    $('playerLayout').classList.toggle('inst-open', anyInst);
+    const layout = $('playerLayout');
+    layout.classList.toggle('side-open', anyInst || !!S.taalOpen);
+    layout.classList.toggle('sargam-open', !!S.sargamPanel);
   }
   function togglePane(key) {
     S[key] = !S[key];
@@ -473,8 +554,15 @@
     $('card-lehra').classList.toggle('off', !S.lehraOn);
     $('card-tanpura').classList.toggle('off', !S.tanpuraOn);
     $('card-swar').classList.toggle('off', !S.swarOn);
-    // Rail icons show which parts are switched on.
-    document.querySelectorAll('.inst-btn').forEach((b) => b.classList.toggle('on', !!S[b.dataset.on]));
+    // Rail icons show which parts are switched on (the dot), and say so in
+    // their names; the highlight means the pane is open.
+    document.querySelectorAll('.inst-btn').forEach((b) => {
+      const on = !!S[b.dataset.on];
+      b.classList.toggle('on', on);
+      if (!b.dataset.name) b.dataset.name = b.title;
+      b.title = b.dataset.name + ' · ' + tr(on ? 'on' : 'off');
+      b.setAttribute('aria-label', b.querySelector('.inst-label').textContent + ' · ' + tr(on ? 'on' : 'off'));
+    });
   }
 
   // Custom manjeera positions are kept per taal (beat numbers differ).
@@ -526,6 +614,8 @@
     syncLehra(c);
     fillLehraSelect();
     setTempo(S.tempo);
+    $('avartan').textContent = $('dockAvartan').textContent = num(0);
+    $('elapsed').textContent = $('dockElapsed').textContent = num('0:00');
     setKey(S.key, S.fine);
     updateFav();
     $('avartan').textContent = num(0);
@@ -601,12 +691,31 @@
         .observe(document.querySelector('.play-slot'));
     }
     $('tempo').addEventListener('change', (e) => setTempo(e.target.value));
-    $('tempoUp').addEventListener('click', () => setTempo(S.tempo + 1));
-    $('tempoDown').addEventListener('click', () => setTempo(S.tempo - 1));
+    holdRepeat($('tempoUp'), () => setTempo(S.tempo + 1));
+    holdRepeat($('tempoDown'), () => setTempo(S.tempo - 1));
     $('tempoHalf').addEventListener('click', () => setTempo(S.tempo / 2));
     $('tempoDouble').addEventListener('click', () => setTempo(S.tempo * 2));
     $('tempoReset').addEventListener('click', () => setTempo((rawTaal(S.taalId) || {}).tempo || 120));
     $('tapBtn').addEventListener('click', tap);
+
+    // Phones: the bottom bar steps the tempo; its value opens the full tempo
+    // and volume controls (the transport's own, shown as a sheet).
+    holdRepeat($('dockTempoDown'), () => setTempo(S.tempo - 1));
+    holdRepeat($('dockTempoUp'), () => setTempo(S.tempo + 1));
+    popover($('dockTempo'), $('tempoSheet'), 'sheet-open');
+    popover($('saBtn'), $('saGroup'), 'sa-open');
+    // 1: the loaded taal's name is a shortcut to choosing another.
+    $('nowBtn').addEventListener('click', () => {
+      if (!S.taalOpen) togglePane('taalOpen');
+      const sel = $('taalSelect');
+      sel.scrollIntoView({ block: 'center' });
+      sel.focus({ preventScroll: true });
+      try { sel.showPicker(); } catch (e) { /* older browsers: focused is enough */ }
+    });
+    popover($('presetBtn'), $('presetPanel'));
+    $('focusBtn').addEventListener('click', () => setFocusPlay(!S.focusPlay));
+    $('focusPlay').addEventListener('change', (e) => setFocusPlay(e.target.checked));
+    updateFocus();
     $('key').addEventListener('change', (e) => setKey(Number(e.target.value)));
     $('keyUp').addEventListener('click', () => setKey(S.key + 1));
     $('keyDown').addEventListener('click', () => setKey(S.key - 1));
@@ -1104,7 +1213,8 @@
     const box = $('sargamLines');
     const handle = $('sargamResize');
     const rows = sargamLineEls;
-    const n = Math.max(1, Math.min(S.sargamVisible, rows.length));
+    const want = document.body.classList.contains('focus') ? 2 : S.sargamVisible;
+    const n = Math.max(1, Math.min(want, rows.length));
     handle.hidden = rows.length < 2;
     handle.lastChild.textContent = rows.length < 2 ? '' : tr('{n} of {total} lines', { n, total: rows.length });
     handle.setAttribute('aria-valuenow', n);
@@ -1494,7 +1604,7 @@
     $('cBols').value = t ? t.bols : '';
     validateComposer();
     renderCustomList();
-    $('cShare').hidden = !editingId;
+    $('cShare').hidden = $('cDelete').hidden = !editingId;
   }
 
   function renderCustomList() {
@@ -1637,7 +1747,7 @@
         t.id = 'c-' + Date.now().toString(36);
         store.custom.push(t);
         editingId = t.id;
-        $('cShare').hidden = false;
+        $('cShare').hidden = $('cDelete').hidden = false;
       }
       save();
       fillTaalSelect($('taalSelect'), S.taalId);
@@ -1794,13 +1904,14 @@
       alert(tr('Microphone unavailable: {err}\nAllow the microphone for Taal Studio in your phone\'s settings.', { err: err.message }));
       return;
     }
-    alert(tr('Microphone unavailable: {err}\nOpen the app through ./run.sh (http://localhost) and allow the microphone.', { err: err.message }));
+    alert(tr('Microphone unavailable: {err}\nAllow this site to use the microphone in your browser, then try again.', { err: err.message }));
   }
 
   function showTunerPitch(f) {
     const needle = $('tNeedle');
     if (!f) { $('tSetSa').disabled = !lastPitch; return; }
     lastPitch = f;
+    $('tNote').closest('.tuner').classList.remove('idle');
     const midi = 69 + 12 * Math.log2(f / 440);
     const r = Math.round(midi);
     const cents = (midi - r) * 100;
@@ -1843,6 +1954,20 @@
     });
   }
 
+  // Folded option groups (<details data-keep>) reopen the way they were left.
+  function initDetails() {
+    const KEY = 'taalStudio.details';
+    let open = {};
+    try { open = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { /* none saved */ }
+    document.querySelectorAll('details[data-keep]').forEach((d) => {
+      if (d.dataset.keep in open) d.open = open[d.dataset.keep];
+      d.addEventListener('toggle', () => {
+        open[d.dataset.keep] = d.open;
+        try { localStorage.setItem(KEY, JSON.stringify(open)); } catch (e) { /* ignore */ }
+      });
+    });
+  }
+
   // ── Settings tab ─────────────────────────────────────────────────────
   // Theme button: auto (follow the system) → light → dark.
   const THEMES = {
@@ -1855,6 +1980,7 @@
     if (S.theme === 'auto') delete document.documentElement.dataset.theme;
     else document.documentElement.dataset.theme = S.theme;
     const [title, icon] = THEMES[S.theme];
+    $('themeSelect').value = S.theme;
     $('themeBtn').title = tr('{title} (click to change)', { title });
     $('themeBtn').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
       'stroke-linecap="round" stroke-linejoin="round">' + icon + '</svg>';
@@ -1868,6 +1994,7 @@
       applyTheme();
       save();
     });
+    $('themeSelect').addEventListener('change', (e) => { S.theme = e.target.value; applyTheme(); save(); });
     bind('fadeOut', 'fadeOut');
     bind('stopMode', 'stopMode', { type: 'str' });
     bind('accentSam', 'accentSam');
@@ -2147,6 +2274,7 @@
     initSequences();
     initTuner();
     initSettings();
+    initDetails();
     requestAnimationFrame(frame);
   });
 })();

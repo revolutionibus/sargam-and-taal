@@ -28,7 +28,7 @@
     'Tap': 'ট্যাপ',
     'Tap tempo (T)': 'ট্যাপ করে গতি (T)',
     "Taal's default tempo": 'তালের নিজস্ব গতি',
-    'Sa (pitch)': 'সা (স্কেল)',
+    'Sa (pitch)': 'সা',
     'Down a semitone': 'এক সেমিটোন নিচে',
     'Up a semitone': 'এক সেমিটোন উপরে',
     'Fine tune (cents)': 'সূক্ষ্ম টিউন (সেন্ট)',
@@ -44,6 +44,16 @@
 
     // ── Player ──
     'Preset': 'প্রিসেট',
+    'Presets': 'প্রিসেট',
+    'on': 'চালু',
+    'off': 'বন্ধ',
+    'Choose taal': 'তাল বাছুন',
+    'Sa': 'সা',
+    'Tempo and volume': 'গতি ও ভলিউম',
+    'Focus': 'ফোকাস',
+    'Focus view while playing': 'বাজানোর সময় ফোকাস দৃশ্য',
+    'Hides the settings while the taal plays and shows the current line large. Stop brings everything back.':
+      'তাল বাজার সময় সেটিংস লুকিয়ে চলতি লাইনটি বড় করে দেখায়। থামালে সব আবার ফিরে আসে।',
     'Save as…': 'সেভ করুন…',
     'Delete': 'মুছুন',
     'Panels': 'প্যানেল',
@@ -52,6 +62,10 @@
     'Swarmandal': 'স্বরমণ্ডল',
     'Taal': 'তাল',
     'Sargam practice': 'সারগাম অনুশীলন',
+    'Sargam': 'সারগাম',
+    'Swars of the line': 'লাইনের স্বর',
+    'More options': 'আরও বিকল্প',
+    'Drum mix and manjeera': 'বাদ্যের মিশ্রণ ও মন্দিরা',
     'Sargam practice (G)': 'সারগাম অনুশীলন (G)',
     'Close': 'বন্ধ করুন',
     'Close (G)': 'বন্ধ করুন (G)',
@@ -64,7 +78,7 @@
     'String delays (seconds)': 'তারের মাঝের বিরতি (সেকেন্ড)',
     'Strum': 'বাজান',
     'Strum now (S)': 'এখনই বাজান (S)',
-    'Auto-strum on son every': 'সোমে নিজে বাজবে, প্রতি',
+    'Auto-strum on sam every': 'সমে নিজে বাজবে, প্রতি',
     'avartans': 'আবর্তনে',
     'Favourite': 'প্রিয়',
     'Drum': 'বাদ্য',
@@ -85,7 +99,7 @@
     'No lehra for {n} beats': '{n} মাত্রার কোনো লহরা নেই',
     '{name} ({n} beats)': '{name} ({n} মাত্রা)',
     '{n} beats': '{n} মাত্রা',
-    '{from} → {to} (on son)': '{from} → {to} (সমে)',
+    '{from} → {to} (on sam)': '{from} → {to} (সমে)',
     '★ Favourites': '★ প্রিয়',
     'Taals': 'তাল',
     'Compositions': 'কম্পজিশন',
@@ -97,7 +111,7 @@
     'Delete preset "{name}"?': 'প্রিসেট "{name}" মুছবেন?',
 
     // ── Sargam practice ──
-    'Starts on son': 'সোম থেকে শুরু',
+    'Starts on sam': 'সম থেকে শুরু',
     'Back to top': 'উপরে যান',
     'Drag to show more or fewer lines (or use the arrow keys)': 'টেনে বেশি বা কম লাইন দেখান (বা অ্যারো কী ব্যবহার করুন)',
     'One line = one avartan. Komal swars are underlined, tivra Ma has a mark above, dots show mandra (below) and taar (above) saptak. Use headphones when checking your singing.':
@@ -184,8 +198,8 @@
     'Low': 'নিচু',
     'High': 'উঁচু',
     'Missed': 'বাদ গেছে',
-    'Microphone unavailable: {err}\nOpen the app through ./run.sh (http://localhost) and allow the microphone.':
-      'মাইক্রোফোন পাওয়া যাচ্ছে না: {err}\n./run.sh (http://localhost) দিয়ে অ্যাপ খুলুন এবং মাইক্রোফোনের অনুমতি দিন।',
+    'Microphone unavailable: {err}\nAllow this site to use the microphone in your browser, then try again.':
+      'মাইক্রোফোন পাওয়া যাচ্ছে না: {err}\nব্রাউজারে এই সাইটকে মাইক্রোফোনের অনুমতি দিন, তারপর আবার চেষ্টা করুন।',
     "Microphone unavailable: {err}\nAllow the microphone for Taal Studio in your phone's settings.":
       'মাইক্রোফোন পাওয়া যাচ্ছে না: {err}\nফোনের সেটিংসে তাল স্টুডিওকে মাইক্রোফোনের অনুমতি দিন।',
 
@@ -243,7 +257,7 @@
     'Repeat': 'পুনরাবৃত্তি',
     '+ Add step': '+ ধাপ যোগ করুন',
     'Play sequence': 'সিকোয়েন্স বাজান',
-    'Leave tempo blank to keep the current tempo. Steps change on son.': 'বর্তমান গতি রাখতে গতির ঘর ফাঁকা রাখুন। ধাপ বদলায় সমে।',
+    'Leave tempo blank to keep the current tempo. Steps change on sam.': 'বর্তমান গতি রাখতে গতির ঘর ফাঁকা রাখুন। ধাপ বদলায় সমে।',
     'No sequences yet.': 'এখনো কোনো সিকোয়েন্স নেই।',
     '{n} steps': '{n}টি ধাপ',
     'Move up': 'উপরে সরান',
@@ -258,7 +272,7 @@
     'Stop listening': 'শোনা বন্ধ করুন',
     'Set Sa to this pitch': 'এই সুরকে সা করুন',
     'Hear current Sa': 'বর্তমান সা শুনুন',
-    'Made by': '',
+    'Made by': 'তৈরি করেছেন',
     '{swar} relative to your Sa ({c}¢)': 'আপনার সা অনুযায়ী {swar} ({c}¢)',
 
     // ── Settings ──
@@ -266,8 +280,8 @@
     'Fade out audio when stopping': 'থামানোর সময় আওয়াজ ধীরে মিলিয়ে যাবে',
     'Stop button': 'থামানোর বোতাম',
     'Stops immediately': 'সঙ্গে সঙ্গে থামবে',
-    'Finishes the avartan and ends on som': 'আবর্তন শেষ করে সমে থামে',
-    'Accent the son': 'সমে ঝোঁক দিন',
+    'Finishes the avartan and ends on sam': 'আবর্তন শেষ করে সমে থামে',
+    'Accent the sam': 'সমে ঝোঁক দিন',
     'Sound previews in the bol keyboard': 'বোল কিবোর্ডে শব্দ শোনাবে',
     'Language': 'ভাষা',
     'App and sargam names': 'অ্যাপ ও সরগমের নাম',
@@ -277,6 +291,10 @@
     'Reset all settings to default': 'সব সেটিংস শুরুর অবস্থায় ফেরান',
     'Compositions, sequences and presets are kept.': 'রচনা, সিকোয়েন্স ও প্রিসেট থেকে যাবে।',
     'Reset all settings to their defaults?': 'সব সেটিংস শুরুর অবস্থায় ফেরাবেন?',
+    'Theme and language': 'থিম ও ভাষা',
+    'Follows system': 'সিস্টেম অনুযায়ী',
+    'Light': 'হালকা',
+    'Dark': 'গাঢ়',
     'Theme: follows system': 'থিম: সিস্টেম অনুযায়ী',
     'Theme: light': 'থিম: হালকা',
     'Theme: dark': 'থিম: গাঢ়',

@@ -6,6 +6,7 @@
 <title>Taal Studio</title>
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="logo.svg">
+<link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/style.css">
 <script>
   // Apply the saved theme before the page paints (no light/dark flash).
@@ -18,7 +19,10 @@
 <body>
 
 <header id="topbar">
-  <div id="brand"><img src="logo.svg" alt="" width="28" height="28">Taal Studio</div>
+  <div id="brand"><img src="logo.svg" alt="" width="28" height="28"><span class="brand-name">Taal Studio</span>
+    <!-- Bangla wordmark: "তাল স্টুডিও" hand-lettered in Li Mainak Signature (Lipighor),
+         converted to outlines so no font file ships. -->
+    <svg class="wordmark" viewBox="-59 -1366 4512 1999" role="img" aria-label="Taal Studio"><path fill="currentColor" d="M229 70Q191 70 146 57Q111 45 94 26Q87 20 75 1Q63 -18 63 -46Q64 -77 77.5 -100.5Q91 -124 104 -124L109 -122Q115 -117 115 -110Q115 -102 110.5 -91Q106 -80 106 -65Q108 -40 130 -20Q152 0 191 0Q211 0 226 -3L231 -4Q279 -12 314 -35Q349 -58 374 -82Q428 -132 455 -176.5Q482 -221 487 -237Q498 -263 511.5 -304Q525 -345 525 -393Q525 -436 507 -482Q488 -521 482 -521Q480 -521 478.5 -519.5Q477 -518 477 -515Q483 -495 483 -479Q483 -444 461.5 -425.5Q440 -407 415 -407Q390 -407 369 -425.5Q348 -444 348 -483Q348 -512 363 -551Q394 -621 449 -621Q498 -621 550 -563Q599 -497 599 -377L598 -340Q593 -301 580 -257Q572 -218 526 -133Q504 -86 445.5 -25.5Q387 35 308 60Q277 70 229 70ZM-12 -557Q-39 -557 -39 -577Q-39 -587 -29.5 -601.5Q-20 -616 -7 -621Q89 -671 197 -671Q268 -671 282 -649Q290 -636 290 -620Q290 -606 283 -594.5Q276 -583 259 -583Q209 -589 198 -589Q112 -589 -4 -558ZM851 0Q831 0 819.5 -14.5Q808 -29 804 -48Q795 -86 793 -125.5Q791 -165 791 -205Q791 -241 790 -277Q789 -313 782 -348Q771 -411 744.5 -464Q718 -517 655 -560Q641 -573 641 -587L642 -590Q645 -609 661 -609Q669 -609 685 -598Q794 -521 843 -393Q857 -358 861 -321L877 -357Q892 -393 927 -444Q1013 -570 1153 -619Q1161 -622 1171 -622Q1180 -622 1189 -616Q1198 -610 1198 -595Q1198 -570 1168 -556Q1115 -537 1037.5 -457.5Q960 -378 930 -282Q910 -207 908 -129L903 -61Q902 -42 894 -24.5Q886 -7 862 -1ZM1568 0Q1542 0 1538 -28Q1525 -140 1494 -249L1492 -245Q1479 -206 1459.5 -176Q1440 -146 1401 -142Q1355 -142 1314 -222Q1311 -198 1311 -170L1312 -100Q1312 -80 1299 -70Q1286 -60 1271 -60Q1256 -60 1243 -70Q1230 -80 1230 -100V-117Q1230 -156 1253 -277Q1262 -322 1269 -340Q1277 -364 1295 -370L1303 -372L1312 -370Q1327 -364 1333 -346Q1339 -328 1342 -305.5Q1345 -283 1351.5 -264.5Q1358 -246 1372 -239L1374 -238Q1376 -237 1382 -236L1392 -238Q1403 -244 1414 -277Q1426 -319 1459 -362Q1479 -383 1494 -383Q1507 -383 1516 -375Q1525 -367 1530 -358.5Q1535 -350 1536 -347V-577Q1536 -597 1549 -607Q1562 -617 1577 -617Q1593 -617 1605.5 -607Q1618 -597 1618 -578Q1618 -566 1612 -550Q1613 -62 1614 -52Q1614 -28 1599 -14Q1584 0 1568 0ZM1155 -557Q1140 -557 1134 -563Q1128 -569 1128 -578Q1128 -589 1138 -603Q1148 -617 1160 -621Q1254 -671 1359 -671Q1403 -671 1443 -665Q1459 -663 1466.5 -649.5Q1474 -636 1474 -620Q1474 -606 1467 -594.5Q1460 -583 1443 -583Q1409 -587 1398.5 -588Q1388 -589 1356 -589Q1272 -589 1163 -558ZM2572 0Q2546 0 2523 -20Q2502 -42 2496 -72.5Q2490 -103 2490 -132Q2490 -222 2505 -319Q2511 -360 2515 -404Q2515 -419 2517 -434L2509 -419Q2477 -346 2420 -346Q2384 -346 2354 -376Q2350 -379 2348 -384Q2325 -319 2265.5 -277Q2206 -235 2135 -225H2132Q2128 -225 2122 -226L2117 -228Q2102 -236 2102 -253L2103 -258Q2105 -268 2112.5 -273.5Q2120 -279 2151 -286Q2170 -291 2188 -297Q2222 -312 2246 -340Q2274 -379 2274 -426Q2274 -448 2267 -467Q2244 -516 2196 -539Q2190 -543 2184 -545.5Q2178 -548 2172 -549Q2150 -556 2127 -556L2054 -554Q2037 -554 2028.5 -565Q2020 -576 2020 -591Q2020 -606 2030 -619.5Q2040 -633 2059 -636L2125 -638Q2199 -638 2265.5 -593Q2332 -548 2351 -473Q2354 -460 2355 -446Q2366 -458 2383 -458Q2396 -458 2412 -448Q2417 -444 2423 -444Q2437 -444 2450 -454.5Q2463 -465 2468.5 -474.5Q2474 -484 2479 -495Q2492 -523 2512 -544Q2534 -563 2552 -563Q2578 -563 2593 -522Q2601 -495 2601 -465Q2601 -433 2596 -403L2595 -387L2691 -506Q2817 -651 2916 -809L2936 -841Q2956 -873 2981 -937Q2992 -963 2992 -981Q2992 -992 2987 -1000Q2970 -1025 2921 -1025L2904 -1024Q2817 -1012 2739 -920Q2721 -899 2715 -899Q2713 -899 2713 -902L2714 -905Q2720 -926 2751 -968Q2825 -1069 2919 -1069Q2932 -1069 2947 -1067Q2962 -1065 2985.5 -1057Q3009 -1049 3024 -1027Q3036 -1007 3036 -982Q3036 -939 3012 -885Q2994 -843 2943 -745Q2853 -593 2665 -344Q2714 -342 2753 -319Q2797 -290 2797 -238Q2797 -203 2780 -169Q2736 -86 2658 -33Q2612 0 2572 0ZM2578 -83Q2605 -87 2644.5 -108.5Q2684 -130 2716 -165.5Q2748 -201 2748 -231Q2748 -253 2729 -264Q2718 -270 2704 -275L2700 -277Q2671 -286 2646 -286Q2609 -286 2580 -274Q2577 -221 2574 -191L2573 -177Q2572 -162 2572 -143Q2572 -113 2578 -86ZM2954 613H2953Q2945 613 2931 590Q2917 567 2900 535L2874 490Q2809 378 2687 277Q2666 309 2616 335Q2497 397 2418 397Q2365 397 2365 349Q2366 332 2371 309.5Q2376 287 2385 272Q2451 181 2639 165Q2666 141 2678.5 116Q2691 91 2697 70Q2703 49 2710.5 36Q2718 23 2737 23Q2763 25 2770 44Q2775 56 2775 70Q2775 93 2760.5 131Q2746 169 2722 203Q2897 330 2958 573Q2961 588 2961 596Q2961 611 2954 613ZM3037 80Q3021 80 3007.5 67.5Q2994 55 2994 36L2995 28Q3001 -1 3005 -50Q3010 -126 3010 -168Q3010 -189 3009 -201Q3009 -224 3007 -286Q2999 -500 2858 -557Q2846 -562 2840 -576Q2836 -584 2836 -592Q2836 -611 2854 -611H2859Q2978 -562 3032 -461Q3092 -348 3092 -205Q3220 -399 3356 -587Q3395 -640 3438 -701Q3636 -986 3773 -1129Q3944 -1310 4129 -1343Q4151 -1346 4170 -1346Q4224 -1346 4254.5 -1321Q4285 -1296 4298 -1254Q4311 -1212 4311 -1159Q4311 -1095 4297.5 -1024.5Q4284 -954 4266.5 -894.5Q4249 -835 4237 -801Q4224 -773 4210 -773Q4202 -773 4195.5 -781Q4189 -789 4189 -802Q4189 -811 4193 -823Q4230 -933 4239 -1113Q4239 -1146 4231 -1184.5Q4223 -1223 4204 -1246Q4173 -1279 4115 -1279Q4077 -1279 4045 -1266Q3950 -1226 3874.5 -1159Q3799 -1092 3734 -1014Q3615 -866 3493 -678Q3430 -584 3375 -506Q3217 -287 3070 60Q3055 80 3037 80ZM3495 0Q3471 0 3470 -22Q3470 -47 3502 -59Q3587 -91 3672 -195Q3706 -241 3725 -297L3726 -300L3714 -299Q3675 -299 3646 -330Q3586 -393 3586 -490Q3586 -541 3599 -589H3577Q3498 -589 3400 -558L3392 -557Q3368 -557 3368 -577Q3368 -588 3376.5 -602Q3385 -616 3397 -621Q3488 -671 3569 -671Q3600 -671 3619 -670L3632 -668Q3646 -691 3671 -691Q3686 -691 3699 -681.5Q3712 -672 3712 -656Q3712 -649 3709 -641Q3693 -618 3681 -577Q3669 -536 3669 -491Q3669 -451 3680 -419Q3689 -392 3709 -384H3712Q3724 -384 3738 -415Q3758 -455 3790 -455Q3810 -455 3825 -434Q3833 -419 3833 -402Q3833 -375 3827 -357Q3804 -229 3719 -138.5Q3634 -48 3513 -4Q3503 0 3495 0ZM4172 0Q4115 0 4060.5 -35Q4006 -70 3965 -150Q3959 -164 3959 -175Q3959 -189 3965.5 -196.5Q3972 -204 3980 -204Q3994 -204 4007 -179Q4033 -124 4070 -99.5Q4107 -75 4148 -75Q4197 -75 4243.5 -105Q4290 -135 4320 -185.5Q4350 -236 4350 -296Q4350 -310 4348 -326Q4339 -301 4323 -289Q4307 -277 4292 -277Q4277 -277 4266.5 -287.5Q4256 -298 4256 -318Q4258 -333 4265 -347Q4278 -372 4278 -408Q4278 -452 4262 -494Q4246 -536 4222 -536Q4201 -536 4177 -492Q4169 -475 4169 -463Q4169 -453 4173.5 -445Q4178 -437 4184 -428.5Q4190 -420 4197 -406.5Q4204 -393 4204 -376Q4204 -356 4194.5 -340Q4185 -324 4164 -324L4152 -326Q4085 -379 4085 -454Q4085 -519 4129 -570.5Q4173 -622 4226 -622Q4268 -622 4305 -579.5Q4342 -537 4361 -437H4364Q4377 -437 4390.5 -426.5Q4404 -416 4410 -400Q4433 -343 4433 -288Q4433 -210 4395 -144.5Q4357 -79 4297.5 -39.5Q4238 0 4172 0Z"/></svg></div>
   <nav id="tabs">
     <button class="tab-btn active" data-tab="player">Player</button>
     <button class="tab-btn" data-tab="composer">Composer</button>
@@ -40,8 +44,9 @@
     <svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6.3" y="6.3" width="11.4" height="11.4" rx="2.6"/></svg>
   </button></div>
 
+  <div id="tempoSheet" class="t-sheet">
   <div class="tgroup">
-    <label>Tempo <span id="laya" class="muted"></span></label>
+    <label for="tempo">Tempo <span id="laya" class="muted"></span></label>
     <div class="row">
       <button id="tempoDown" title="−1 (↓, Shift = −10)">−</button>
       <input id="tempo" type="number" min="10" max="800" step="1">
@@ -52,158 +57,187 @@
       <button id="tempoReset" title="Taal's default tempo">↺</button>
     </div>
   </div>
+  <div class="tgroup t-master">
+    <label for="masterVol">Master</label>
+    <input id="masterVol" type="range" min="0" max="1" step="0.01">
+  </div>
+  </div>
 
-  <div class="tgroup">
-    <label>Sa (pitch) <span id="saInfo" class="muted"></span></label>
+  <button id="saBtn" class="sa-btn" aria-expanded="false" aria-controls="saGroup" title="Sa (pitch)"></button>
+  <div id="saGroup" class="tgroup t-sa">
+    <label for="key">Sa (pitch) <span id="saInfo" class="muted"></span></label>
     <div class="row">
       <button id="keyDown" title="Down a semitone">−</button>
       <select id="key"></select>
       <button id="keyUp" title="Up a semitone">+</button>
-      <input id="fine" type="number" min="-100" max="100" step="1" title="Fine tune (cents)">
+      <input id="fine" aria-label="Fine tune (cents)" type="number" min="-100" max="100" step="1" title="Fine tune (cents)">
       <span class="muted">cents</span>
     </div>
   </div>
 
-  <div class="tgroup">
-    <label>Master</label>
-    <input id="masterVol" type="range" min="0" max="1" step="0.01">
+  <div class="tgroup t-presets">
+    <button id="presetBtn" class="menu-btn" aria-expanded="false" aria-controls="presetPanel" aria-label="Presets">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h12v17l-6-4.2-6 4.2z"/></svg>
+      <span class="menu-label">Presets</span></button>
+    <div id="presetPanel" class="presets popover" hidden>
+      <label for="presetSelect">Preset</label>
+      <select id="presetSelect"><option value="">—</option></select>
+      <div class="row">
+        <button id="presetSave">Save as…</button>
+        <button id="presetDelete">Delete</button>
+      </div>
+    </div>
   </div>
 
   <div class="tgroup status">
-    <div><span class="muted">Now:</span> <b id="nowPlaying">—</b></div>
-    <div><span class="muted">Avartan</span> <b id="avartan">0</b>
+    <button id="nowBtn" class="now-btn" title="Choose taal"><span class="muted">Now:</span> <b id="nowPlaying">—</b></button>
+    <div class="status-count"><span class="muted">Avartan</span> <b id="avartan">0</b>
          <span class="muted">· Time</span> <b id="elapsed">0:00</b></div>
   </div>
 </section>
 
+<div id="dock" class="dock">
+  <div class="dock-tempo" role="group" aria-label="Tempo">
+    <button id="dockTempoDown" title="−1" aria-label="−1">−</button>
+    <button id="dockTempo" aria-expanded="false" aria-controls="tempoSheet" title="Tempo and volume">
+      <b id="dockTempoVal">120</b><small id="dockLaya"></small></button>
+    <button id="dockTempoUp" title="+1" aria-label="+1">+</button>
+  </div>
+  <div class="dock-count" aria-hidden="true">
+    <div><span class="muted">Avartan</span> <b id="dockAvartan">0</b></div>
+    <b id="dockElapsed">0:00</b>
+  </div>
+</div>
+
 <main>
   <!-- ── Player ── -->
   <section id="tab-player" class="tab active">
-    <div class="presets">
-      <label>Preset</label>
-      <select id="presetSelect"><option value="">—</option></select>
-      <button id="presetSave">Save as…</button>
-      <button id="presetDelete">Delete</button>
-    </div>
-
     <div id="beatGrid" class="beat-grid"></div>
 
     <div class="player-layout" id="playerLayout">
       <!-- Rail: one icon per pane. A click opens or closes it; the rest of the layout slides. -->
       <nav class="inst-rail" aria-label="Panels">
         <button class="inst-btn" data-open="lehraOpen" data-on="lehraOn" title="Lehra" aria-label="Lehra" aria-expanded="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17h18l-3-9H6z"/><path d="M6.5 11.5h11M5.3 14.3h13.4"/><path d="M14 4l3.5 3.5"/><circle cx="18.6" cy="8.6" r="1"/></svg><span class="dot"></span></button>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17h18l-3-9H6z"/><path d="M6.5 11.5h11M5.3 14.3h13.4"/><path d="M14 4l3.5 3.5"/><circle cx="18.6" cy="8.6" r="1"/></svg><span class="dot"></span><span class="inst-label">Lehra</span></button>
         <button class="inst-btn" data-open="tanpuraOpen" data-on="tanpuraOn" title="Tanpura" aria-label="Tanpura" aria-expanded="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="17" r="4.5"/><path d="M12 12.5V2.5"/><path d="M10.5 5h3M10.5 8h3"/></svg><span class="dot"></span></button>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="17" r="4.5"/><path d="M12 12.5V2.5"/><path d="M10.5 5h3M10.5 8h3"/></svg><span class="dot"></span><span class="inst-label">Tanpura</span></button>
         <button class="inst-btn" data-open="swarOpen" data-on="swarOn" title="Swarmandal" aria-label="Swarmandal" aria-expanded="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V6l16-3v17z"/><path d="M8 19.5V5.3M12 19.5V4.5M16 19.5V3.8"/></svg><span class="dot"></span></button>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V6l16-3v17z"/><path d="M8 19.5V5.3M12 19.5V4.5M16 19.5V3.8"/></svg><span class="dot"></span><span class="inst-label">Swarmandal</span></button>
         <span class="rail-sep"></span>
         <button class="inst-btn" data-open="taalOpen" data-on="taalOn" title="Taal" aria-label="Taal" aria-expanded="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="7" cy="8.5" rx="4" ry="1.8"/><path d="M3 8.5v7.5c0 1 1.8 1.8 4 1.8s4-.8 4-1.8V8.5"/><ellipse cx="17" cy="11" rx="4.5" ry="1.8"/><path d="M12.5 11c0 4.2 2 7.3 4.5 7.3s4.5-3.1 4.5-7.3"/></svg><span class="dot"></span></button>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="7" cy="8.5" rx="4" ry="1.8"/><path d="M3 8.5v7.5c0 1 1.8 1.8 4 1.8s4-.8 4-1.8V8.5"/><ellipse cx="17" cy="11" rx="4.5" ry="1.8"/><path d="M12.5 11c0 4.2 2 7.3 4.5 7.3s4.5-3.1 4.5-7.3"/></svg><span class="dot"></span><span class="inst-label">Taal</span></button>
         <button class="inst-btn" data-open="sargamPanel" data-on="sargamOn" title="Sargam practice (G)" aria-label="Sargam practice" aria-expanded="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg><span class="dot"></span></button>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg><span class="dot"></span><span class="inst-label">Sargam</span></button>
       </nav>
 
-      <!-- Panes for the open instruments -->
-      <aside id="instruments" class="instruments pane">
-        <!-- Lehra -->
-        <div class="card inst" id="card-lehra">
+      <!-- Settings column: the taal card and any open instruments, stacked at a
+           fixed width so the sargam panel keeps the rest of the row. -->
+      <div class="side-col">
+        <!-- Taal -->
+        <div class="card pane" id="card-taal">
           <div class="card-head">
-            <label class="switch"><input type="checkbox" id="lehraOn"><span></span></label>
-            <h3>Lehra</h3>
-            <button class="icon pane-close" data-open="lehraOpen" title="Close">✕</button>
+            <label class="switch"><input type="checkbox" id="taalOn"><span></span></label>
+            <h3>Taal</h3>
+            <button id="favBtn" class="icon" title="Favourite">☆</button>
+            <button class="icon pane-close" data-open="taalOpen" title="Close">✕</button>
           </div>
-          <div class="inst-body">
-            <select id="lehraSelect"></select>
-            <div class="field"><label>Volume</label><input id="lehraVol" type="range" min="0" max="1.5" step="0.01"></div>
-            <div class="field"><label><input type="checkbox" id="lehraAuto"> Auto-load lehra for taal</label></div>
-            <p class="muted small" id="lehraNotes"></p>
-          </div>
+          <select id="taalSelect" aria-label="Taal"></select>
+          <div class="field"><label for="drumSelect">Drum</label>
+            <select id="drumSelect">
+              <option value="">Taal default</option>
+              <option value="tabla">Tabla</option>
+              <option value="pakhawaj">Pakhawaj</option>
+            </select></div>
+          <div class="field"><label for="taalVol">Volume</label><input id="taalVol" type="range" min="0" max="1.5" step="0.01"></div>
+          <details data-keep="taal-more">
+            <summary>Drum mix and manjeera</summary>
+          <div class="field"><label for="startBeat">Start at beat</label><input id="startBeat" type="number" min="1" value="1"></div>
+          <div class="field"><label for="dayanVol">Dayan</label><input id="dayanVol" type="range" min="0" max="1.5" step="0.01"></div>
+          <div class="field"><label for="bayanVol">Bayan</label><input id="bayanVol" type="range" min="0" max="1.5" step="0.01"></div>
+          <div class="field"><label for="tablaFine">Tabla fine-tune</label>
+            <input id="tablaFine" type="number" min="-100" max="100" step="1"><span class="muted">cents</span></div>
+          <div class="field sub"><label><input type="checkbox" id="manjeeraOn"> Manjeera</label>
+            <input id="manjeeraVol" aria-label="Volume" type="range" min="0" max="1.5" step="0.01"></div>
+          <div class="field"><label for="manjeeraMode">Manjeera on</label>
+            <select id="manjeeraMode">
+              <option value="beats">Every beat (vibhag accents)</option>
+              <option value="custom">Custom positions</option>
+            </select></div>
+          <div class="field" id="manjeeraCustom"><label for="manjeeraBeats">Positions</label>
+            <input id="manjeeraBeats" type="text" placeholder="1 5 9 13 · 2.5 = half beat · 3c = closed"></div>
+          <p class="muted small" id="manjeeraError"></p>
+          </details>
         </div>
-        <!-- Tanpura -->
-        <div class="card inst" id="card-tanpura">
-          <div class="card-head">
-            <label class="switch"><input type="checkbox" id="tanpuraOn"><span></span></label>
-            <h3>Tanpura</h3>
-            <button class="icon pane-close" data-open="tanpuraOpen" title="Close">✕</button>
-          </div>
-          <div class="inst-body">
-            <select id="tanpuraPattern"></select>
-            <div class="field"><label>Tone</label><select id="tanpuraTone"></select></div>
-            <div class="field"><label>Tanpuras</label>
-              <select id="tanpuraCount"><option value="1">1</option><option value="2">2</option></select></div>
-            <div class="field"><label>Speed <span id="tanpuraSpeedVal" class="muted"></span></label>
-              <input id="tanpuraSpeed" type="range" min="0.5" max="2" step="0.05"></div>
-            <div class="field"><label>Volume</label><input id="tanpuraVol" type="range" min="0" max="1.5" step="0.01"></div>
-            <div class="field"><label><input type="checkbox" id="tanpuraRandom"> Randomize delays</label></div>
-            <details>
-              <summary>String delays (seconds)</summary>
-              <div class="field"><label>1 → 2</label><input class="tdelay" data-i="0" type="number" min="0.2" max="5" step="0.05"></div>
-              <div class="field"><label>2 → 3</label><input class="tdelay" data-i="1" type="number" min="0.2" max="5" step="0.05"></div>
-              <div class="field"><label>3 → 4</label><input class="tdelay" data-i="2" type="number" min="0.2" max="5" step="0.05"></div>
-              <div class="field"><label>4 → 1</label><input class="tdelay" data-i="3" type="number" min="0.2" max="5" step="0.05"></div>
-            </details>
-          </div>
-        </div>
-        <!-- Swarmandal -->
-        <div class="card inst" id="card-swar">
-          <div class="card-head">
-            <label class="switch"><input type="checkbox" id="swarOn"><span></span></label>
-            <h3>Swarmandal</h3>
-            <button id="strumBtn" title="Strum now (S)">Strum</button>
-            <button class="icon pane-close" data-open="swarOpen" title="Close">✕</button>
-          </div>
-          <div class="inst-body">
-            <select id="swarRaga"></select>
-            <div class="field"><label>Auto-strum on sam every</label>
-              <input id="swarEvery" type="number" min="0" max="16" step="1"><span class="muted">avartans</span></div>
-            <div class="field"><label>Speed</label><input id="swarSpeed" type="range" min="0.4" max="2.5" step="0.05"></div>
-            <div class="field"><label>Volume</label><input id="swarVol" type="range" min="0" max="1.5" step="0.01"></div>
-          </div>
-        </div>
-      </aside>
 
-      <!-- Taal -->
-      <div class="card pane" id="card-taal">
-        <div class="card-head">
-          <label class="switch"><input type="checkbox" id="taalOn"><span></span></label>
-          <h3>Taal</h3>
-          <button id="favBtn" class="icon" title="Favourite">☆</button>
-          <button class="icon pane-close" data-open="taalOpen" title="Close">✕</button>
-        </div>
-        <select id="taalSelect"></select>
-        <div class="field"><label>Drum</label>
-          <select id="drumSelect">
-            <option value="">Taal default</option>
-            <option value="tabla">Tabla</option>
-            <option value="pakhawaj">Pakhawaj</option>
-          </select></div>
-        <div class="field"><label>Start at beat</label><input id="startBeat" type="number" min="1" value="1"></div>
-        <div class="field"><label>Volume</label><input id="taalVol" type="range" min="0" max="1.5" step="0.01"></div>
-        <div class="field"><label>Dayan</label><input id="dayanVol" type="range" min="0" max="1.5" step="0.01"></div>
-        <div class="field"><label>Bayan</label><input id="bayanVol" type="range" min="0" max="1.5" step="0.01"></div>
-        <div class="field"><label>Tabla fine-tune</label>
-          <input id="tablaFine" type="number" min="-100" max="100" step="1"><span class="muted">cents</span></div>
-        <div class="field sub"><label><input type="checkbox" id="manjeeraOn"> Manjeera</label>
-          <input id="manjeeraVol" type="range" min="0" max="1.5" step="0.01"></div>
-        <div class="field"><label>Manjeera on</label>
-          <select id="manjeeraMode">
-            <option value="beats">Every beat (vibhag accents)</option>
-            <option value="custom">Custom positions</option>
-          </select></div>
-        <div class="field" id="manjeeraCustom"><label>Positions</label>
-          <input id="manjeeraBeats" type="text" placeholder="1 5 9 13 · 2.5 = half beat · 3c = closed"></div>
-        <p class="muted small" id="manjeeraError"></p>
+        <!-- Panes for the open instruments -->
+        <aside id="instruments" class="instruments pane">
+          <!-- Lehra -->
+          <div class="card inst" id="card-lehra">
+            <div class="card-head">
+              <label class="switch"><input type="checkbox" id="lehraOn"><span></span></label>
+              <h3>Lehra</h3>
+              <button class="icon pane-close" data-open="lehraOpen" title="Close">✕</button>
+            </div>
+            <div class="inst-body">
+              <select id="lehraSelect" aria-label="Lehra"></select>
+              <div class="field"><label for="lehraVol">Volume</label><input id="lehraVol" type="range" min="0" max="1.5" step="0.01"></div>
+              <div class="field"><label><input type="checkbox" id="lehraAuto"> Auto-load lehra for taal</label></div>
+              <p class="muted small" id="lehraNotes"></p>
+            </div>
+          </div>
+          <!-- Tanpura -->
+          <div class="card inst" id="card-tanpura">
+            <div class="card-head">
+              <label class="switch"><input type="checkbox" id="tanpuraOn"><span></span></label>
+              <h3>Tanpura</h3>
+              <button class="icon pane-close" data-open="tanpuraOpen" title="Close">✕</button>
+            </div>
+            <div class="inst-body">
+              <select id="tanpuraPattern" aria-label="Tanpura"></select>
+              <div class="field"><label for="tanpuraTone">Tone</label><select id="tanpuraTone"></select></div>
+              <div class="field"><label for="tanpuraCount">Tanpuras</label>
+                <select id="tanpuraCount"><option value="1">1</option><option value="2">2</option></select></div>
+              <div class="field"><label for="tanpuraSpeed">Speed <span id="tanpuraSpeedVal" class="muted"></span></label>
+                <input id="tanpuraSpeed" type="range" min="0.5" max="2" step="0.05"></div>
+              <div class="field"><label for="tanpuraVol">Volume</label><input id="tanpuraVol" type="range" min="0" max="1.5" step="0.01"></div>
+              <div class="field"><label><input type="checkbox" id="tanpuraRandom"> Randomize delays</label></div>
+              <details>
+                <summary>String delays (seconds)</summary>
+                <div class="field"><label for="tdelay0">1 → 2</label><input id="tdelay0" class="tdelay" data-i="0" type="number" min="0.2" max="5" step="0.05"></div>
+                <div class="field"><label for="tdelay1">2 → 3</label><input id="tdelay1" class="tdelay" data-i="1" type="number" min="0.2" max="5" step="0.05"></div>
+                <div class="field"><label for="tdelay2">3 → 4</label><input id="tdelay2" class="tdelay" data-i="2" type="number" min="0.2" max="5" step="0.05"></div>
+                <div class="field"><label for="tdelay3">4 → 1</label><input id="tdelay3" class="tdelay" data-i="3" type="number" min="0.2" max="5" step="0.05"></div>
+              </details>
+            </div>
+          </div>
+          <!-- Swarmandal -->
+          <div class="card inst" id="card-swar">
+            <div class="card-head">
+              <label class="switch"><input type="checkbox" id="swarOn"><span></span></label>
+              <h3>Swarmandal</h3>
+              <button id="strumBtn" title="Strum now (S)">Strum</button>
+              <button class="icon pane-close" data-open="swarOpen" title="Close">✕</button>
+            </div>
+            <div class="inst-body">
+              <select id="swarRaga" aria-label="Swarmandal"></select>
+              <div class="field"><label for="swarEvery">Auto-strum on sam every</label>
+                <input id="swarEvery" type="number" min="0" max="16" step="1"><span class="muted">avartans</span></div>
+              <div class="field"><label for="swarSpeed">Speed</label><input id="swarSpeed" type="range" min="0.4" max="2.5" step="0.05"></div>
+              <div class="field"><label for="swarVol">Volume</label><input id="swarVol" type="range" min="0" max="1.5" step="0.01"></div>
+            </div>
+          </div>
+        </aside>
       </div>
 
-      <!-- Sargam practice: fills the body until an instrument is open -->
+      <!-- Sargam practice: takes the rest of the row -->
       <aside id="sargamPanel" class="card pane">
         <div class="card-head">
           <label class="switch"><input type="checkbox" id="sargamOn"><span></span></label>
           <h3>Sargam practice</h3>
+          <button id="focusBtn" class="small focus-btn" aria-pressed="false" title="Focus view while playing">Focus</button>
           <button class="icon pane-close" data-open="sargamPanel" title="Close (G)">✕</button>
         </div>
-        <div id="sargamTurn" class="turn">Starts on sam</div>
+        <div id="sargamTurn" class="turn" aria-live="polite">Starts on sam</div>
         <div id="sargamScore" class="small muted"></div>
         <div id="sargamLoopBar" class="loop-bar" hidden>
           <span id="sargamLoopInfo" class="small"></span>
@@ -212,11 +246,9 @@
         <div id="sargamLines" class="sargam-lines"></div>
         <div id="sargamResize" class="sargam-resize" role="separator" aria-orientation="horizontal" tabindex="0"
           title="Drag to show more or fewer lines (or use the arrow keys)"><i></i><span></span></div>
-        <p class="muted small sargam-help">One line = one avartan. Komal swars are underlined, tivra Ma has a mark above,
-          dots show mandra (below) and taar (above) saptak. Use headphones when checking your singing.</p>
         <div class="sargam-settings">
           <div class="sargam-search">
-            <input id="sargamSearch" type="search" placeholder="Search sargams by name or list…" autocomplete="off"
+            <input id="sargamSearch" type="search" placeholder="Search sargams by name or list…" aria-label="Search sargams by name or list…" autocomplete="off"
               role="combobox" aria-expanded="false" aria-controls="sargamResults">
             <ul id="sargamResults" class="sargam-results" role="listbox" hidden></ul>
           </div>
@@ -232,19 +264,15 @@
             <button id="sargamEdit" aria-pressed="false" title="Show the line editor">Edit</button>
             <button id="sargamShare" title="Save this line as a file to share">Share…</button>
           </div>
-          <div class="row sargam-files">
-            <button id="sargamShareAll" class="small" title="Save all your sargam lines as one file to share">Share all lines…</button>
-            <label class="button small" title="Add sargam lines or compositions from a shared file">Import… <input id="sargamImport" type="file" accept=".json,application/json" hidden></label>
-          </div>
           <div id="sargamEditor" hidden>
-            <div class="field"><label>Name</label>
+            <div class="field"><label for="sargamLineName">Name</label>
               <input id="sargamLineName" type="text" placeholder="e.g. Yaman palta 1"></div>
-            <div class="field"><label>List</label>
+            <div class="field"><label for="sargamLineList">List</label>
               <input id="sargamLineList" type="text" list="sargamListNames" placeholder="e.g. Kaharba lessons">
               <datalist id="sargamListNames"></datalist></div>
             <div class="field" title="Selecting this line switches to its taal; you can still change the taal afterwards">
-              <label>Default taal</label><select id="sargamLineTaal"></select></div>
-            <textarea id="sargamCustom" rows="3" spellcheck="false"
+              <label for="sargamLineTaal">Default taal</label><select id="sargamLineTaal"></select></div>
+            <textarea id="sargamCustom" aria-label="Swars of the line" rows="3" spellcheck="false"
               placeholder="S R G M P - - - | P M G R S - - -"></textarea>
             <p class="muted small hint" data-i18n="sargamHint">Brackets share one beat: <code>S R (GM) P (DNS')</code>.
               <code>[beats]</code> sets a length that carries on until changed: <code>S[0.5] R G M[2]</code>.
@@ -252,33 +280,35 @@
             <div class="row">
               <button id="sargamLineSave">Save line</button>
               <button id="sargamLineDelete" class="danger">Delete</button>
-              <span id="sargamLineStatus" class="small muted"></span>
+              <span id="sargamLineStatus" class="small muted" aria-live="polite"></span>
             </div>
           </div>
-          <div id="sargamError" class="status-line err"></div>
-          <div id="sargamWarn" class="status-line warn"></div>
-          <div class="field"><label>Raga / thaat</label><select id="sargamRaga"></select></div>
-          <div class="field"><label>Laya</label>
+          <div id="sargamError" class="status-line err" aria-live="polite"></div>
+          <div id="sargamWarn" class="status-line warn" aria-live="polite"></div>
+          <div class="field"><label for="sargamRaga">Raga / thaat</label><select id="sargamRaga"></select></div>
+          <div class="field"><label for="sargamPerBeat">Laya</label>
             <select id="sargamPerBeat">
               <option value="1">Barabar · 1 note / beat</option>
               <option value="2">Dugun · 2 notes / beat</option>
               <option value="3">Tigun · 3 notes / beat</option>
               <option value="4">Chaugun · 4 notes / beat</option>
             </select></div>
-          <div class="field"><label>Mode</label>
+          <div class="field"><label for="sargamMode">Mode</label>
             <select id="sargamMode">
               <option value="along">Play along</option>
               <option value="call">Call &amp; response</option>
               <option value="silent">Notes only (you sing)</option>
             </select></div>
-          <div class="field"><label>Loop</label>
+          <div class="field"><label><input type="checkbox" id="sargamCheck"> Check my singing (mic)</label></div>
+          <details data-keep="sargam-more">
+            <summary>More options</summary>
+          <div class="field"><label for="sargamLoop">Loop</label>
             <select id="sargamLoop">
               <option value="all">All lines</option>
               <option value="selected">Selected lines</option>
             </select></div>
-          <div class="field"><label>Instrument</label><select id="sargamInst"></select></div>
-          <div class="field"><label>Volume</label><input id="sargamVol" type="range" min="0" max="1.5" step="0.01"></div>
-          <div class="field"><label><input type="checkbox" id="sargamCheck"> Check my singing (mic)</label></div>
+          <div class="field"><label for="sargamInst">Instrument</label><select id="sargamInst"></select></div>
+          <div class="field"><label for="sargamVol">Volume</label><input id="sargamVol" type="range" min="0" max="1.5" step="0.01"></div>
           <div class="field"><label><input type="checkbox" id="keysOn"> Play swars from the keyboard</label></div>
           <div id="keysInfo" hidden>
             <p class="muted small hint" data-i18n="keysHelp">Uses the instrument above. <kbd>A</kbd> is Sa and
@@ -294,8 +324,15 @@
             <p class="muted small hint" data-i18n="keysWriteHelp">While the line editor is open, each swar you play is
               added at its cursor. Click outside the text box to play from the computer keys; there <kbd>-</kbd> holds
               the swar, <kbd>\</kbd> adds a <code>|</code> and <kbd>Backspace</kbd> removes the last swar.</p>
-            <div id="keysStatus" class="status-line"></div>
+            <div id="keysStatus" class="status-line" aria-live="polite"></div>
           </div>
+            <div class="row sargam-files">
+            <button id="sargamShareAll" class="small" title="Save all your sargam lines as one file to share">Share all lines…</button>
+            <label class="button small" title="Add sargam lines or compositions from a shared file">Import… <input id="sargamImport" type="file" accept=".json,application/json" hidden></label>
+          </div>
+            <p class="muted small sargam-help">One line = one avartan. Komal swars are underlined, tivra Ma has a mark above,
+          dots show mandra (below) and taar (above) saptak. Use headphones when checking your singing.</p>
+          </details>
         </div>
       </aside>
     </div>
@@ -306,25 +343,25 @@
     <div class="two-col">
       <div class="card">
         <h3>Compose a taal or composition</h3>
-        <div class="field"><label>Name</label><input id="cName" type="text" placeholder="My Kayda"></div>
-        <div class="field"><label>Vibhag marks</label><input id="cMarks" type="text" placeholder="X 2 0 3"></div>
-        <div class="field"><label>Default tempo</label><input id="cTempo" type="number" min="10" max="800" value="100"></div>
-        <div class="field"><label>Drum</label>
+        <div class="field"><label for="cName">Name</label><input id="cName" type="text" placeholder="My Kayda"></div>
+        <div class="field"><label for="cMarks">Vibhag marks</label><input id="cMarks" type="text" placeholder="X 2 0 3"></div>
+        <div class="field"><label for="cTempo">Default tempo</label><input id="cTempo" type="number" min="10" max="800" value="100"></div>
+        <div class="field"><label for="cDrum">Drum</label>
           <select id="cDrum"><option value="tabla">Tabla</option><option value="pakhawaj">Pakhawaj</option></select></div>
-        <label>Bols <span class="muted small" data-i18n="bolsHelp">— beats separated by spaces, vibhags by “|”. Several bols in one beat
+        <label for="cBols">Bols <span class="muted small" data-i18n="bolsHelp">— beats separated by spaces, vibhags by “|”. Several bols in one beat
           share it: <code>TiRaKiTa</code>, <code>DhaGe</code>. “-” is a rest. <code>(Na---)[1]</code> fits a group
           into 1 beat, <code>(Dha|Dha2)</code> picks one at random, <code>Dha2</code> = recording 2, <code>#</code> louder,
           <code>*</code> softer.</span></label>
         <textarea id="cBols" rows="6" spellcheck="false"
           placeholder="Dha Dhin Dhin Dha | Dha Dhin Dhin Dha | Dha Tin Tin Ta | Ta Dhin Dhin Dha"></textarea>
-        <div id="cStatus" class="status-line"></div>
+        <div id="cStatus" class="status-line" aria-live="polite"></div>
         <div id="cPreview" class="beat-grid small"></div>
         <div class="row wrap">
           <button id="cPlay" class="primary">Play in player</button>
           <button id="cSave">Save</button>
           <button id="cNew">New</button>
           <button id="cShare" title="Save this composition as a file to share">Share…</button>
-          <button id="cDelete" class="danger">Delete</button>
+          <button id="cDelete" class="danger" hidden>Delete</button>
         </div>
       </div>
       <div>
@@ -355,7 +392,7 @@
       </div>
       <div class="card" id="seqEditor">
         <h3>Sequence editor</h3>
-        <div class="field"><label>Name</label><input id="seqName" type="text" placeholder="Practice set"></div>
+        <div class="field"><label for="seqName">Name</label><input id="seqName" type="text" placeholder="Practice set"></div>
         <div class="field"><label><input type="checkbox" id="seqLoop"> Loop the whole sequence</label></div>
         <table class="steps">
           <thead><tr><th>#</th><th>Taal / composition</th><th>Repeat</th><th>Tempo</th><th></th></tr></thead>
@@ -374,7 +411,7 @@
 
   <!-- ── Tuner ── -->
   <section id="tab-tuner" class="tab">
-    <div class="card tuner">
+    <div class="card tuner idle">
       <h3>Pitch detector</h3>
       <p class="muted small">Sing or play a steady Sa, then set it as the app's Sa.</p>
       <div id="tNote" class="tuner-note">—</div>
@@ -394,17 +431,25 @@
     <div class="card">
       <h3>Playback</h3>
       <div class="field"><label><input type="checkbox" id="fadeOut"> Fade out audio when stopping</label></div>
-      <div class="field"><label>Stop button</label>
+      <div class="field"><label for="stopMode">Stop button</label>
         <select id="stopMode">
           <option value="immediate">Stops immediately</option>
           <option value="sam">Finishes the avartan and ends on sam</option>
         </select></div>
       <div class="field"><label><input type="checkbox" id="accentSam"> Accent the sam</label></div>
+      <div class="field"><label><input type="checkbox" id="focusPlay"> Focus view while playing</label></div>
+      <p class="muted small field-note">Hides the settings while the taal plays and shows the current line large. Stop brings everything back.</p>
       <div class="field"><label><input type="checkbox" id="previews"> Sound previews in the bol keyboard</label></div>
     </div>
     <div class="card">
-      <h3>Language</h3>
-      <div class="field"><label>App and sargam names</label>
+      <h3>Theme and language</h3>
+      <div class="field"><label for="themeSelect">Theme</label>
+        <select id="themeSelect">
+          <option value="auto">Follows system</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select></div>
+      <div class="field"><label for="sargamLang">App and sargam names</label>
         <select id="sargamLang">
           <option value="en">English (Sa Re Ga)</option>
           <option value="bn">বাংলা (সা রা গা)</option>

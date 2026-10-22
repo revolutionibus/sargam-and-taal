@@ -7,19 +7,27 @@
   --line: #e4e4e0;
   --line-strong: #d2d2cc;
   --text: #1c1c1a;
-  --muted: #74746e;
+  --muted: #66665f;
   --accent: #e8890c;
   --accent-soft: #fdf0dc;
-  --on-accent: #ffffff;
-  --accent-2: #a85f00;
-  --khali: #3b82c4;
+  --on-accent: #1a1206;        /* dark ink on the orange: 7:1, white was 2.6:1 */
+  --accent-2: #8f5000;         /* orange as text on light surfaces */
+  --mark: #8f5000;             /* vibhag marks (X 2 3) */
+  --grid-on: #ffffff;          /* bol on the lit beat cell */
+  --khali: #2f6fae;
   --khali-soft: #e3eef8;
-  --danger: #d64545;
+  --danger: #c53a3a;
   --ok: #2f9e5b;
   --radius: 14px;
   --radius-sm: 9px;
   --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 2px 8px rgba(0, 0, 0, .03);
   --topbar-bg: rgba(246, 246, 244, .82);
+  --play-drop: 0 6px 16px color-mix(in srgb, var(--accent) 40%, transparent);
+  --font-ui: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  /* Swaralipi: sargam set like a printed notation book. */
+  --font-notation: 'Kalpurush', 'Hind Siliguri', Georgia, serif;
+  /* The beat grid keeps the system face it was designed with. */
+  --font-grid: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
 }
 /* Dark: when the system asks for it (unless the theme button forces light),
    or when the theme button forces it. */
@@ -36,6 +44,9 @@
     --accent-soft: #33240f;
     --on-accent: #1a1206;
     --accent-2: #ffc67a;
+    --mark: #f59e2b;
+    --grid-on: #1a1206;
+    --play-drop: 0 6px 16px rgba(0, 0, 0, .5);
     --khali: #6aaee8;
     --khali-soft: #16293b;
     --danger: #ef6b6b;
@@ -57,6 +68,9 @@
   --accent-soft: #33240f;
   --on-accent: #1a1206;
   --accent-2: #ffc67a;
+  --mark: #f59e2b;
+  --grid-on: #1a1206;
+  --play-drop: 0 6px 16px rgba(0, 0, 0, .5);
   --khali: #6aaee8;
   --khali-soft: #16293b;
   --danger: #ef6b6b;
@@ -71,10 +85,15 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 15px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font: 15px/1.5 var(--font-ui);
   -webkit-font-smoothing: antialiased;
+  caret-color: var(--accent);
+  scrollbar-color: var(--line-strong) transparent;
 }
-h3 { margin: 0 0 12px; font-size: .95rem; font-weight: 600; letter-spacing: -.005em; }
+::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); color: inherit; }
+/* Bangla conjuncts break apart under letter-spacing, so labels never track. */
+:lang(bn) * { letter-spacing: 0 !important; }
+h3 { margin: 0 0 12px; font-size: 1rem; font-weight: 600; letter-spacing: -.005em; text-wrap: balance; }
 code, kbd {
   background: var(--panel-2); padding: 1px 6px; border-radius: 5px; font-size: .85em;
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
@@ -91,7 +110,7 @@ button, .button, select, input[type=text], input[type=search], input[type=number
   border-radius: var(--radius-sm);
   padding: 7px 12px;
   font: inherit;
-  font-size: .9rem;
+  font-size: .93rem;
   min-height: 36px;
   transition: border-color .12s, background .12s, color .12s;
 }
@@ -158,6 +177,11 @@ input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px va
 }
 #brand { font-weight: 700; font-size: 1.05rem; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
 #brand img { flex: none; display: block; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .12)); }
+/* Bangla: the hand-lettered wordmark replaces the typed name. Its flourishes
+   reach into the bar's padding, so the negative margins keep the bar's height. */
+.wordmark { display: none; height: 46px; width: auto; margin: -7px 0 -5px; flex: none; }
+html:lang(bn) .wordmark { display: block; }
+html:lang(bn) .brand-name { display: none; }
 #themeBtn {
   margin-left: auto; flex: 0 0 auto; width: 36px; height: 36px; padding: 0;
   border-radius: 50%; border-color: transparent; background: none; color: var(--muted);
@@ -184,10 +208,10 @@ input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px va
   background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
 }
 #transport label {
-  display: block; font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
-  color: var(--muted); margin-bottom: 6px;
+  display: block; font-size: .82rem; font-weight: 600;
+  color: var(--muted); margin-bottom: 4px;
 }
-#transport label .muted { text-transform: none; letter-spacing: 0; font-weight: 500; }
+#transport label .muted { font-weight: 500; }
 #transport .tgroup input[type=range] { width: 150px; }
 #transport .status { margin-left: auto; font-size: .88rem; text-align: right; line-height: 1.7; }
 #transport .status b { font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -198,7 +222,11 @@ input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px va
 #tempoUp, #keyUp { border-top-left-radius: 0; border-bottom-left-radius: 0; margin-left: -7px; }
 #tempo, #key { border-radius: 0; position: relative; z-index: 1; }
 #tempoDown, #tempoUp, #keyDown, #keyUp { width: 36px; padding: 0; font-size: 1.05rem; }
-#tempoHalf { margin-left: 6px; }
+/* Tempo row in clusters, so ½ / ×2 aren't one slip away from ±1:
+   [− n +]   [½ ×2]   [Tap] [↺] */
+#tempoHalf { margin-left: 14px; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+#tempoDouble { margin-left: -7px; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+#tapBtn { margin-left: 14px; }
 /* Play: a glossy orange disc; while playing it turns dark with a stop
    square, and a ring pulses out on every beat (stronger on sam). */
 .play {
@@ -206,7 +234,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px va
   background: linear-gradient(150deg, #f8ad45, var(--accent) 50%, #d26a06);
   color: #fff; border: none;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), inset 0 -2px 4px rgba(120, 50, 0, .25),
-              0 6px 16px color-mix(in srgb, var(--accent) 40%, transparent);
+              var(--play-drop);
   transition: transform .12s, box-shadow .15s, filter .15s;
 }
 .play svg { width: 46%; height: 46%; fill: currentColor; filter: drop-shadow(0 1px 1px rgba(90, 40, 0, .3)); }
@@ -242,6 +270,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px va
   position: fixed; z-index: 30;
   right: calc(24px + env(safe-area-inset-right, 0px)); bottom: calc(24px + env(safe-area-inset-bottom, 0px));
 }
+.dock { display: none; }
 .to-top {
   position: fixed; z-index: 30; width: 44px; height: 44px; border-radius: 50%; padding: 0; font-size: 1.2rem;
   left: calc(24px + env(safe-area-inset-left, 0px)); bottom: calc(24px + env(safe-area-inset-bottom, 0px));
@@ -258,14 +287,39 @@ main { padding: 20px 24px 48px; max-width: 1768px; margin: 0 auto; }
 .tab { display: none; }
 .tab.active { display: block; }
 
-.presets { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
-.presets label { color: var(--muted); font-size: .85rem; font-weight: 500; }
-.presets select { min-width: 160px; }
+/* Transport order: tempo, Sa, master, presets, status (the tempo group and
+   master share a wrapper that phones turn into a sheet). */
+.t-sheet { display: contents; }
+.t-master { order: 1; }
+.t-presets { order: 2; position: relative; }
+#transport .status { order: 3; }
+.menu-btn { padding-right: 30px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238f8f8a' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 11px center; }
+.menu-btn[aria-expanded=true] { border-color: var(--accent); }
+.menu-btn svg { width: 16px; height: 16px; flex: none; }
+.now-btn {
+  background: none; border: none; padding: 0; min-height: 0; font: inherit; color: inherit; font-weight: 400;
+  display: inline; text-align: inherit;
+}
+.now-btn:hover { background: none; }
+.now-btn:hover b { color: var(--accent-2); text-decoration: underline; text-underline-offset: 3px; }
+.sa-btn { display: none; }
+.popover {
+  position: absolute; z-index: 25; top: calc(100% + 6px); left: 0; width: 280px;
+  display: flex; flex-direction: column; gap: 8px; padding: 14px;
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .16);
+}
+.popover[hidden] { display: none; }
+/* The button already names the menu; the select keeps its label for screen readers. */
+#presetPanel label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.presets select { width: 100%; }
+.presets .row button { flex: 1; }
 
 /* ── Beat grid ── */
-.beat-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.beat-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; font-family: var(--font-grid); line-height: 1.45; }
 .vibhag { display: flex; flex-direction: column; gap: 5px; }
-.vibhag .mark { font-weight: 700; color: var(--accent); font-size: .85rem; padding-left: 2px; }
+.vibhag .mark { font-weight: 700; color: var(--mark); font-size: .85rem; padding-left: 2px; }
 .vibhag .mark.khali { color: var(--khali); }
 .vibhag .cells { display: flex; gap: 4px; }
 .cell {
@@ -276,8 +330,8 @@ main { padding: 20px 24px 48px; max-width: 1768px; margin: 0 auto; }
 .cell .num { font-size: .68rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 .cell .bol { font-weight: 600; white-space: normal; }   /* long choice cells wrap at "/" */
 .cell.sam { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-.cell.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); transform: translateY(-2px); }
-.cell.on .num { color: var(--on-accent); opacity: .8; }
+.cell.on { background: var(--accent); border-color: var(--accent); color: var(--grid-on); transform: translateY(-2px); }
+.cell.on .num { color: var(--grid-on); opacity: .8; }
 .cell.error { border-color: var(--danger); color: var(--danger); }
 .beat-grid.small .cell { min-width: 42px; padding: 5px; font-size: .8rem; }
 
@@ -297,9 +351,22 @@ main { padding: 20px 24px 48px; max-width: 1768px; margin: 0 auto; }
 .card .sub { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 4px; }
 .card p.small:empty { display: none; }
 #manjeeraError { color: var(--danger); margin: 0; }
+/* Long option text: the select takes its own line rather than truncating. */
+#manjeeraMode { flex-basis: 100%; }
 details { margin-top: 10px; }
-details summary { cursor: pointer; color: var(--muted); font-size: .86rem; }
+details summary { cursor: pointer; color: var(--muted); font-size: .9rem; font-weight: 500; }
 details summary:hover { color: var(--text); }
+details summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+details[data-keep] { border-top: 1px solid var(--line); margin-top: 14px; }
+details[data-keep] > summary {
+  list-style: none; display: flex; align-items: center; gap: 8px; min-height: 44px;
+}
+details[data-keep] > summary::-webkit-details-marker { display: none; }
+details[data-keep] > summary::after {
+  content: ''; width: 7px; height: 7px; margin: -3px 2px 0 auto;
+  border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); transition: transform .15s;
+}
+details[data-keep][open] > summary::after { transform: rotate(-135deg); margin-top: 3px; }
 
 .switch { position: relative; width: 36px; height: 21px; flex: 0 0 auto; }
 .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
@@ -318,21 +385,36 @@ details summary:hover { color: var(--text); }
 .instruments .card.off h3 { color: var(--muted); }
 .instruments .card.off .inst-body { opacity: .55; }
 
-/* ── Player layout: rail · instruments · Taal · Sargam ── */
-/* Each part is a .pane that the rail opens and closes. Sargam fills the
-   body; while an instrument is open (.inst-open) it shrinks to its panel
-   width. Flex sizes are transitioned, so opening and closing slide. */
+/* ── Player layout: rail · settings column · Sargam ── */
+/* Each card is a .pane that the rail opens and closes. The sargam panel
+   takes three quarters of the row; the taal card and any open instruments
+   stack in one column in the last quarter (never narrower than 260px, so on
+   small desktops the sargam panel gives up the difference). Alone, the
+   sargam panel takes the full row; without it, the settings column keeps
+   to its quarter. */
 .player-layout { display: flex; gap: 16px; align-items: flex-start; }
-.player-layout > .card { margin: 0; }
+.player-layout > .card, .side-col > .card { margin: 0; }
 .push-right { margin-left: auto; }
-#card-taal { flex: 0 0 300px; min-width: 0; }
+.side-col {
+  flex: 1 1 0; min-width: 0;
+  display: flex; flex-direction: column; gap: 16px;
+  transition: flex-grow .35s ease, flex-basis .35s ease, margin-left .35s ease, opacity .25s ease;
+}
+.player-layout:not(.side-open) .side-col { flex-grow: 0; flex-basis: 0; margin-left: -16px; opacity: 0; overflow: hidden; }
+.side-col > .pane { flex: none; min-width: 0; }
+/* In the column a closed card folds away vertically, not sideways. */
+.side-col > .pane:not(.open) { margin-left: 0; margin-top: -16px; }
 /* The panel is as tall as its content: resizing the notation box grows or
    shrinks the whole card, and the page scrolls to everything under it. */
 #sargamPanel { flex: 1 1 0; min-width: 0; }
-.inst-open #sargamPanel { flex: 0 0 370px; }
 .instruments {
-  flex: 1 1 0; min-width: 0;
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 10px 12px; align-items: start;
+  display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start;
+}
+@media (min-width: 1001px) {
+  .player-layout.side-open #sargamPanel { flex: 0 1 calc(75% - 12px); }
+  .side-col { min-width: 260px; }
+  .player-layout:not(.side-open) .side-col { min-width: 0; }
+  .player-layout:not(.sargam-open) .side-col { flex: 0 1 calc(25% - 4px); }
 }
 
 .pane {
@@ -359,6 +441,7 @@ details summary:hover { color: var(--text); }
   border: none; border-radius: 10px; background: none; color: var(--muted);
 }
 .inst-btn svg { width: 24px; height: 24px; }
+.inst-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .inst-btn:hover { background: var(--panel-2); color: var(--text); }
 .inst-btn.on { color: var(--text); }
 .inst-btn.active, .inst-btn.active:hover { background: var(--accent-soft); color: var(--accent-2); }
@@ -376,16 +459,44 @@ details summary:hover { color: var(--text); }
 .inst .card-head { margin: 0 0 12px; gap: 8px; }
 .inst-body > select { width: 100%; margin-bottom: 10px; }
 .pane-close { font-size: 1rem !important; flex: 0 0 auto; }
+.pane-close, #favBtn, #sargamFav { min-width: 44px; min-height: 44px !important; margin: -10px -8px; }
+#sargamFav { margin: 0; }
 .inst #strumBtn { min-height: 28px; padding: 2px 9px; font-size: .8rem; flex: 0 0 auto; }
 @media (prefers-reduced-motion: reduce) {
   .play.beat::after { animation: none; }
   .pane, .inst.open { transition: none; animation: none; }
 }
 .field[hidden] { display: none; }
+.focus-btn { min-height: 30px; padding: 3px 10px; font-size: .82rem; flex: 0 0 auto; }
+.focus-btn[aria-pressed=true] { background: var(--accent-soft); color: var(--accent-2); border-color: var(--accent); }
+.field-note { margin: -4px 0 10px 26px; }
+
+/* ── Focus view: while playing, only the beat, the cue and the line ── */
+.focus .inst-rail, .focus .side-col, .focus #instruments, .focus #card-taal,
+.focus .sargam-settings, .focus #sargamResize, .focus #sargamPanel .switch { display: none !important; }
+.focus #sargamPanel { flex: 1 1 0 !important; }
+.focus .turn { font-size: 1.3rem; padding: 14px; }
+.focus .s-line { padding: 12px 8px; }
+.focus .s-line .vibs { gap: 10px 16px; }
+.focus .s-beat { min-width: 64px; padding: 10px 6px 12px; }
+.focus .sw { font-size: 1.9rem; }
+.focus .s-line:not(.current) { opacity: .55; }
+@media (min-width: 1001px) {
+  .focus .s-beat { min-width: 76px; }
+  .focus .sw { font-size: 2.3rem; }
+}
 #sargamPanel textarea { margin-bottom: 4px; }
-/* Notation on top; the exercise picker, editor and settings below it. */
-#sargamPanel .turn { margin-top: 0; }
-.sargam-help { margin: 12px 0 0; }
+/* Choose (or edit) a line, then the cue and the lines, then raga, laya,
+   mode and the rest. The settings wrapper is dissolved so its parts can be
+   ordered around the lines. */
+#sargamPanel.open { display: flex; flex-direction: column; }
+.sargam-settings { display: contents; }
+#sargamPanel > *, .sargam-settings > * { order: 3; }
+#sargamPanel > .card-head { order: 0; }
+#sargamPanel .sargam-search, #sargamPanel .sargam-pick, #sargamEditor, #sargamError, #sargamWarn { order: 1; }
+#sargamPanel > .turn, #sargamScore, #sargamLoopBar, #sargamLines, #sargamResize { order: 2; }
+.field:has(> #sargamRaga) { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 14px; }
+.sargam-help { margin: 12px 0 4px; }
 .sargam-settings { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 16px; }
 /* Search box with a dropdown of matching sargams under it. */
 .sargam-search { position: relative; margin-bottom: 8px; }
@@ -439,8 +550,8 @@ button[hidden] { display: none; }
 #sargamPanel .field > label:first-child { min-width: 92px; }
 #sargamPanel .field select { flex: 1; min-width: 0; }
 .turn {
-  margin: 14px 0 10px; padding: 8px 12px; border-radius: var(--radius-sm); text-align: center;
-  background: var(--panel-2); font-weight: 600; font-size: .88rem;
+  margin: 14px 0 10px; padding: 10px 14px; border-radius: var(--radius-sm); text-align: center;
+  background: var(--panel-2); font-weight: 600; font-size: 1.02rem; transition: background .15s, color .15s;
 }
 .turn.listen { background: var(--khali-soft); color: var(--khali); }
 .turn.yours { background: var(--accent-soft); color: var(--accent-2); }
@@ -462,7 +573,8 @@ button[hidden] { display: none; }
   display: flex; gap: 6px; align-items: flex-start; padding: 8px 6px; border-radius: 10px;
   border: 1px solid transparent; transition: background .15s;
 }
-.s-line.current { border-color: var(--line); background: var(--panel-2); }
+.s-line.current { border-color: var(--line-strong); background: var(--panel-2); }
+.s-line.current .ln { color: var(--accent-2); font-weight: 700; }
 /* Loop selected lines: lines become toggles; unpicked ones fade once any is picked. */
 .loop-bar {
   display: flex; align-items: center; gap: 8px; margin: 0 0 6px; padding: 6px 10px;
@@ -483,22 +595,23 @@ button[hidden] { display: none; }
 .s-line.picked .ln { color: var(--accent); font-weight: 700; }
 .s-line.picked .ln::before { background: var(--accent); border-color: var(--accent); }
 .sargam-lines.has-picks .s-line.pickable:not(.picked) { opacity: .45; }
-.s-line .ln { flex: 0 0 18px; font-size: .72rem; color: var(--muted); padding-top: 8px; font-variant-numeric: tabular-nums; }
+.s-line .ln { flex: 0 0 20px; font-size: .8rem; color: var(--muted); padding-top: 10px; font-variant-numeric: tabular-nums; }
 .s-line .vibs { display: flex; flex-wrap: wrap; gap: 6px 10px; }
 .s-vib { display: flex; gap: 3px; }
 .s-beat {
-  display: flex; gap: 1px; padding: 4px 3px 6px; min-width: 34px; justify-content: center;
+  display: flex; gap: 1px; padding: 6px 4px 7px; min-width: 40px; justify-content: center;
   background: var(--panel); border: 1px solid var(--line); border-radius: 7px; position: relative;
 }
-.s-beat.sam::after { content: 'X'; position: absolute; top: -9px; left: 2px; font-size: .6rem; color: var(--accent); font-weight: 700; }
+.s-beat.sam::after { content: 'X'; position: absolute; top: -10px; left: 2px; font: 700 .68rem/1 var(--font-grid); color: var(--mark); }
 .sw {
   position: relative; display: inline-block; min-width: 1.15em; text-align: center;
   flex: 1 1 0; white-space: nowrap;
-  font-weight: 600; font-size: .9rem; padding: 2px 1px; border-radius: 4px;
+  font-family: var(--font-notation); font-weight: 400; font-synthesis: none;
+  font-size: 1.12rem; line-height: 1.35; padding: 1px 2px; border-radius: 4px;
 }
 .sw.pad { color: var(--line-strong); }
 .sw.held { color: var(--muted); }
-.sw.rest { color: var(--muted); font-weight: 400; }
+.sw.rest { color: var(--muted); }
 .sw.komal .nm {  text-underline-offset: 3px; } /* text-decoration: underline;*/
 .sw.tivra .nm::before { content: ''; position: absolute; top: -1px; left: 50%; width: 1px; height: 5px; background: currentColor; }
 .sw.taar::after, .sw.mandra::after {
@@ -526,21 +639,34 @@ button[hidden] { display: none; }
 .legend span { margin-right: 10px; white-space: nowrap; }
 .legend i { display: inline-block; width: 10px; height: 3px; vertical-align: middle; margin-right: 4px; }
 
-@media (max-width: 1180px) {
-  #card-taal { flex-basis: 270px; }
-  .inst-open #sargamPanel { flex-basis: 330px; }
-}
 @media (max-width: 1000px) {
   .player-layout { flex-direction: column; align-items: stretch; }
   /* Stacked: every block takes its natural height. (The desktop flex sizes
      would squash the sargam panel to a sliver that scrolls inside itself.) */
-  .player-layout > *, #sargamPanel, .inst-open #sargamPanel, .instruments { flex: none; width: 100%; }
+  .player-layout > *, #sargamPanel, .instruments { flex: none; width: 100%; }
+  /* The settings column dissolves, so its cards are ordered with the rest. */
+  .side-col, .player-layout:not(.side-open) .side-col { display: contents; }
   .inst-rail { flex-direction: row; position: static; width: auto; align-self: flex-start; }
   .rail-sep { width: 1px; height: 24px; margin: 0 4px; }
   .instruments { margin: 0; grid-template-columns: 1fr; }
   .instruments .card { min-width: 0; }
   /* Stacked: closed panes simply disappear (no sideways slide). */
   .pane:not(.open) { display: none !important; }
+  /* Stacked order: an instrument just opened from the rail, then the line
+     being sung, then the taal settings. */
+  .instruments { order: 1; }
+  #sargamPanel { order: 2; }
+  #card-taal { order: 3; }
+  /* No hover to reveal names here, so the rail shows them: a slim strip
+     across the width, no card around it. */
+  .inst-rail {
+    gap: 2px; width: 100%; max-width: 520px; align-self: flex-start; padding: 0;
+    background: none; border: none; box-shadow: none;
+  }
+  .inst-btn { flex: 1 1 0; min-width: 0; width: auto; height: auto; padding: 4px 2px 3px; flex-direction: column; gap: 1px; }
+  .inst-btn svg { width: 20px; height: 20px; }
+  .inst-btn .dot { top: 4px; right: calc(50% - 18px); width: 6px; height: 6px; }
+  .inst-label { position: static; width: auto; height: auto; overflow: visible; clip-path: none; font-size: .7rem; line-height: 1.2; }
 }
 
 /* ── Composer / Sequences ── */
@@ -567,8 +693,8 @@ button[hidden] { display: none; }
 .list .empty:hover { background: none; }
 .steps { width: 100%; border-collapse: collapse; margin: 10px 0; }
 .steps th {
-  text-align: left; font-size: .72rem; color: var(--muted); font-weight: 600;
-  text-transform: uppercase; letter-spacing: .05em; padding: 6px 4px; border-bottom: 1px solid var(--line);
+  text-align: left; font-size: .82rem; color: var(--muted); font-weight: 600;
+  padding: 6px 4px; border-bottom: 1px solid var(--line);
 }
 .steps td { padding: 5px 4px; }
 .steps td select { width: 100%; }
@@ -584,6 +710,8 @@ button[hidden] { display: none; }
 .meter .zero { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--line-strong); }
 #tNeedle { position: absolute; top: 4px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); left: calc(50% - 10px); transition: left .08s; }
 #tNeedle.good { background: var(--ok); }
+.tuner.idle .tuner-note { color: var(--line-strong); }
+.tuner.idle #tNeedle { visibility: hidden; }
 
 /* ── Settings ── */
 #tab-settings { max-width: 720px; margin: 0 auto; }
@@ -598,10 +726,12 @@ button[hidden] { display: none; }
   main { padding: 14px 12px 40px; }
   .cell { min-width: 44px; }
 }
-@media (max-width: 560px) {
+@media (max-width: 1000px), (max-height: 500px) and (orientation: landscape) {
   #brand { display: none; }
+  /* All five tabs fit; the theme lives in Settings on phones. */
+  #themeBtn { display: none; }
   #tabs { flex: 1; }
-  .tab-btn { padding: 5px 10px; flex: 1; }
+  .tab-btn { padding: 5px 6px; flex: 1 1 auto; font-size: .88rem; }
   #transport { gap: 12px; }
   #transport .tgroup { flex: 1 1 100%; }
   #transport .tgroup input[type=range] { width: 100%; }
@@ -609,17 +739,104 @@ button[hidden] { display: none; }
   #tempo { flex: 1; min-width: 56px; }
   /* Phones: the play button always sits at the bottom, in thumb reach. */
   .play-slot { display: contents; }
-  .play {
+  .play, .play.floating {
     position: fixed; z-index: 30; width: 64px; height: 64px;
     left: 50%; right: auto; margin-left: -32px; bottom: calc(18px + env(safe-area-inset-bottom, 0px));
   }
   .play:hover, .play:active { transform: none; }
-  .to-top { left: calc(16px + env(safe-area-inset-left, 0px)); bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
+  /* Bottom bar: tempo on the left, play in the middle, avartan and time on
+     the right: what a student reaches for mid-riyaz, under the thumb. */
+  .dock {
+    display: flex; align-items: center; justify-content: space-between;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 29;
+    height: calc(100px + env(safe-area-inset-bottom, 0px));
+    padding: 0 calc(12px + env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) calc(12px + env(safe-area-inset-left, 0px));
+    background: var(--topbar-bg); border-top: 1px solid var(--line);
+    backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  }
+  .dock-tempo { display: flex; align-items: center; gap: 2px; }
+  .dock-tempo button { width: 38px; min-height: 44px; padding: 0; font-size: 1.15rem; }
+  #dockTempo {
+    width: 54px; flex-direction: column; gap: 0; line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  #dockTempo b { font-size: 1.05rem; }
+  #dockTempo small { font-size: .68rem; color: var(--muted); font-weight: 500; }
+  #dockTempo[aria-expanded=true] { border-color: var(--accent); background: var(--accent-soft); }
+  .dock-count { display: flex; flex-direction: column; align-items: flex-end; font-size: .82rem; line-height: 1.35; }
+  .dock-count b { font-variant-numeric: tabular-nums; font-size: .95rem; }
+  .to-top { left: auto; right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(112px + env(safe-area-inset-bottom, 0px)); }
+  /* The tempo/volume group leaves the top card and opens as a sheet above the bar. */
+  .t-sheet, #transport .t-sa { display: none; }
+  .sa-open #transport .t-sa { display: block; }
+  .sa-open #transport .t-sa label { margin-bottom: 8px; }
+  .sheet-open .t-sheet { display: flex; }
+  .sheet-open .t-sheet, .sa-open #transport .t-sa { flex-direction: column; gap: 16px;
+    position: fixed; z-index: 31; left: 12px; right: 12px; bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+    padding: 16px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .2);
+  }
+  /* Top card, one row: the loaded taal (tap to change), Sa (tap for its
+     controls) and the presets menu. */
+  #transport { padding: 10px 12px; gap: 8px; align-items: center; }
+  #transport .status { order: -2; flex: 1 1 0; min-width: 0; text-align: left; margin: 0; line-height: 1.3; }
+  .now-btn {
+    display: block; width: 100%; min-height: 44px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+    text-align: left;
+  }
+  .sa-btn {
+    display: inline-flex; order: -1; flex: 0 0 auto; gap: 4px; min-height: 44px; padding: 6px 10px;
+    font-weight: 400; font-variant-numeric: tabular-nums;
+  }
+  .sa-btn b { font-weight: 600; }
+  .sa-btn[aria-expanded=true] { border-color: var(--accent); background: var(--accent-soft); }
+  #transport .t-presets { order: -1; flex: 0 0 auto; }
+  .menu-btn { width: 44px; min-height: 44px; padding: 0; background-image: none; }
+  .menu-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .menu-btn svg { width: 19px; height: 19px; }
+  .status-count { display: none; }
+  .popover { left: auto; right: 0; width: min(300px, calc(100vw - 48px)); }
   main { padding-bottom: 72px; }
   #credit { padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); }
-  #transport .status { flex: 1 1 0; order: -1; text-align: right; }
-  .cell { min-width: 0; flex: 1; }
-  .vibhag { flex: 1 1 100%; }
-  .beat-grid { gap: 10px; }
+  /* Compact grid: vibhags share rows, sized by their beat count, so a
+     16-beat taal takes two short rows instead of four tall ones. */
+  .beat-grid { gap: 8px 6px; }
+  .vibhag { flex: var(--cells, 4) 1 0; min-width: calc(var(--cells, 4) * 38px); gap: 3px; }
+  .vibhag .cells { gap: 3px; }
+  .vibhag .mark { font-size: .78rem; }
+  .cell { min-width: 0; flex: 1; padding: 4px 1px 5px; font-size: .82rem; border-radius: 7px; }
+  .beat-grid.small .cell { min-width: 0; padding: 4px 1px; font-size: .78rem; }
+  /* Focus on phones: two vibhags per row, swars as large as that allows. */
+  .focus .s-line { padding: 10px 4px; }
+  .focus .s-line .vibs { gap: 10px 8px; }
+  .focus .s-vib { flex: 1 1 calc(50% - 8px); }
+  .focus .s-beat { flex: 1 0 auto; min-width: 0; padding: 8px 2px 10px; }
+  .focus .sw { font-size: 1.3rem; }
   .field > label:first-child { min-width: 96px; }
+}
+/* Narrow phones: the song picker keeps the first row (with its star); New,
+   Edit and Share share the row below instead of squeezing it. */
+@media (max-width: 560px) {
+  .sargam-pick { flex-wrap: wrap; row-gap: 8px; }
+  .sargam-picker { flex: 1 1 calc(100% - 60px); }
+  .sargam-pick > button:not(.icon) { flex: 1 1 0; min-width: 0; }
+}
+/* …but with room for the name and the theme button. */
+@media (min-width: 561px) and (max-width: 1000px) {
+  #brand { display: flex; }
+  #themeBtn { display: inline-flex; }
+  #tabs { flex: 0 1 auto; }
+  .tab-btn { flex: 0 0 auto; padding: 5px 14px; font-size: .93rem; }
+  .sheet-open .t-sheet, .sa-open #transport .t-sa { left: auto; width: min(520px, calc(100vw - 24px)); }
+}
+/* Phones turned sideways: little height, so a shorter bar and sheets that scroll. */
+@media (max-height: 500px) and (orientation: landscape) {
+  .dock { height: calc(72px + env(safe-area-inset-bottom, 0px)); }
+  .play, .play.floating { width: 56px; height: 56px; margin-left: -28px; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+  .sheet-open .t-sheet, .sa-open #transport .t-sa {
+    left: auto; width: min(520px, calc(100vw - 24px)); bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    max-height: calc(100vh - 96px); overflow-y: auto;
+  }
+  .to-top { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+  #credit { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 }
