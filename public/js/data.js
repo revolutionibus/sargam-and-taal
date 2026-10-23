@@ -42,12 +42,14 @@
                 ['piano_fs5', 17], ['piano_a5', 20], ['piano_c6', 23], ['piano_ds6', 26]],
     // University of Iowa MIS violin (2012), bowed without vibrato (the engine
     // adds it), a minor third apart with crossfaded loops; see tools/import_violin.py.
-    violin:    [['violin_g3', -6, [1.0692, 3.1234]], ['violin_as3', -3, [0.9688, 2.7727]],
-                ['violin_cs4', 0, [2.1553, 3.1829]], ['violin_e4', 3, [1.7997, 3.7467]],
-                ['violin_g4', 6, [1.2375, 3.5049]], ['violin_as4', 9, [3.0033, 5.8633]],
-                ['violin_cs5', 12, [1.6234, 5.4095]], ['violin_e5', 15, [1.0961, 4.6113]],
-                ['violin_g5', 18, [3.5455, 4.8730]], ['violin_as5', 21, [1.2463, 4.7971]],
-                ['violin_cs6', 24, [0.9367, 5.0172]], ['violin_e6', 27, [1.6856, 4.7545]]],
+    // Loop points are exact to the sample (the loop ends at the file's end): a
+    // point even one sample off clicks each time the loop wraps.
+    violin:    [['violin_g3', -6, [1.069161, 3.123424]], ['violin_as3', -3, [0.968753, 2.772698]],
+                ['violin_cs4', 0, [2.155306, 3.182902]], ['violin_e4', 3, [1.799728, 3.746667]],
+                ['violin_g4', 6, [1.237460, 3.504853]], ['violin_as4', 9, [3.003311, 5.863333]],
+                ['violin_cs5', 12, [1.623356, 5.409456]], ['violin_e5', 15, [1.096145, 4.611338]],
+                ['violin_g5', 18, [3.545510, 4.872993]], ['violin_as5', 21, [1.246349, 4.797120]],
+                ['violin_cs6', 24, [0.936667, 5.017188]], ['violin_e6', 27, [1.685646, 4.754467]]],
   };
 
   // Tanpura tones (different instruments / jawari). Roles: pa, sa, sa2, sa_low.
