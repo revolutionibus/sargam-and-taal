@@ -44,13 +44,15 @@
     // adds it), a minor third apart with crossfaded loops; see tools/import_violin.py.
     // Loop points are exact to the sample (the loop ends at the file's end): a
     // point even one sample off clicks each time the loop wraps. A#4 is the
-    // mf D-string take, warmer than the A-string one. C#5 is that same take
+    // mf D-string take, warmer than the A-string one, trimmed to where the
+    // string speaks (its first 0.34 s was quiet bow noise, which muted short
+    // swars). C#5 is that same take
     // resampled up 3 semitones (Ni at Sa C#): every recording near C5 sounded
     // harsh there.
     violin:    [['violin_g3', -6, [1.069161, 3.123424]], ['violin_as3', -3, [0.968753, 2.772698]],
                 ['violin_cs4', 0, [2.155306, 3.182902]], ['violin_e4', 3, [1.799728, 3.746667]],
-                ['violin_g4', 6, [1.237460, 3.504853]], ['violin_as4', 9, [0.923560, 3.387188]],
-                ['violin_cs5', 12, [0.776618, 2.848274]], ['violin_e5', 15, [1.096145, 4.611338]],
+                ['violin_g4', 6, [1.237460, 3.504853]], ['violin_as4', 9, [0.578912, 3.042540]],
+                ['violin_cs5', 12, [0.486805, 2.558461]], ['violin_e5', 15, [1.096145, 4.611338]],
                 ['violin_g5', 18, [3.545510, 4.872993]], ['violin_as5', 21, [1.246349, 4.797120]],
                 ['violin_cs6', 24, [0.936667, 5.017188]], ['violin_e6', 27, [1.685646, 4.754467]]],
   };

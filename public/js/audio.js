@@ -236,18 +236,23 @@
     // between; the other curves (meendCurve) are drawn as value curves.
     rampPitch(param, glides) {
       const shape = MEEND_CURVES[this.meendCurve];
-      let v = param.value;
+      let v = param.value, last = -Infinity;
       for (const g of glides) {
         if (!shape) {
           param.setValueAtTime(v, g.at);
           param.exponentialRampToValueAtTime(v = g.value, g.end);
           continue;
         }
-        if (g.end <= g.at) { param.setValueAtTime(v = g.value, g.at); continue; }
+        // A curve may not overlap the one before it (that throws): in a chain at
+        // full meend length a slide starts where the last one ends, and
+        // rounding can put it a hair earlier.
+        const at = Math.max(g.at, last + 1e-6);
+        if (g.end <= at) { param.setValueAtTime(v = g.value, at); continue; }
         const from = v, ratio = g.value / v, curve = new Float32Array(32);
         for (let i = 0; i < curve.length; i++) curve[i] = from * Math.pow(ratio, shape(i / (curve.length - 1)));
-        param.setValueCurveAtTime(curve, g.at, g.end - g.at);
+        param.setValueCurveAtTime(curve, at, g.end - at);
         v = g.value;
+        last = g.end;
       }
     }
 
