@@ -174,8 +174,10 @@ Teentaal fits 16 beats per line, Jhaptaal 10, Rupak 7, Keherwa 8, Dadra 6.
 
 - If the exercise is longer, it continues on the next avartan.
 - A short last line is padded with silence until sam.
-- A swar that runs past the end of an avartan is cut at sam; the editor shows a
-  yellow warning when that happens.
+- A swar that runs past the end of an avartan holds on into the next line, as
+  long as the next avartan plays that line. It is cut at sam when another line
+  comes next: looping selected lines, the exercise starting over, or your turn
+  in call & response. The editor shows a yellow warning for such a swar.
 - Mistakes (an unknown swar, a missing `)`, a bad length) show in red.
 
 ## Examples
@@ -417,4 +419,5 @@ by default). The slide always ends where the next swar's beat starts. The
   can fade before the chain ends. Violin samples loop, so they last.
 - Samples are pitched by changing their playback speed, so a long meend chain
   can run past the end of a short recording (not the violin).
-- A chain that crosses the end of an avartan is cut at sam, like any long note.
+- A chain that crosses the end of an avartan holds on into the next line, like
+  any long note, unless another line comes next (then it is cut at sam).

@@ -102,6 +102,18 @@
       return { lines: Math.max(1, Math.ceil(this.sargam.total / beats - 1e-9)) };
     }
 
+    // The line played in avartan av (counted from the start of the sargam), and
+    // whether it is your turn (call & response: listen, then sing).
+    sargamLineAt(av, beats) {
+      const { lines } = this.sargamLayout(beats);
+      const call = this.sargam.mode === 'call';
+      const k = call ? Math.floor(av / 2) : av;
+      // Selected lines that still exist (an edited line may have fewer lines).
+      const loop = this.sargamLoop && this.sargamLoop.filter((l) => l < lines);
+      const line = loop && loop.length ? loop[k % loop.length] : k % lines;
+      return { line, yourTurn: call && av % 2 === 1 };
+    }
+
     get s() { return this.opts.settings(); }
 
     setTaal(taal) {
@@ -356,15 +368,18 @@
         this.sargamCount = 0;
       }
       const beats = this.taal.beats;
-      const { lines } = this.sargamLayout(beats);
       const av = Math.floor(this.sargamCount / beats);
-      const call = q.mode === 'call';
-      const k = call ? Math.floor(av / 2) : av;
-      // Selected lines that still exist (an edited line may have fewer lines).
-      const loop = this.sargamLoop && this.sargamLoop.filter((l) => l < lines);
-      const line = loop && loop.length ? loop[k % loop.length] : k % lines;
-      const yourTurn = call && av % 2 === 1;
+      const { line, yourTurn } = this.sargamLineAt(av, beats);
       const lineEnd = (line + 1) * beats;
+      // A swar running past the avartan holds on while the next avartans play
+      // the next lines; it is cut at sam when they don't (a loop of selected
+      // lines, the exercise starting over, or your turn in call & response).
+      let holdEnd = lineEnd;
+      for (let j = 1; j < 64; j++) {
+        const next = this.sargamLineAt(av + j, beats);
+        if (next.line !== line + j || next.yourTurn !== yourTurn) break;
+        holdEnd += beats;
+      }
       const absB = line * beats + (this.sargamCount % beats);   // position in the exercise
       if (b === 0) this.sargamVisual.push({ time: t, kind: 'line', line, yourTurn });
       for (const n of N.eventsInBeat(q.notes, absB)) {
@@ -377,8 +392,7 @@
           // Sustaining instruments (harmonium, violin) don't ring on under a
           // "^": the next swar takes over, crossfading without a new attack.
           const sustain = !!D.SARGAM_INSTRUMENTS.find((i) => i.id === s.sargamInst)?.sustain;
-          // A note running past the avartan is cut at the line end.
-          const len = Math.min((!sustain && n.ringTo) || n.end, lineEnd) - n.pos - grace / dur;
+          const len = Math.min((!sustain && n.ringTo) || n.end, holdEnd) - n.pos - grace / dur;
           const glides = n.glides && n.glides.map((g) => ({ at: beatAt + g.at * dur, end: beatAt + g.end * dur, semi: g.semi }));
           if (n.grace) {
             const each = grace / n.grace.length;

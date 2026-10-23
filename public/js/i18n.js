@@ -205,8 +205,8 @@
     'Saved in this browser (Settings → Export all to back it up).': 'এই ব্রাউজারে সেভ হয়েছে (ব্যাকআপের জন্য রচনা → সব এক্সপোর্ট)।',
     'Saved in this browser only (start the app with ./run.sh to save to the file).': 'শুধু এই ব্রাউজারে সেভ হয়েছে (ফাইলে সেভ করতে ./run.sh দিয়ে অ্যাপ চালু করুন)।',
     'Delete the line "{name}"?': '"{name}" লাইনটি মুছবেন?',
-    'A note at beat {beat} of line {line} runs past the avartan and is cut at the line end.':
-      '{line} নম্বর লাইনের {beat} মাত্রার একটি স্বর আবর্তন ছাড়িয়ে যায়, তাই লাইনের শেষে কেটে দেওয়া হয়েছে।',
+    'A note at beat {beat} of line {line} runs past the avartan: it holds on into the next line, but is cut at sam when another line comes next (looping selected lines, call & response).':
+      '{line} নম্বর লাইনের {beat} মাত্রার একটি স্বর আবর্তন ছাড়িয়ে যায়: সেটি পরের লাইনে টানা বাজে, তবে পরে অন্য লাইন এলে (বাছাই করা লাইন লুপ, কল ও রেসপন্স) সমে কেটে যায়।',
     '{n} of {total} lines': '{total}টির মধ্যে {n}টি লাইন',
     'Your turn — sing it back': 'আপনার পালা — গেয়ে শোনান',
     'Listen': 'শুনুন',

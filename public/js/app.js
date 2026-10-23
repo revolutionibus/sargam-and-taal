@@ -1180,7 +1180,7 @@
     const crossing = notes.filter((n) => n.semi !== null && Math.floor(n.pos / beats + eps) !== Math.floor((n.pos + n.len) / beats - eps));
     if (crossing.length) {
       const n = crossing[0];
-      $('sargamWarn').textContent = tr('A note at beat {beat} of line {line} runs past the avartan and is cut at the line end.',
+      $('sargamWarn').textContent = tr('A note at beat {beat} of line {line} runs past the avartan: it holds on into the next line, but is cut at sam when another line comes next (looping selected lines, call & response).',
         { beat: +(n.pos % beats + 1).toFixed(3), line: Math.floor(n.pos / beats) + 1 });
     }
     notes.forEach((n) => sargamLineNotes[Math.min(lines - 1, Math.floor(n.pos / beats + eps))].push(n.i));
