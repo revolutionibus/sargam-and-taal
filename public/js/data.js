@@ -43,11 +43,13 @@
     // University of Iowa MIS violin (2012), bowed without vibrato (the engine
     // adds it), a minor third apart with crossfaded loops; see tools/import_violin.py.
     // Loop points are exact to the sample (the loop ends at the file's end): a
-    // point even one sample off clicks each time the loop wraps.
+    // point even one sample off clicks each time the loop wraps. A#4 (mf, D
+    // string) and C#5 (pp, G string) are warmer takes than the A-string ones,
+    // whose loops joined out of phase (Dha and Ni sounded harsh).
     violin:    [['violin_g3', -6, [1.069161, 3.123424]], ['violin_as3', -3, [0.968753, 2.772698]],
                 ['violin_cs4', 0, [2.155306, 3.182902]], ['violin_e4', 3, [1.799728, 3.746667]],
-                ['violin_g4', 6, [1.237460, 3.504853]], ['violin_as4', 9, [3.003311, 5.863333]],
-                ['violin_cs5', 12, [1.623356, 5.409456]], ['violin_e5', 15, [1.096145, 4.611338]],
+                ['violin_g4', 6, [1.237460, 3.504853]], ['violin_as4', 9, [0.923560, 3.387188]],
+                ['violin_cs5', 12, [1.484376, 3.988050]], ['violin_e5', 15, [1.096145, 4.611338]],
                 ['violin_g5', 18, [3.545510, 4.872993]], ['violin_as5', 21, [1.246349, 4.797120]],
                 ['violin_cs6', 24, [0.936667, 5.017188]], ['violin_e6', 27, [1.685646, 4.754467]]],
   };
