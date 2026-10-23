@@ -18,13 +18,13 @@
     swarOn: false, swarRaga: 'yaman', swarEvery: 2, swarSpeed: 1, swarVol: 0.5,
     sargamPanel: true, sargamOn: true, sargamExercise: 'scale', sargamRaga: 'bilawal',
     sargamCustom: 'S R G M P - - - | P M G R S - - -', sargamPerBeat: 1, sargamMode: 'along',
-    sargamInst: 'harmonium', sargamVol: 0.7, sargamGrace: true, sargamCheck: false, sargamVisible: 4, sargamCollapsed: {},
+    sargamInst: 'harmonium', sargamVol: 0.7, sargamGrace: true, sargamCheck: false, sargamVisible: 4, sargamEditorH: null, sargamCollapsed: {},
     sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true, keysShow: true, midiSaNote: null,
     fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'bn', theme: 'auto',
     focusPlay: false,
   };
   // Settings captured by a preset (everything except app preferences).
-  const APP_PREFS = ['keysOn', 'keysWrite', 'keysShow', 'midiSaNote', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamCollapsed',
+  const APP_PREFS = ['keysOn', 'keysWrite', 'keysShow', 'midiSaNote', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamEditorH', 'sargamCollapsed',
                      'lehraOpen', 'tanpuraOpen', 'swarOpen', 'keysOpen', 'taalOpen', 'focusPlay'];
 
   let store = { settings: {}, custom: [], sequences: [], presets: [], favorites: [], sargamFavorites: [], sargamLines: [] };
@@ -735,7 +735,9 @@
   let sargamSpans = [];      // note index -> its spans (a long note spans several beats)
   let sargamLineNotes = [];  // line -> indexes of the notes that start in it
   let sargamLineEls = [];
+  let sargamBridges = [];    // "^" joins: [note index, next note index]
   let sargamEditing = false;   // the line editor shows only after pressing Edit
+  let sargamBeforeNew = null;  // what was selected before a new line was started (Cancel goes back)
   let sargamOn = [];
   let checkNote = null;   // note being checked: { idx, semi, start, samples }
   const score = { ok: 0, low: 0, high: 0, miss: 0 };
@@ -932,6 +934,7 @@
   }
 
   function selectSargamExercise(value) {
+    if (value === 'custom' && S.sargamExercise !== 'custom') sargamBeforeNew = S.sargamExercise;
     S.sargamExercise = value;
     if (value === 'custom') sargamEditing = true;   // nothing to see until it is written
     const line = savedLine();
@@ -979,6 +982,25 @@
     writeFile('sargamLines').then((ok) => {
       status.textContent = ok ? tr('Saved to {file}.', { file: FILES.sargamLines }) : BROWSER_ONLY;
     });
+  }
+
+  // Cancel: drop the unsaved changes and close the editor. A saved line goes
+  // back to what was saved; a new line is discarded (after asking, if it has
+  // swars) and the previous selection comes back.
+  function cancelSargamEdit() {
+    const line = savedLine();
+    if (line) {
+      sargamEditing = false;
+      $('sargamLineStatus').textContent = '';
+      selectSargamExercise(S.sargamExercise);   // reloads the saved notes and fields
+      return;
+    }
+    if (S.sargamCustom.trim() && !confirm(tr('Discard the unsaved line?'))) return;
+    S.sargamCustom = '';
+    sargamEditing = false;
+    const back = sargamBeforeNew && sargamBeforeNew !== 'custom' ? sargamBeforeNew : DEFAULTS.sargamExercise;
+    sargamBeforeNew = null;
+    selectSargamExercise(back);
   }
 
   function deleteSargamLine() {
@@ -1151,6 +1173,8 @@
     sargamLineNotes = Array.from({ length: lines }, () => []);
     sargamLineEls = [];
     sargamOn = [];
+    // Join ("^"): a bridge from the swar to the next one, drawn once laid out.
+    sargamBridges = notes.filter((n) => n.ringOn && notes[n.i + 1]).map((n) => [n.i, n.i + 1]);
     box.innerHTML = '';
 
     const crossing = notes.filter((n) => n.semi !== null && Math.floor(n.pos / beats + eps) !== Math.floor((n.pos + n.len) / beats - eps));
@@ -1190,9 +1214,14 @@
               gr.textContent = n.grace.map((g) => N.swarLabel(g, S.sargamLang).short).join('');
               sp.insertBefore(gr, sp.firstChild);
             }
-            // Join ("^"): a slur from the end of the swar to the next one.
-            if (n.ringOn && Math.min(n.pos + n.len, b0 + 1) >= n.pos + n.len - eps) sp.classList.add('meend');
-            if (starts && n.slur) sp.classList.add('meend-in');
+            // Meend ("/"): a curve below, from the end of the swar to the swar it slides into.
+            const glideOut = n.glideTo !== undefined && Math.min(n.pos + n.len, b0 + 1) >= n.pos + n.len - eps;
+            const glideIn = starts && n.glideIn;
+            if (glideOut || glideIn) {
+              const arc = document.createElement('span');
+              arc.className = 'glide' + (glideOut ? ' out' : '') + (glideIn ? ' in' : '');
+              sp.appendChild(arc);
+            }
             sp.style.flexGrow = frac;
             sargamSpans[n.i].push(sp);
             cell.appendChild(sp);
@@ -1221,9 +1250,47 @@
     fitSargamLines();
   }
 
+  // "^" bridges: a straight line from the end of one swar's name to the start
+  // of the next, across the gaps between beats. Measured, so redrawn whenever
+  // the lines rewrap. A join that wraps onto the next row draws two stubs.
+  function drawSargamBridges() {
+    const box = $('sargamLines');
+    if (!box) return;
+    for (const el of box.querySelectorAll('.bridge')) el.remove();
+    if (!box.offsetParent) return;
+    const glyph = (sp, side) => {
+      const el = side === 'left' ? sp.querySelector('.gr') || sp.querySelector('.nm') : sp.querySelector('.nm');
+      if (el) return el.getBoundingClientRect();
+      const r = document.createRange();
+      r.selectNodeContents(sp);
+      return r.getBoundingClientRect();
+    };
+    const line = (row, x0, x1, y) => {
+      const rr = row.getBoundingClientRect();
+      const el = document.createElement('span');
+      el.className = 'bridge';
+      Object.assign(el.style, { left: x0 - rr.left + 'px', width: Math.max(0, x1 - x0) + 'px', top: y - rr.top + 'px' });
+      row.appendChild(el);
+    };
+    for (const [a, b] of sargamBridges) {
+      const from = sargamSpans[a][sargamSpans[a].length - 1], to = sargamSpans[b][0];
+      if (!from || !to) continue;
+      const f = glyph(from, 'right'), t = glyph(to, 'left');
+      const fy = (f.top + f.bottom) / 2, ty = (t.top + t.bottom) / 2;
+      const gap = 2;
+      if (from.closest('.s-line') === to.closest('.s-line') && Math.abs(fy - ty) < f.height / 2) {
+        line(from.closest('.s-line'), f.right + gap, t.left - gap, fy);
+      } else {
+        line(from.closest('.s-line'), f.right + gap, from.closest('.s-beat').getBoundingClientRect().right + 4, fy);
+        line(to.closest('.s-line'), to.closest('.s-beat').getBoundingClientRect().left - 4, t.left - gap, ty);
+      }
+    }
+  }
+
   // The notation box shows S.sargamVisible lines and scrolls the rest.
   // Lines wrap at narrow widths, so the height is measured, not computed.
   function fitSargamLines() {
+    drawSargamBridges();
     const box = $('sargamLines');
     const handle = $('sargamResize');
     const rows = sargamLineEls;
@@ -1261,6 +1328,38 @@
     S.sargamVisible = n;
     fitSargamLines();
     save();
+  }
+
+  // The bar under the line editor sets its height (S.sargamEditorH, px;
+  // null = the default 8 rows). Double-click goes back to the default.
+  function initEditorResize() {
+    const area = $('sargamCustom');
+    const bar = $('sargamEditorResize');
+    const MIN = 60, MAX = 640;
+    const set = (h, keep = true) => {
+      S.sargamEditorH = h === null ? null : Math.round(Math.max(MIN, Math.min(MAX, h)));
+      area.style.height = S.sargamEditorH === null ? '' : S.sargamEditorH + 'px';
+      if (keep) save();
+    };
+    set(S.sargamEditorH, false);
+    let drag = null;
+    bar.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      bar.setPointerCapture(e.pointerId);
+      drag = { y: e.clientY, h: area.getBoundingClientRect().height };
+      bar.classList.add('dragging');
+    });
+    bar.addEventListener('pointermove', (e) => { if (drag) set(drag.h + e.clientY - drag.y); });
+    const end = () => { drag = null; bar.classList.remove('dragging'); };
+    bar.addEventListener('pointerup', end);
+    bar.addEventListener('pointercancel', end);
+    bar.addEventListener('dblclick', () => set(null));
+    bar.addEventListener('keydown', (e) => {
+      const step = e.key === 'ArrowDown' ? 24 : e.key === 'ArrowUp' ? -24 : 0;
+      if (!step) return;
+      e.preventDefault();
+      set(area.getBoundingClientRect().height + step);
+    });
   }
 
   // Drag the handle under the lines; it snaps to whole lines.
@@ -1304,6 +1403,8 @@
       const w = Math.round(entry.contentRect.width);
       if (w !== width) { width = w; fitSargamLines(); }
     }).observe($('sargamPanel'));
+    // Glyph widths change when the notation font arrives.
+    if (document.fonts) document.fonts.ready.then(drawSargamBridges);
     // Focus view fills the screen height, so a rotation or resize refits it.
     addEventListener('resize', () => { if (document.body.classList.contains('focus')) fitSargamLines(); });
   }
@@ -1399,13 +1500,15 @@
     sargamOn.forEach((sp) => sp.classList.add('on'));
     // Pitch checking: each sung note collects pitch samples until the next note.
     finishCheck();
-    if (checking && ev.semi !== null) checkNote = { idx: ev.idx, semi: ev.semi, start: ev.time, samples: [] };
+    // A swar that slides away (meend) is checked only until the slide.
+    if (checking && ev.semi !== null) checkNote = { idx: ev.idx, semi: ev.semi, start: ev.time, until: ev.glideAt ?? null, samples: [] };
   }
 
   function sargamPitch(f) {
     if (!checkNote || !f || !player.playing) return;
     const heardAt = engine.now - ((engine.ctx && engine.ctx.outputLatency) || 0);
     if (heardAt - checkNote.start < 0.06) return;   // skip the slide into the note
+    if (checkNote.until !== null && heardAt > checkNote.until) return;   // sliding away
     const expected = engine.saFrequency() * Math.pow(2, checkNote.semi / 12);
     let cents = 1200 * Math.log2(f / expected);
     cents = ((((cents + 600) % 1200) + 1200) % 1200) - 600;   // any octave counts
@@ -1486,6 +1589,7 @@
     $('sargamLineName').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveSargamLine(); });
     $('sargamLineSave').addEventListener('click', saveSargamLine);
     $('sargamLineDelete').addEventListener('click', deleteSargamLine);
+    $('sargamLineCancel').addEventListener('click', cancelSargamEdit);
     $('sargamShare').addEventListener('click', () => {
       const line = savedLine();
       if (line) exportFile(fileName(line.name, 'sargam'), { sargamLines: [line] });
@@ -1511,6 +1615,7 @@
       if (sargamEditing) $('sargamCustom').focus();
     });
     initSargamResize();
+    initEditorResize();
     initSargamFollow();
     bind('sargamPerBeat', 'sargamPerBeat', { onChange: applySargam });
     bind('sargamMode', 'sargamMode', { type: 'str', onChange: applySargam });
@@ -2060,7 +2165,7 @@
       banner.hidden = false;
       banner.textContent = tr(location.protocol === 'file:'
         ? 'Browsers block loading sound files from file://. Start the app with ./run.sh to use the real samples — using synthesized sounds for now.'
-        : 'No samples found in sounds/. Run ./import_sounds.sh to copy them from TaalMala — using synthesized sounds for now.');
+        : 'No samples found in sounds/ — using synthesized sounds for now.');
     } else banner.hidden = true;
   }
   engine.onSamplesChanged = () => {
@@ -2076,7 +2181,7 @@
     KeyA: 0, KeyW: 1, KeyS: 2, KeyE: 3, KeyD: 4, KeyF: 5, KeyT: 6, KeyG: 7, KeyY: 8, KeyH: 9,
     KeyU: 10, KeyJ: 11, KeyK: 12, KeyO: 13, KeyL: 14, KeyP: 15, Semicolon: 16, Quote: 17,
   };
-  const KEY_RELEASE = { harmonium: 0.12, piano: 0.25 };   // santoor rings on
+  const KEY_RELEASE = { harmonium: 0.12, piano: 0.25, violin: 0.2 };   // santoor rings on
   const held = new Map();      // key code or 'm' + MIDI note -> { voice, release }
   const sustained = new Map(); // notes let go while the sustain pedal is down
   let keyOctave = 0, pedal = false, learningSa = false, midiStarted = false, midiNames = null, midiError = '';
@@ -2093,7 +2198,9 @@
     engine.ensure();
     engine.load(engine.melodicFiles(inst)).then(() => {
       if (held.get(id) !== n) return;   // let go while the samples loaded
-      n.voice = engine.melodic(inst, semi, engine.now, 6.5, vel, engine.preview.sargam);
+      // Looped samples (violin) last as long as the key is held.
+      const hold = D.MELODIC[inst][0][2] ? 30 : 6.5;
+      n.voice = engine.melodic(inst, semi, engine.now, hold, vel, engine.preview.sargam);
     });
   }
 

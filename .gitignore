@@ -1,7 +1,9 @@
 dist/
 *.py
+!taal_studio/*.py
 *.sh
 android/
 .wrangler/
 node_modules/
 keytool_details.txt
+pydist/

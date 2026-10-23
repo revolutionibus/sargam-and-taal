@@ -120,6 +120,7 @@
     // ── Sargam practice ──
     'Starts on sam': 'সম থেকে শুরু',
     'Back to top': 'উপরে যান',
+    "Drag to change the editor's height (arrow keys too; double-click to reset)": 'টেনে সম্পাদকের উচ্চতা বদলান (অ্যারো কী-ও চলে; ডাবল-ক্লিকে আগের মাপে ফেরে)',
     'Drag to show more or fewer lines (or use the arrow keys)': 'টেনে বেশি বা কম লাইন দেখান (বা অ্যারো কী ব্যবহার করুন)',
     'One line = one avartan. Komal swars are underlined, tivra Ma has a mark above, dots show mandra (below) and taar (above) saptak, small raised swars are grace swars. Use headphones when checking your singing.':
       'এক লাইন = এক আবর্তন। তীব্র মা-র উপরে চিহ্ন, আর স্বরের নিচে ফোটা দিয়ে মন্দ্র বা উদারা সপ্তক (lower octave) ও উপরে ফোটা দিয়ে তারা সপ্তক বোঝানো হয়। ছোট করে উপরে লেখা স্বর হলো স্পর্শ স্বর। নিজের গান যাচাই করার সময় হেডফোন ব্যবহার করুন।',
@@ -131,6 +132,7 @@
     'Name': 'নাম',
     'e.g. Yaman palta 1': 'যেমন: ইমন পাল্টা ১',
     'Save line': 'লাইন সেভ করুন',
+    'Discard the changes and close the editor': 'পরিবর্তনগুলো বাদ দিয়ে সম্পাদক বন্ধ করুন',
     'Raga / thaat': 'রাগ / ঠাট',
     'Laya': 'লয়',
     'Barabar · 1 note / beat': 'বরাবর · মাত্রায় ১টি স্বর',
@@ -313,8 +315,8 @@
     '.': '।',
     'Browsers block loading sound files from file://. Start the app with ./run.sh to use the real samples — using synthesized sounds for now.':
       'ব্রাউজার file:// থেকে সাউন্ড ফাইল লোড করতে দেয় না। আসল নমুনা পেতে ./run.sh দিয়ে অ্যাপ চালু করুন — আপাতত কৃত্রিম শব্দ বাজছে।',
-    'No samples found in sounds/. Run ./import_sounds.sh to copy them from TaalMala — using synthesized sounds for now.':
-      'sounds/ ফোল্ডারে কোনো নমুনা নেই। TaalMala থেকে কপি করতে ./import_sounds.sh চালান — আপাতত কৃত্রিম শব্দ বাজছে।',
+    'No samples found in sounds/ — using synthesized sounds for now.':
+      'sounds/ ফোল্ডারে কোনো নমুনা নেই — আপাতত কৃত্রিম শব্দ বাজছে।',
 
     // ── Notation errors ──
     '{msg} in beat {beat}': '{beat} নম্বর মাত্রায় {msg}',
@@ -326,9 +328,9 @@
     '"{tok}" has no swar': '"{tok}"-এ কোনো স্বর নেই',
     'Bad length [{v}] in "{tok}"': '"{tok}"-এ ভুল দৈর্ঘ্য [{v}]',
     'Bad swar "{tok}"': 'ভুল স্বর "{tok}"',
-    '"^" in "{tok}" needs a swar before it': '"{tok}"-এ "^"-এর আগে একটি স্বর লাগবে',
-    '"^" must be followed by a swar, not "{tok}"': '"^"-এর পরে একটি স্বর লাগবে, "{tok}" নয়',
-    '"^" at the end needs a swar after it': 'শেষের "^"-এর পরে একটি স্বর লাগবে',
+    '"{sym}" in "{tok}" needs a swar before it': '"{tok}"-এ "{sym}"-এর আগে একটি স্বর লাগবে',
+    '"{sym}" must be followed by a swar, not "{tok}"': '"{sym}"-এর পরে একটি স্বর লাগবে, "{tok}" নয়',
+    '"{sym}" at the end needs a swar after it': 'শেষের "{sym}"-এর পরে একটি স্বর লাগবে',
     '"<…>" must be followed by a swar, not "{tok}"': '"<…>"-এর পরে একটি স্বর লাগবে, "{tok}" নয়',
     '"<…>" at the end needs a swar after it': 'শেষের "<…>"-এর পরে একটি স্বর লাগবে',
     'Bad position "{tok}"': 'ভুল জায়গা "{tok}"',
@@ -364,6 +366,7 @@
     'Harmonium': 'হারমোনিয়াম',
     'Santoor': 'সন্তুর',
     'Piano': 'পিয়ানো',
+    'Violin': 'বেহালা',
     'Yaman': 'ইমন',
     'Yaman / Kalyan': 'ইমন / কল্যাণ',
     'Bilawal': 'বিলাবল',
@@ -394,7 +397,8 @@
   const BN_HTML = {
     sargamHint: 'বন্ধনীর ভেতরের স্বরগুলো এক মাত্রা ভাগ করে নেয়: <code>S R (GM) P (DNS\')</code>। ' +
       '<code>[beats]</code> দিয়ে দৈর্ঘ্য ঠিক হয়, যা বদলানো পর্যন্ত চলতে থাকে: <code>S[0.5] R G M[2]</code>। ' +
-      '<code>-</code> আগের স্বর ধরে রাখে, <code>~</code> হলো বিরাম।',
+      '<code>-</code> আগের স্বর ধরে রাখে, <code>~</code> হলো বিরাম। ' +
+      '<code>S^R</code> নতুন আঘাত ছাড়া রে-তে যায়, <code>D/S\'</code> গড়িয়ে র্সা-তে ওঠে (মীড়)।',
     bolsHelp: '— মাত্রাগুলো স্পেস দিয়ে, বিভাগগুলো “|” দিয়ে আলাদা। এক মাত্রায় কয়েকটি বোল থাকলে তারা মাত্রাটি ভাগ করে নেয়: ' +
       '<code>TiRaKiTa</code>, <code>DhaGe</code>। “-” হলো বিরাম। <code>(Na---)[1]</code> একটি দলকে ১ মাত্রায় বসায়, ' +
       '<code>(Dha|Dha2)</code> এলোমেলোভাবে একটি বাছে, <code>Dha2</code> = ২ নম্বর রেকর্ডিং, <code>#</code> জোরে, <code>*</code> আস্তে।',

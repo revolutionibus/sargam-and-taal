@@ -6,6 +6,10 @@
   const BUSES = ['taal', 'dayan', 'bayan', 'manjeera', 'lehra', 'tanpura', 'swar', 'sargam'];
   const LEGATO_OFFSET = 0.3;  // seconds into the sample a legato note starts
   const LEGATO_FADE = 0.04;   // its fade-in, in place of the attack
+  const RELEASE = { harmonium: 0.12, piano: 0.25, violin: 0.2 };   // default fade after a melodic note
+  // Vibrato added to an instrument's samples: rate (Hz), depth (cents either
+  // side), and how long the note stays straight before it fades in over rise (s).
+  const VIBRATO = { violin: { rate: 5.6, cents: 16, delay: 0.25, rise: 0.45 } };
 
   class Engine {
     constructor() {
@@ -167,11 +171,35 @@
 
     // legato: start past the sample's attack and fade in, so the note comes
     // in without a new strike.
-    playBuffer(buf, time, bus, { semis = 0, vel = 1, pan = 0, dur = 0, release = 0.25, legato = false } = {}) {
+    // loop: [start, end] (s) repeated while a note with a dur is held.
+    // vibrato: see VIBRATO; a legato note picks it up sooner.
+    // glides: meend, [{ at, end, semis }] in seconds (see rampPitch).
+    playBuffer(buf, time, bus, { semis = 0, vel = 1, pan = 0, dur = 0, release = 0.25, legato = false,
+                                 loop = null, vibrato = null, glides = null } = {}) {
       const c = this.ctx;
       const src = c.createBufferSource();
       src.buffer = buf;
-      src.playbackRate.value = Math.pow(2, semis / 12);
+      const rate = Math.pow(2, semis / 12);
+      src.playbackRate.value = rate;
+      if (glides) this.rampPitch(src.playbackRate, glides.map((g) => ({ at: g.at, end: g.end, value: Math.pow(2, g.semis / 12) })));
+      if (loop && dur > 0) {
+        src.loop = true;
+        [src.loopStart, src.loopEnd] = loop;
+      }
+      if (vibrato) {
+        const lfo = c.createOscillator();
+        lfo.frequency.value = vibrato.rate * (0.95 + Math.random() * 0.1);
+        const depth = c.createGain();
+        const full = rate * (Math.pow(2, vibrato.cents / 1200) - 1);
+        const delay = legato ? 0.05 : vibrato.delay;
+        const rise = legato ? 0.2 : vibrato.rise;
+        depth.gain.setValueAtTime(0, time);
+        depth.gain.setValueAtTime(0, time + delay);
+        depth.gain.linearRampToValueAtTime(full, time + delay + rise);
+        lfo.connect(depth).connect(src.playbackRate);
+        lfo.start(time);
+        src.onended = () => lfo.stop();
+      }
       const g = c.createGain();
       g.gain.value = vel;
       if (legato) {
@@ -194,6 +222,17 @@
       return { src, gain: g };
     }
 
+    // Meend: glide a pitch param (frequency or playback rate) through
+    // [{ at, end, value }], holding each value until the next glide starts.
+    // Exponential, so the pitch moves evenly through the swars in between.
+    rampPitch(param, glides) {
+      let v = param.value;
+      for (const g of glides) {
+        param.setValueAtTime(v, g.at);
+        param.exponentialRampToValueAtTime(v = g.value, g.end);
+      }
+    }
+
     // ── Percussion ──────────────────────────────────────────────────────
     stroke(group, time, vel, bus, extraSemis = 0, variant = 0) {
       if (!group) return;
@@ -212,22 +251,25 @@
     // the sounding pitch, so the key's transposition is kept small.
     // release: fade after dur (default depends on the instrument).
     // legato: no new attack (see playBuffer).
-    melodic(instrument, semi, time, dur, vel, bus, release, legato = false) {
+    // glides: meend, [{ at, end, semi }] (seconds; semi as above).
+    melodic(instrument, semi, time, dur, vel, bus, release, legato = false, glides = null) {
       const set = D.MELODIC[instrument];
       let best = null;
-      for (const [file, off] of set) {
+      for (const [file, off, loop] of set) {
         const f = file + '.wav';
         if (!this.buffers.has(f)) continue;
         const d = Math.abs(this.saSemis + semi - off);
-        if (!best || d < Math.abs(this.saSemis + semi - best[1])) best = [f, off];
+        if (!best || d < Math.abs(this.saSemis + semi - best[1])) best = [f, off, loop];
       }
       if (!best) {
-        if (set.every(([f]) => this.missing.has(f + '.wav'))) this.synthMelodic(instrument, semi, time, dur, vel, bus);
+        if (set.every(([f]) => this.missing.has(f + '.wav'))) this.synthMelodic(instrument, semi, time, dur, vel, bus, glides);
         return null;
       }
       return this.playBuffer(this.buffers.get(best[0]), time, bus,
         { semis: this.saSemis + semi - best[1], vel, dur,
-          release: release ?? ({ harmonium: 0.12, piano: 0.25 }[instrument] ?? 0.6), legato });
+          release: release ?? RELEASE[instrument] ?? 0.6, legato,
+          loop: best[2], vibrato: VIBRATO[instrument],
+          glides: glides && glides.map((g) => ({ at: g.at, end: g.end, semis: this.saSemis + g.semi - best[1] })) });
     }
 
     melodicFiles(instrument) {
@@ -344,11 +386,12 @@
       }
     }
 
-    synthMelodic(instrument, semi, t, dur, vel, bus) {
+    synthMelodic(instrument, semi, t, dur, vel, bus, glides) {
       const c = this.ctx;
       const freq = (s) => this.saFrequency() * Math.pow(2, s / 12);
       const f = freq(semi);
-      if (instrument === 'harmonium') {
+      const glide = (o, mul) => glides && this.rampPitch(o.frequency, glides.map((g) => ({ at: g.at, end: g.end, value: freq(g.semi) * mul })));
+      if (instrument === 'harmonium' || instrument === 'violin') {
         const lp = c.createBiquadFilter();
         lp.type = 'lowpass'; lp.frequency.value = 2200;
         const g = c.createGain();
@@ -360,11 +403,12 @@
         for (const [type, mul] of [['sawtooth', 1], ['square', 1.003]]) {
           const o = c.createOscillator();
           o.type = type; o.frequency.value = f * mul;
+          glide(o, mul);
           o.connect(lp); o.start(t); o.stop(t + dur + 0.15);
         }
       } else {
-        this.tone(f, t, 0.4 * vel, instrument === 'santoor' ? 0.6 : 1.2, bus, 'triangle');
-        this.tone(f * 2, t, 0.1 * vel, 0.3, bus);
+        glide(this.tone(f, t, 0.4 * vel, instrument === 'santoor' ? 0.6 : 1.2, bus, 'triangle'), 1);
+        glide(this.tone(f * 2, t, 0.1 * vel, 0.3, bus), 2);
       }
     }
 

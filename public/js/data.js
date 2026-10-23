@@ -27,7 +27,8 @@
     'manjeera_open', 'manjeera_closed',
   ]);
 
-  // Melodic instruments: [sample, semitone offset from C#4].
+  // Melodic instruments: [sample, semitone offset from C#4, optional loop
+  // [start, end] in seconds that a held note repeats].
   const MELODIC = {
     harmonium: [['harmonium_sa_low', -12], ['harmonium_pa_low', -5], ['harmonium_sa', 0],
                 ['harmonium_pa', 7], ['harmonium_sa_high', 12]],
@@ -39,6 +40,14 @@
                 ['piano_fs3', -7], ['piano_a3', -4], ['piano_c4', -1], ['piano_ds4', 2],
                 ['piano_fs4', 5], ['piano_a4', 8], ['piano_c5', 11], ['piano_ds5', 14],
                 ['piano_fs5', 17], ['piano_a5', 20], ['piano_c6', 23], ['piano_ds6', 26]],
+    // University of Iowa MIS violin (2012), bowed without vibrato (the engine
+    // adds it), a minor third apart with crossfaded loops; see tools/import_violin.py.
+    violin:    [['violin_g3', -6, [1.0692, 3.1234]], ['violin_as3', -3, [0.9688, 2.7727]],
+                ['violin_cs4', 0, [2.1553, 3.1829]], ['violin_e4', 3, [1.7997, 3.7467]],
+                ['violin_g4', 6, [1.2375, 3.5049]], ['violin_as4', 9, [3.0033, 5.8633]],
+                ['violin_cs5', 12, [1.6234, 5.4095]], ['violin_e5', 15, [1.0961, 4.6113]],
+                ['violin_g5', 18, [3.5455, 4.8730]], ['violin_as5', 21, [1.2463, 4.7971]],
+                ['violin_cs6', 24, [0.9367, 5.0172]], ['violin_e6', 27, [1.6856, 4.7545]]],
   };
 
   // Tanpura tones (different instruments / jawari). Roles: pa, sa, sa2, sa_low.
@@ -131,6 +140,7 @@
     { id: 'harmonium', name: 'Harmonium', sustain: true },
     { id: 'santoor', name: 'Santoor', sustain: false },
     { id: 'piano', name: 'Piano', sustain: false },
+    { id: 'violin', name: 'Violin', sustain: true },
   ];
 
   // ── Ragas (for swarmandal) ──────────────────────────────────────────────

@@ -88,7 +88,8 @@ lines in the Latin letters above.
 | `-` | Hold the previous swar for one more step |
 | `~` | Rest (silence) for one step |
 | `(GM)` | Brackets: the swars inside **share one step** |
-| `^` | Join: the swar rings on and the next one comes in without a new strike (`G^R`) |
+| `^` | Join (legato): the next swar comes in without a new strike (`G^R`) |
+| `/` | Meend: slide into the next swar (`D/S'`) |
 | `<P>` | Grace swar: a quick touch before the next swar (`<P>G`) |
 | `[0.5]` | Set the length in beats; it carries on to the next swars |
 
@@ -105,17 +106,40 @@ lines in the Latin letters above.
 
 ### Join (`^`)
 
-Put `^` between two swars to join them: `G^R` strikes Ga, and Ga keeps ringing
-while Re comes in **without a new strike** (legato). The pitch doesn't slide.
+Put `^` between two swars to join them: in `G^R`, Re comes in **without a
+new strike** (legato). The pitch moves straight to Re; it doesn't slide.
+In Bengali swaralipi this is the dash before a swar (`সা -রা`, with `০` under
+it in the lyric line): the same syllable carries on to the next swar.
 
-- Every swar of a chain rings until the chain's last swar ends: in `P^m^G`,
-  Pa, Ma and Ga all stop together at the end of Ga. Only Pa is struck.
-- For now `^` works on piano and santoor. On harmonium the swars play as if
-  there were no `^`.
+- On harmonium and violin, Ga stops as Re comes in: the two crossfade, so the
+  sound never breaks and Re has no attack of its own.
+- On piano and santoor, every swar of a chain also rings until the chain's
+  last swar ends: in `P^m^G`, Pa, Ma and Ga all stop together at the end of
+  Ga. Only Pa is struck.
 - `G^R`, `G^ R` and `G ^R` mean the same thing.
 - `^` must have a swar on both sides. A rest or `-` after it is an error.
-- In the panel, a slur arc above the swars shows the chain.
+- In the panel, an orange bridge joins the swars.
 - Pitch checking scores each swar on its own, as usual.
+
+### Meend (`/`)
+
+Put `/` between two swars to slide from one to the other: `D/S'` glides from
+Dha up to taar Sa. In Bengali swaralipi this is the curve drawn under the
+swars. The sound doesn't stop: Sa' isn't struck again, it is where the slide
+lands.
+
+- The slide takes the **last third** of the swar before `/`, so both swars
+  keep their own pitch: in `D/S'` Dha holds for two thirds of the beat,
+  slides, and Sa' is already on its pitch when its beat starts.
+- The slide's speed follows the length of that swar's last step: in `(D/S')`
+  it takes a sixth of a beat, and in `D[3] /S'[1]` a whole beat. Holding with
+  `-` doesn't make it longer: `D - /S'` holds Dha and slides at the end.
+- Chains work: `P/m/G` glides from Pa through Ma to Ga. So do mixes with `^`:
+  `D/S'^N` slides up to Sa', then moves to Ni without a new strike.
+- `D/S'`, `D/ S'` and `D /S'` mean the same thing.
+- `/` must have a swar on both sides. A rest or `-` after it is an error.
+- In the panel, a curve below the swars shows the meend.
+- Pitch checking scores the swar before `/` only up to the slide.
 
 ### Grace swars (`<>`)
 
@@ -277,22 +301,36 @@ A quarter-beat grace note from mandra Ni into Sa (5 beats):
 
 ### Join
 
-Ga rings on under Re, then Sa (4 beats):
+Re and Sa sung on Ga's syllable, without new attacks (4 beats):
 
 ```
 G^R - S
 ```
 
-Pa for two beats ringing into Ma; a quick Ga–Re pair (4 beats):
+Pa for two beats joining Ma; a quick joined Ga–Re pair (4 beats):
 
 ```
 P - ^m (G^R)
 ```
 
-Mandra Dha, Ni and Sa ringing together (3 beats):
+Mandra Dha, Ni and Sa in one breath (3 beats):
 
 ```
 .D^.N^S
+```
+
+### Meend
+
+Dha slides up to taar Sa, held for two beats, then Ni (4 beats):
+
+```
+D /S' - N
+```
+
+A held Dha sliding down to Pa at the end of its second beat (3 beats):
+
+```
+D - /P
 ```
 
 ### Grace swars
@@ -343,7 +381,7 @@ The second line continues on the next avartan:
 S R G M P D N S' | S' N D P M G R S | S G R M G P M D | P N D S' S' - - ~
 ```
 
-## For developers: how `^` and `<>` work
+## For developers: how `^`, `/` and `<>` work
 
 This section is for changing the code. You don't need it to write lines.
 
@@ -351,15 +389,24 @@ This section is for changing the code. You don't need it to write lines.
 
 | Step | File | What it does |
 |---|---|---|
-| Parse | `js/notation.js`, `parseSargam` | Reads `^`. The swar before it gets `ringOn: true`, the swar after it gets `slur: true`. |
-| Plan | `js/player.js`, `setSargam` | Every swar of a chain except the last gets `ringTo`: the chain's end, in beats. |
-| Play | `js/player.js`, `scheduleSargam` | Plays every swar on its own beat until `ringTo` (or its own end), so the swars overlap. Swars with `slur: true` are played legato. Skipped on instruments with `sustain: true` in `SARGAM_INSTRUMENTS` (harmonium). |
-| Sound | `js/audio.js`, `playBuffer` | A legato note starts `LEGATO_OFFSET` (0.3 s) into the sample, past its attack, and fades in over `LEGATO_FADE` (40 ms). |
+| Parse | `js/notation.js`, `parseSargam` | Reads `^`: the swar before it gets `ringOn: true`, the swar after it `slur: true`. Reads `/`: the swar before it gets `glideTo` (the target swar) and `glideAt` (when its slide starts, in beats from its start), the swar after it `glideIn: true`. |
+| Plan | `js/player.js`, `setSargam` | A swar that slides on plays as one sound through its meend chain: it gets `glides` (each slide's start, end and target, in beats from its start), `end` (where the chain ends) and `joinNext` (the chain's last swar has a `^`). Then each `^` chain's sounds, except the last, get `ringTo`: the chain's end, in beats. |
+| Play | `js/player.js`, `scheduleSargam` | Swars with `glideIn` aren't played. Swars with `slur: true` are played legato. On instruments with `sustain: true` in `SARGAM_INSTRUMENTS` (harmonium, violin), a swar with `joinNext` stops exactly when the next starts and fades out over `SARGAM_HANDOVER` (50 ms); elsewhere it rings until `ringTo`. |
+| Sound | `js/audio.js`, `playBuffer` / `rampPitch` / `synthMelodic` | A legato note starts `LEGATO_OFFSET` (0.3 s) into the sample, past its attack, and fades in over `LEGATO_FADE` (40 ms). A meend moves the sample's playback rate (or the synth's frequency) exponentially, so the pitch changes evenly. |
 | Grace | `js/notation.js`, `parseSargam`; `js/player.js`, `scheduleSargam` | `<…>` gives the next swar `grace: [semi, …]`. The player plays them from the swar's beat for `SARGAM_GRACE` (70 ms) each, at most a third of the swar, and starts the swar after them. |
-| Show | `js/app.js`, `renderSargam`; `css/style.css`, `.sw.meend` / `.sw.meend-in` | Draws the slur arc from the end of the first swar to the next one. |
+| Show | `js/app.js`, `renderSargam`; `css/style.css`, `.bridge`, `.sw .glide` | `drawSargamBridges` draws the `^` bridge (`.bridge`) from the end of one swar's name to the start of the next, measured after layout and redrawn when the lines rewrap; the `/` curve below is CSS. |
+| Score | `js/app.js`, `sargamPitch` | Pitch checking stops at `glideAt`, so the slide isn't scored. |
+
+### Changing how long the slide takes
+
+In `parseSargam`, `glideAt` is the swar's length minus a third of its last
+step. Change the `/ 3` there to `/ 2` for a slower slide or `/ 4` for a quicker
+one. The slide always ends where the next swar's beat starts.
 
 ### Limits
 
-- A swar rings only as long as its recording: a short sample can fade before
-  the chain ends.
+- A piano or santoor swar rings only as long as its recording: a short sample
+  can fade before the chain ends. Violin samples loop, so they last.
+- Samples are pitched by changing their playback speed, so a long meend chain
+  can run past the end of a short recording (not the violin).
 - A chain that crosses the end of an avartan is cut at sam, like any long note.

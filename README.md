@@ -16,6 +16,28 @@ to synthesized sounds.
 The grand piano (sargam practice) uses the Salamander Grand Piano V3 by
 Alexander Holm, CC-BY 3.0; `./import_piano.sh` re-downloads it into `public/sounds/`.
 
+The violin uses the University of Iowa Musical Instrument Samples (violin, 2012,
+arco mono): `tools/import_violin.py` cuts, tunes and loops them into `public/sounds/`.
+
+### As a Python package
+
+`taal_studio/` is a small Flask app that does what `server.py` does, for
+installing with pip. `pyproject.toml` ships `public/` inside it as
+`taal_studio/web`, so there is still one copy of the site.
+
+```sh
+python3 -m build --outdir pydist .          # pydist/taal_studio-<version>-py3-none-any.whl and .tar.gz
+pip install pydist/taal_studio-*.whl
+taal-studio                                 # http://localhost:3000; --port, --data-dir, --no-browser
+python3 -m taal_studio --data-dir public    # from the repo, saving to public/ like server.py
+```
+
+Installed, it saves compositions, presets and sargam lines in `~/.taal-studio`
+(or `--data-dir`, or `$TAAL_STUDIO_DATA`), copied from the bundled files on
+first run. All the samples in `public/sounds/` ship with it; samples put in
+`<data dir>/sounds/` are used before the shipped ones. `PYPI.md` is the
+package's page on PyPI; the version is in `taal_studio/__init__.py`.
+
 ## Layout and hosting
 
 Everything the site needs (`index.html`, `css/`, `js/`, `sounds/` and the saved
@@ -68,6 +90,19 @@ python3 tools/convert_sargams.py -o songs.taal.json data/      # same, in Python
 
 It prints how many songs have notation errors and which taal names have no
 matching taal in the app (create them in the Composer, or pass `--map`).
+
+The first conversion of the nltr swaralipi pages dropped some marks. To put
+them back into `public/sargam-lines.json` (needs `requests` and `beautifulsoup4`):
+
+```sh
+python3 tools/fetch_swaralipi.py ../taal_app/sargam/html    # download each song's page once (cached)
+python3 tools/rewrite_sargams.py ../taal_app/sargam/html    # rewrite the song lines from the pages
+```
+
+This adds legato (`-রা` → `^R`), kan (`<R>G`) and meend (the curve under
+swars → `D/S'`). `{ }` repeats are not written out yet. Beats and bars stay
+as they were: a song whose
+swars come out different from before is left alone and listed.
 
 ## Notation
 

@@ -297,13 +297,19 @@
               <datalist id="sargamListNames"></datalist></div>
             <div class="field" title="Selecting this line switches to its taal; you can still change the taal afterwards">
               <label for="sargamLineTaal">Default taal</label><select id="sargamLineTaal"></select></div>
-            <textarea id="sargamCustom" aria-label="Swars of the line" rows="3" spellcheck="false"
-              placeholder="S R G M P - - - | P M G R S - - -"></textarea>
+            <div class="editor-box">
+              <textarea id="sargamCustom" aria-label="Swars of the line" rows="8" spellcheck="false"
+                placeholder="S R G M P - - - | P M G R S - - -"></textarea>
+              <div id="sargamEditorResize" class="editor-resize" role="separator" aria-orientation="horizontal" tabindex="0"
+                aria-controls="sargamCustom" title="Drag to change the editor's height (arrow keys too; double-click to reset)"><i></i></div>
+            </div>
             <p class="muted small hint" data-i18n="sargamHint">Brackets share one beat: <code>S R (GM) P (DNS')</code>.
               <code>[beats]</code> sets a length that carries on until changed: <code>S[0.5] R G M[2]</code>.
-              <code>-</code> holds the previous swar, <code>~</code> is a rest.</p>
+              <code>-</code> holds the previous swar, <code>~</code> is a rest.
+              <code>S^R</code> moves to Re without a new attack, <code>D/S'</code> slides up to Sa' (meend).</p>
             <div class="row">
               <button id="sargamLineSave">Save line</button>
+              <button id="sargamLineCancel" title="Discard the changes and close the editor">Cancel</button>
               <button id="sargamLineDelete" class="danger">Delete</button>
               <span id="sargamLineStatus" class="small muted" aria-live="polite"></span>
             </div>

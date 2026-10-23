@@ -9,6 +9,7 @@
   const LEHRA_INST = 'santoor';   // the lehra always plays on santoor
   const SARGAM_REPEAT_GAP = 0.06;   // seconds of silence between a swar and its repeat
   const SARGAM_GRACE = 0.07;        // seconds per grace swar ("<P>G"), at most a third of the swar
+  const SARGAM_HANDOVER = 0.05;     // fade (s) of a sustained swar as the next one comes in on "^"
 
   function compileTaal(t) {
     const p = N.parseBols(t.bols);
@@ -58,16 +59,33 @@
           const next = notes[i + 1];
           return n.semi !== null && !!next && next.semi === n.semi && Math.abs(next.pos - (n.pos + n.len)) < 1e-6;
         };
-        const out = notes.map((n, i) => ({ ...n, i, repeat: repeat(n, i) }));
-        // "^": every swar of a chain keeps ringing until the chain's last
-        // swar ends (ringTo, in beats); the swars after the first come in
-        // legato, without a new strike (slur, from the parser).
+        const out = notes.map((n, i) => ({ ...n, i, repeat: repeat(n, i), tail: i, end: n.pos + n.len }));
+        // "/" (meend): a swar that slides on sounds through the swars it
+        // slides into (they aren't played), so it carries the whole chain:
+        // the slides (glides, in beats from its start), where the sound ends
+        // (end), and the repeat gap and "^" of the swar it lands on (tail).
         for (let i = 0; i < out.length; i++) {
-          if (!out[i].ringOn || out[i].slur) continue;
+          const n = out[i];
+          if (n.glideTo === undefined || n.glideIn) continue;
+          n.glides = [];
           let k = i;
-          while (out[k].ringOn) k++;
-          const end = out[k].pos + out[k].len;
-          for (let j = i; j < k; j++) out[j].ringTo = end;
+          for (; out[k].glideTo !== undefined; k++) {
+            const g = out[k];
+            n.glides.push({ at: g.pos + g.glideAt - n.pos, end: g.pos + g.len - n.pos, semi: g.glideTo });
+          }
+          Object.assign(n, { tail: k, end: out[k].end, repeat: out[k].repeat, joinNext: !!out[k].ringOn });
+        }
+        for (const n of out) if (n.joinNext === undefined) n.joinNext = !!n.ringOn;
+        // "^": the next swar comes in legato, without a new strike (slur, from
+        // the parser). On plucked or struck instruments every sound of a chain
+        // also keeps ringing until the chain ends (ringTo, in beats).
+        for (let i = 0; i < out.length; i++) {
+          const n = out[i];
+          if (n.glideIn || n.slur || !n.joinNext) continue;
+          const heads = [i];
+          while (out[heads[heads.length - 1]].joinNext) heads.push(out[heads[heads.length - 1]].tail + 1);
+          const end = out[heads[heads.length - 1]].end;
+          heads.slice(0, -1).forEach((h) => { out[h].ringTo = end; });
         }
         this.sargam = { notes: out, mode, total: last.pos + last.len };
       } else {
@@ -354,25 +372,31 @@
         // Grace swars take their time from the start of the swar.
         const grace = n.grace ? Math.min(SARGAM_GRACE * n.grace.length, n.len * dur / 3) : 0;
         const at = beatAt + grace;
-        if (n.semi !== null && q.mode !== 'silent' && !yourTurn) {
-          // "^" is ignored on sustaining instruments (harmonium) for now.
-          const chain = !D.SARGAM_INSTRUMENTS.find((i) => i.id === s.sargamInst)?.sustain;
+        // Swars a meend slides into are part of the swar before them.
+        if (n.semi !== null && !n.glideIn && q.mode !== 'silent' && !yourTurn) {
+          // Sustaining instruments (harmonium, violin) don't ring on under a
+          // "^": the next swar takes over, crossfading without a new attack.
+          const sustain = !!D.SARGAM_INSTRUMENTS.find((i) => i.id === s.sargamInst)?.sustain;
           // A note running past the avartan is cut at the line end.
-          const len = Math.min((chain && n.ringTo) || n.pos + n.len, lineEnd) - n.pos - grace / dur;
-          const legato = chain && !!n.slur;
+          const len = Math.min((!sustain && n.ringTo) || n.end, lineEnd) - n.pos - grace / dur;
+          const glides = n.glides && n.glides.map((g) => ({ at: beatAt + g.at * dur, end: beatAt + g.end * dur, semi: g.semi }));
           if (n.grace) {
             const each = grace / n.grace.length;
             n.grace.forEach((g, k) => this.engine.melodic(s.sargamInst, g, beatAt + k * each, each, 0.6, ses.sargam, 0.03));
           }
-          if (n.repeat && !(chain && n.ringTo)) {
+          if (sustain && n.joinNext) {
+            this.engine.melodic(s.sargamInst, n.semi, at, Math.max(0.05, len * dur), 0.75, ses.sargam, SARGAM_HANDOVER, !!n.slur, glides);
+          } else if (n.repeat && !n.ringTo) {
             // Stop (incl. a short fade) a little before the repeated swar starts.
             const gap = Math.min(SARGAM_REPEAT_GAP, len * dur * 0.25);
-            this.engine.melodic(s.sargamInst, n.semi, at, Math.max(0.03, len * dur - gap - 0.03), 0.75, ses.sargam, 0.03, legato);
+            this.engine.melodic(s.sargamInst, n.semi, at, Math.max(0.03, len * dur - gap - 0.03), 0.75, ses.sargam, 0.03, !!n.slur, glides);
           } else {
-            this.engine.melodic(s.sargamInst, n.semi, at, Math.max(0.05, len * dur - 0.02), 0.75, ses.sargam, undefined, legato);
+            this.engine.melodic(s.sargamInst, n.semi, at, Math.max(0.05, len * dur - 0.02), 0.75, ses.sargam, undefined, !!n.slur, glides);
           }
         }
-        this.sargamVisual.push({ time: at, kind: 'note', idx: n.i, line, yourTurn, semi: n.semi });
+        // glideAt: when this swar starts sliding away (pitch checking stops).
+        this.sargamVisual.push({ time: at, kind: 'note', idx: n.i, line, yourTurn, semi: n.semi,
+                                 glideAt: n.glideTo === undefined ? null : beatAt + n.glideAt * dur });
       }
       // Exercise ended mid-line: the rest of the avartan is padding.
       if (q.total >= absB - 1e-9 && q.total < absB + 1 - 1e-9 && q.total < lineEnd - 1e-9) {

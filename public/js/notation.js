@@ -217,15 +217,17 @@
 
   const SWAR_SEMI = { S: 0, r: 1, R: 2, g: 3, G: 4, m: 5, M: 6, P: 7, d: 8, D: 9, n: 10, N: 11 };
 
-  // sargam: allow "^" (join to the next swar) and "<PM>" (grace swars before
-  // the next swar, as { grace: [semi, ...] }); only sargam lines have them.
+  // sargam: allow "^" (join: legato into the next swar), "/" (meend: slide
+  // into the next swar) and "<PM>" (grace swars before the next swar, as
+  // { grace: [semi, ...] }); only sargam lines have them.
   function parseSwarToken(tok, sargam = false) {
     const out = [];
     let i = 0;
     while (i < tok.length) {
       const c = tok[i];
       if (c === '-' || c === '_') { out.push({ sustain: true }); i++; continue; }
-      if (c === '^' && sargam) { out.push({ ring: true }); i++; continue; }
+      if (c === '^' && sargam) { out.push({ join: '^' }); i++; continue; }
+      if (c === '/' && sargam) { out.push({ join: '/' }); i++; continue; }
       if (c === '<' && sargam) {
         const end = tok.indexOf('>', i);
         const inner = end < 0 ? null : parseSwarToken(tok.slice(i + 1, end));
@@ -297,8 +299,12 @@
   // which carries on to the following swars. A (group) shares one length
   // between its swars: "(GM)" = two half-length notes, "(DNS')[2]" = three
   // notes in 2 beats. "-" extends the previous swar, "~" is a rest; "|" is
-  // ignored. "^" joins swars: in "G^R", G keeps ringing until the end of the
-  // chain, and R comes in legato (no new strike). G gets ringOn: true; R gets slur: true.
+  // ignored. "^" joins swars: in "G^R", R comes in legato (no new strike).
+  // G gets ringOn: true; R gets slur: true. "/" is a meend: in "G/R", G holds
+  // its pitch, slides to R over the last third of its last step, and R is
+  // where the slide lands (no new strike). G gets glideTo (the target semi)
+  // and glideAt (when the slide starts, in beats from its start); R gets
+  // glideIn: true.
   // "<P>G" plays P as a quick grace swar at the start of G; G gets grace: [semi, ...].
   // Returns { notes, total, errors }.
   function parseSargam(text, defaultLen) {
@@ -307,7 +313,8 @@
     let pos = 0;
     let len = defaultLen;
     let last = null;
-    let ringFrom = null; // note before a "^", waiting for the next swar
+    let joinFrom = null; // { note, sym }: note before a "^" or "/", waiting for the next swar
+    let lastStep = 0;    // length of the last step of `last`
     let grace = null;    // "<…>" swars waiting for the swar they lead into
     const src = (text || '').replace(/\|/g, ' ')
       .replace(/\(([^)]*)\)/g, (_, inner) => '(' + inner.replace(/\s+/g, '') + ')')    // "(S R)" = "(SR)"
@@ -323,7 +330,7 @@
         len = v;
       }
       const parts = parseSwarToken(m[2], true);
-      const steps = parts && parts.filter((p) => !p.ring && !p.grace).length;
+      const steps = parts && parts.filter((p) => !p.join && !p.grace).length;
       if (!parts || !parts.length) { errors.push(t('Bad swar "{tok}"', { tok })); continue; }
       const each = group ? len / (steps || 1) : len;
       for (const p of parts) {
@@ -335,30 +342,36 @@
           errors.push(t('"<…>" must be followed by a swar, not "{tok}"', { tok }));
           grace = null;
         }
-        if (p.ring) {
-          if (!last || last.semi === null || ringFrom) errors.push(t('"^" in "{tok}" needs a swar before it', { tok }));
-          else ringFrom = last;
+        if (p.join) {
+          const sym = p.join;
+          if (!last || last.semi === null || joinFrom) errors.push(t('"{sym}" in "{tok}" needs a swar before it', { sym, tok }));
+          else joinFrom = { note: last, sym, step: lastStep };
           continue;
         }
-        if (ringFrom && (p.sustain || p.rest)) {
-          errors.push(t('"^" must be followed by a swar, not "{tok}"', { tok }));
-          ringFrom = null;
+        if (joinFrom && (p.sustain || p.rest)) {
+          errors.push(t('"{sym}" must be followed by a swar, not "{tok}"', { sym: joinFrom.sym, tok }));
+          joinFrom = null;
         }
         if (p.sustain && last) last.len = round(last.len + each);
         else {
           last = { pos: round(pos), len: round(each), semi: p.sustain || p.rest ? null : p.semi };
-          if (ringFrom) {
-            ringFrom.ringOn = true;
+          if (joinFrom && joinFrom.sym === '^') {
+            joinFrom.note.ringOn = true;
             last.slur = true;
-            ringFrom = null;
+          } else if (joinFrom) {
+            const from = joinFrom.note;
+            Object.assign(from, { glideTo: last.semi, glideAt: round(from.len - joinFrom.step / 3) });
+            last.glideIn = true;
           }
+          joinFrom = null;
           if (grace) { last.grace = grace; grace = null; }
           notes.push(last);
         }
+        lastStep = each;
         pos += each;
       }
     }
-    if (ringFrom) errors.push(t('"^" at the end needs a swar after it'));
+    if (joinFrom) errors.push(t('"{sym}" at the end needs a swar after it', { sym: joinFrom.sym }));
     if (grace) errors.push(t('"<…>" at the end needs a swar after it'));
     return { notes, total: round(pos), errors };
   }

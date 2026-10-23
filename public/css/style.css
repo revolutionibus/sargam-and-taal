@@ -506,6 +506,26 @@ details[data-keep][open] > summary::after { transform: rotate(-135deg); margin-t
   .focus .sw { font-size: 2.3rem; }
 }
 #sargamPanel textarea { margin-bottom: 4px; }
+/* Line editor: the textarea and its height bar read as one box. */
+.editor-box {
+  margin-bottom: 4px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  background: var(--panel); transition: border-color .15s, box-shadow .15s;
+}
+.editor-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+#sargamPanel .editor-box textarea {
+  display: block; margin: 0; resize: none; border: 0; border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  background: transparent; padding: 10px 12px; font-size: .95rem; line-height: 1.65; letter-spacing: .02em;
+  min-height: 60px;
+}
+#sargamPanel .editor-box textarea:focus-visible { box-shadow: none; }
+.editor-resize {
+  display: flex; justify-content: center; align-items: center; height: 14px;
+  border-top: 1px solid var(--line); border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background: var(--panel-2); cursor: ns-resize; touch-action: none; user-select: none;
+}
+.editor-resize i { width: 40px; height: 4px; border-radius: 2px; background: color-mix(in srgb, var(--muted) 60%, transparent); transition: background .15s, width .15s; }
+.editor-resize:hover i, .editor-resize.dragging i, .editor-resize:focus-visible i { background: var(--accent); width: 56px; }
+.editor-resize:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* Choose (or edit) a line, then the cue and the lines, then raga, laya,
    mode and the rest. The settings wrapper is dissolved so its parts can be
    ordered around the lines. */
@@ -642,16 +662,20 @@ button[hidden] { display: none; }
 .sw.taar::after { top: -2px; }
 .sw.mandra::after { bottom: -3px; }
 .sw.taar2::after { box-shadow: 4px 0 0 currentColor; margin-left: -3.5px; }
-/* Join ("^"): a slur from the swar to the next one. Each span draws its
-   piece; a swar in the middle of a chain draws a straight one. */
-.sw.meend::before, .sw.meend-in::before {
-  content: ''; position: absolute; top: -6px; height: 5px;
-  border-top: 1.5px solid var(--accent); pointer-events: none;
+/* Join ("^"): a bridge from one swar to the next (drawn by drawSargamBridges). */
+.s-line { position: relative; }
+.bridge {
+  position: absolute; height: 2px; margin-top: -1px; border-radius: 1px;
+  background: var(--accent); pointer-events: none; z-index: 1;
 }
-.sw.meend::before { left: 45%; right: -3px; border-left: 1.5px solid var(--accent); border-top-left-radius: 8px 5px; }
-.sw.meend-in.meend::before { left: -3px; border-left: 0; border-radius: 0; }
-.sw.meend-in::before { left: -3px; right: 45%; border-right: 1.5px solid var(--accent); border-top-right-radius: 8px 5px; }
-.sw.meend-in.meend::before { right: -3px; border-right: 0; }
+/* Meend ("/"): a curve below, from the swar to the swar it slides into. */
+.sw .glide {
+  position: absolute; bottom: -8px; height: 5px; pointer-events: none;
+  border-bottom: 1.5px solid var(--accent);
+}
+.sw .glide.out { left: 45%; right: -3px; border-left: 1.5px solid var(--accent); border-bottom-left-radius: 8px 5px; }
+.sw .glide.in { left: -3px; right: 45%; border-right: 1.5px solid var(--accent); border-bottom-right-radius: 8px 5px; }
+.sw .glide.in.out { left: -3px; right: -3px; border-left: 0; border-right: 0; border-radius: 0; }
 .sw.on { background: var(--accent); color: var(--on-accent); }
 .sw.ok { box-shadow: inset 0 -3px 0 var(--ok); }
 .sw.low { box-shadow: inset 0 -3px 0 var(--khali); }

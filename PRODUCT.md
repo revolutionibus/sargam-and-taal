@@ -51,6 +51,7 @@ Confirmed differentiators:
 
 - A song library of Rabindra Sangeet and other Bengali songs in sargam notation: `songs.taal.json` (52 entries) and `songs2.taal.json` (about 1,965 entries), plus the converters in `tools/`.
 - Grand piano samples: Salamander Grand Piano V3 by Alexander Holm, CC-BY 3.0. Attribution must stay.
+- Violin samples: University of Iowa Electronic Music Studios, Musical Instrument Samples (freely available).
 - Tabla and other instrument samples in `public/sounds/`.
 - None of these exist, and none may be invented: user counts, testimonials, reviews, endorsements by teachers or institutions, store ratings.
 
