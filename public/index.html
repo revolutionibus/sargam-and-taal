@@ -338,6 +338,15 @@
           <div class="field"><label for="sargamInst">Instrument</label><select id="sargamInst"></select></div>
           <div class="field"><label for="sargamVol">Volume</label><input id="sargamVol" type="range" min="0" max="1.5" step="0.01"></div>
           <div class="field"><label title="Grace swars are the small raised swars, written &lt;P&gt;G"><input type="checkbox" id="sargamGrace"> Play grace swars (kan)</label></div>
+          <div class="field"><label for="sargamMeend" title="How much of the swar before / the slide takes (of its last step)">Meend length <span id="sargamMeendVal" class="small muted"></span></label>
+            <input id="sargamMeend" type="range" min="0.1" max="1" step="0.01"></div>
+          <div class="field"><label for="sargamMeendCurve">Meend curve</label>
+            <select id="sargamMeendCurve">
+              <option value="even">Even</option>
+              <option value="smooth">Smooth (eases in and out)</option>
+              <option value="late">Late (lingers, then falls in)</option>
+              <option value="early">Early (leaves at once)</option>
+            </select></div>
           <div class="field"><label><input type="checkbox" id="sargamCheck"> Check my singing (mic)</label></div>
           <!-- Shown while Keys is on: what is played can be written into the line. -->
           <div id="keysWriteBox" hidden>

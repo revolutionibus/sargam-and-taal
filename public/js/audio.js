@@ -10,6 +10,13 @@
   // Vibrato added to an instrument's samples: rate (Hz), depth (cents either
   // side), and how long the note stays straight before it fades in over rise (s).
   const VIBRATO = { violin: { rate: 5.6, cents: 16, delay: 0.25, rise: 0.45 } };
+  // Meend curves: how far through the slide the pitch is (0 to 1, in
+  // semitones) at each point of its time (0 to 1). 'even' is an exponential ramp.
+  const MEEND_CURVES = {
+    smooth: (x) => x * x * (3 - 2 * x),   // eases out of one swar and into the next
+    late: (x) => x * x * x,               // lingers on the first swar, then falls in
+    early: (x) => 1 - Math.pow(1 - x, 3), // leaves at once, settles into the next
+  };
 
   class Engine {
     constructor() {
@@ -20,6 +27,7 @@
       this.lastVariant = {};
       this.saSemis = 0;           // Sa relative to C#4, in semitones (fractional)
       this.tablaFine = 0;         // extra dayan tuning, semitones
+      this.meendCurve = 'even';   // 'even' or a key of MEEND_CURVES
       this.vol = { master: 0.8, taal: 0.9, dayan: 1, bayan: 1, manjeera: 0.5,
                    lehra: 0.6, tanpura: 0.6, swar: 0.5, sargam: 0.7 };
       this.session = null;
@@ -224,12 +232,22 @@
 
     // Meend: glide a pitch param (frequency or playback rate) through
     // [{ at, end, value }], holding each value until the next glide starts.
-    // Exponential, so the pitch moves evenly through the swars in between.
+    // Even: exponential, so the pitch moves evenly through the swars in
+    // between; the other curves (meendCurve) are drawn as value curves.
     rampPitch(param, glides) {
+      const shape = MEEND_CURVES[this.meendCurve];
       let v = param.value;
       for (const g of glides) {
-        param.setValueAtTime(v, g.at);
-        param.exponentialRampToValueAtTime(v = g.value, g.end);
+        if (!shape) {
+          param.setValueAtTime(v, g.at);
+          param.exponentialRampToValueAtTime(v = g.value, g.end);
+          continue;
+        }
+        if (g.end <= g.at) { param.setValueAtTime(v = g.value, g.at); continue; }
+        const from = v, ratio = g.value / v, curve = new Float32Array(32);
+        for (let i = 0; i < curve.length; i++) curve[i] = from * Math.pow(ratio, shape(i / (curve.length - 1)));
+        param.setValueCurveAtTime(curve, g.at, g.end - g.at);
+        v = g.value;
       }
     }
 

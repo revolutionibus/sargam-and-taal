@@ -301,13 +301,13 @@
   // notes in 2 beats. "-" extends the previous swar, "~" is a rest; "|" is
   // ignored. "^" joins swars: in "G^R", R comes in legato (no new strike).
   // G gets ringOn: true; R gets slur: true. "/" is a meend: in "G/R", G holds
-  // its pitch, slides to R over the last third of its last step, and R is
-  // where the slide lands (no new strike). G gets glideTo (the target semi)
-  // and glideAt (when the slide starts, in beats from its start); R gets
-  // glideIn: true.
+  // its pitch, slides to R over the last part of its last step (meend: the
+  // fraction, a third by default), and R is where the slide lands (no new
+  // strike). G gets glideTo (the target semi) and glideAt (when the slide
+  // starts, in beats from its start); R gets glideIn: true.
   // "<P>G" plays P as a quick grace swar at the start of G; G gets grace: [semi, ...].
   // Returns { notes, total, errors }.
-  function parseSargam(text, defaultLen) {
+  function parseSargam(text, defaultLen, meend = 1 / 3) {
     const notes = [];
     const errors = [];
     let pos = 0;
@@ -360,7 +360,7 @@
             last.slur = true;
           } else if (joinFrom) {
             const from = joinFrom.note;
-            Object.assign(from, { glideTo: last.semi, glideAt: round(from.len - joinFrom.step / 3) });
+            Object.assign(from, { glideTo: last.semi, glideAt: round(from.len - joinFrom.step * meend) });
             last.glideIn = true;
           }
           joinFrom = null;

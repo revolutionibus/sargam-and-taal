@@ -131,6 +131,11 @@ lands.
 - The slide takes the **last third** of the swar before `/`, so both swars
   keep their own pitch: in `D/S'` Dha holds for two thirds of the beat,
   slides, and Sa' is already on its pitch when its beat starts.
+  **Meend length** in the panel changes that share (10% to the whole step).
+- **Meend curve** in the panel sets how the pitch moves: *Even* (the same
+  speed all the way), *Smooth* (eases out of one swar and into the next),
+  *Late* (lingers on the first swar, then falls in) or *Early* (leaves at
+  once and settles into the next).
 - The slide's speed follows the length of that swar's last step: in `(D/S')`
   it takes a sixth of a beat, and in `D[3] /S'[1]` a whole beat. Holding with
   `-` doesn't make it longer: `D - /S'` holds Dha and slides at the end.
@@ -399,9 +404,12 @@ This section is for changing the code. You don't need it to write lines.
 
 ### Changing how long the slide takes
 
-In `parseSargam`, `glideAt` is the swar's length minus a third of its last
-step. Change the `/ 3` there to `/ 2` for a slower slide or `/ 4` for a quicker
-one. The slide always ends where the next swar's beat starts.
+In `parseSargam`, `glideAt` is the swar's length minus `meend` times its last
+step; `meend` comes from the **Meend length** setting (`sargamMeend`, a third
+by default). The slide always ends where the next swar's beat starts. The
+**Meend curve** setting (`sargamMeendCurve`) is `engine.meendCurve`:
+`rampPitch` uses an exponential ramp for *Even* and a value curve from
+`MEEND_CURVES` in `js/audio.js` for the others.
 
 ### Limits
 

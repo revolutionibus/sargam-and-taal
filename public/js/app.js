@@ -18,7 +18,7 @@
     swarOn: false, swarRaga: 'yaman', swarEvery: 2, swarSpeed: 1, swarVol: 0.5,
     sargamPanel: true, sargamOn: true, sargamExercise: 'scale', sargamRaga: 'bilawal',
     sargamCustom: 'S R G M P - - - | P M G R S - - -', sargamPerBeat: 1, sargamMode: 'along',
-    sargamInst: 'harmonium', sargamVol: 0.7, sargamGrace: true, sargamCheck: false, sargamVisible: 4, sargamEditorH: null, sargamCollapsed: {},
+    sargamInst: 'harmonium', sargamVol: 0.7, sargamGrace: true, sargamMeend: 1 / 3, sargamMeendCurve: 'even', sargamCheck: false, sargamVisible: 4, sargamEditorH: null, sargamCollapsed: {},
     sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true, keysShow: true, midiSaNote: null,
     fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'bn', theme: 'auto',
     focusPlay: false,
@@ -755,7 +755,7 @@
     const step = 1 / Number(S.sargamPerBeat);
     $('sargamError').textContent = '';
     if (isOwnLine()) {
-      const p = N.parseSargam(S.sargamCustom, step);
+      const p = N.parseSargam(S.sargamCustom, step, S.sargamMeend);
       $('sargamError').textContent = p.errors.join(' · ');
       // Grace swars off: practise the plain line (they are neither played nor shown).
       if (!S.sargamGrace) p.notes.forEach((n) => delete n.grace);
@@ -1635,6 +1635,12 @@
     bind('keysInst', 'sargamInst', { type: 'str', onChange: setInst });
     bind('sargamVol', 'sargamVol', { onChange: (v) => engine.setVolume('sargam', v) });
     bind('sargamGrace', 'sargamGrace', { onChange: applySargam });
+    // Meend: how much of the swar's last step the slide takes, and its curve.
+    const showMeend = (v) => { $('sargamMeendVal').textContent = num(Math.round(v * 100)) + '%'; };
+    showMeend(S.sargamMeend);
+    bind('sargamMeend', 'sargamMeend', { onChange: (v) => { showMeend(v); applySargam(); } });
+    engine.meendCurve = S.sargamMeendCurve;
+    bind('sargamMeendCurve', 'sargamMeendCurve', { type: 'str', onChange: (v) => { engine.meendCurve = v; } });
     $('sargamCheck').addEventListener('change', async (e) => {
       S.sargamCheck = e.target.checked;
       if (S.sargamCheck && !tuner.running) {
