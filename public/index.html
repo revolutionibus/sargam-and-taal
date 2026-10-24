@@ -351,9 +351,11 @@
           <!-- Shown while Keys is on: what is played can be written into the line. -->
           <div id="keysWriteBox" hidden>
             <div class="field"><label><input type="checkbox" id="keysWrite"> Write what I play into the line editor</label></div>
+            <div class="field"><label title="At the tempo and Laya: a swar held for three notes' time is written S - -"><input type="checkbox" id="keysHolds"> Write a - for each step a swar is held</label></div>
             <p class="muted small hint" data-i18n="keysWriteHelp">While the line editor is open, each swar you play is
-              added at its cursor. Click outside the text box to play from the computer keys; there <kbd>-</kbd> holds
-              the swar, <kbd>\</kbd> adds a <code>|</code> and <kbd>Backspace</kbd> removes the last swar.</p>
+              added at its cursor, with a <code>-</code> for each step you hold it (at the tempo and Laya). Click outside
+              the text box to play from the computer keys; there <kbd>-</kbd> holds the swar, <kbd>\</kbd> adds a
+              <code>|</code> and <kbd>Backspace</kbd> removes the last swar.</p>
           </div>
           <div class="row sargam-files">
             <button id="sargamShareAll" class="small" title="Save all your sargam lines as one file to share">Share all lines…</button>

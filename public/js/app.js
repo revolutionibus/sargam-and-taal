@@ -19,12 +19,12 @@
     sargamPanel: true, sargamOn: true, sargamExercise: 'scale', sargamRaga: 'bilawal',
     sargamCustom: 'S R G M P - - - | P M G R S - - -', sargamPerBeat: 1, sargamMode: 'along',
     sargamInst: 'harmonium', sargamVol: 0.7, sargamGrace: true, sargamMeend: 1 / 3, sargamMeendCurve: 'even', sargamCheck: false, sargamVisible: 4, sargamEditorH: null, sargamCollapsed: {},
-    sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true, keysShow: true, midiSaNote: null,
+    sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true, keysHolds: true, keysShow: true, midiSaNote: null,
     fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'bn', theme: 'auto',
     focusPlay: false,
   };
   // Settings captured by a preset (everything except app preferences).
-  const APP_PREFS = ['keysOn', 'keysWrite', 'keysShow', 'midiSaNote', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamEditorH', 'sargamCollapsed',
+  const APP_PREFS = ['keysOn', 'keysWrite', 'keysHolds', 'keysShow', 'midiSaNote', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamEditorH', 'sargamCollapsed',
                      'lehraOpen', 'tanpuraOpen', 'swarOpen', 'keysOpen', 'taalOpen', 'focusPlay'];
 
   let store = { settings: {}, custom: [], sequences: [], presets: [], favorites: [], sargamFavorites: [], sargamLines: [] };
@@ -2193,7 +2193,7 @@
   let keyOctave = 0, pedal = false, learningSa = false, midiStarted = false, midiNames = null, midiError = '';
 
   function noteOn(id, semi, vel) {
-    writeSwar(semi);
+    writeSwar(id, semi);
     noteOff(id);
     if (sustained.has(id)) { releaseNote(sustained.get(id)); sustained.delete(id); }
     const inst = S.sargamInst;
@@ -2211,6 +2211,7 @@
   }
 
   function noteOff(id) {
+    if (writtenHold && writtenHold.id === id) writeHold();
     const n = held.get(id);
     if (!n) return;
     held.delete(id);
@@ -2247,13 +2248,28 @@
     return S.keysWrite && !$('sargamEditor').hidden;
   }
 
-  function writeSwar(semi) {
+  // writtenHold: the swar written last while its key is down, timed so that
+  // holding it writes a "-" for each further step (one note at the Laya and
+  // tempo); it ends at the key's release or the next swar, whichever is first.
+  let writtenHold = null;
+  function writeSwar(id, semi) {
     if (!writing()) return;
+    writeHold();
     const oct = Math.floor(semi / 12);
     editLine((before) => {
       const sep = before && !/[\s(]$/.test(before) ? ' ' : '';
       return before + sep + '.'.repeat(Math.max(0, -oct)) + SWAR_CHARS[semi - 12 * oct] + "'".repeat(Math.max(0, oct));
     });
+    if (S.keysHolds) writtenHold = { id, t0: performance.now() };
+  }
+
+  function writeHold() {
+    const h = writtenHold;
+    writtenHold = null;
+    if (!h || !writing()) return;
+    const step = 60 / S.tempo / Number(S.sargamPerBeat);
+    const dashes = Math.min(64, Math.round((performance.now() - h.t0) / 1000 / step) - 1);
+    if (dashes > 0) editLine((before) => before + (before && !/\s$/.test(before) ? ' ' : '') + Array(dashes).fill('-').join(' '));
   }
 
   // Replaces the text before the cursor with edit(before), as if typed.
@@ -2448,6 +2464,7 @@
     };
     bind('keysOn', 'keysOn', { onChange: on });
     bind('keysWrite', 'keysWrite');
+    bind('keysHolds', 'keysHolds');
     bind('keysShow', 'keysShow', { onChange: drawBoard });
     drawBoard();
     $('midiSaLearn').addEventListener('click', () => { learningSa = !learningSa; showMidiSa(); });
