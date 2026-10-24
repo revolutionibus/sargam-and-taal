@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "taal-studio"
+dynamic = ["version"]
+description = "Taal, lehra and sargam practice in the browser, served locally"
+readme = "PYPI.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [{ name = "revolutionibus", email = "me@revolutionibus.net" }]
+dependencies = ["flask>=2.2"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Framework :: Flask",
+  "Topic :: Multimedia :: Sound/Audio",
+  "Environment :: Web Environment",
+]
+
+[project.scripts]
+taal-studio = "taal_studio.__main__:main"
+
+[tool.hatch.version]
+path = "taal_studio/__init__.py"
+
+# The site is the repo's public/ folder (sounds included); it ships as taal_studio/web.
+[tool.hatch.build]
+exclude = [
+  # Never ship caches: downloaded swaralipi pages (tools/fetch_swaralipi.py),
+  # compiled Python, half-written saves.
+  "**/sargam/html",
+  "public/**/*.html",
+  "!public/index.html",
+  "**/__pycache__",
+  "*.pyc",
+  "*.tmp",
+]
+
+[tool.hatch.build.targets.wheel]
+only-include = ["taal_studio", "public"]
+
+[tool.hatch.build.targets.wheel.sources]
+"public" = "taal_studio/web"
+
+[tool.hatch.build.targets.sdist]
+only-include = ["taal_studio", "public", "PYPI.md", "LICENSE", "pyproject.toml"]

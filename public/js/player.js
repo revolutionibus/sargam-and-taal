@@ -48,6 +48,7 @@
       this.picks = new WeakMap(); // choice group -> picked alternative
       this.onBeat = null;        // (time, beat, beatDur, taal) for each beat scheduled
       this.sargamMuted = false;  // don't play the sargam line (it is being written)
+      this.onSargamNote = null;  // (ev) for each swar of the line scheduled, to be played on the keys
     }
 
     // notes: [{ pos, len, semi | null(rest) }] in beats, from Notation.parseSargam;
@@ -412,8 +413,10 @@
           }
         }
         // glideAt: when this swar starts sliding away (pitch checking stops).
-        this.sargamVisual.push({ time: at, kind: 'note', idx: n.i, line, yourTurn, semi: n.semi,
-                                 glideAt: n.glideTo === undefined ? null : beatAt + n.glideAt * dur });
+        const ev = { time: at, kind: 'note', idx: n.i, line, yourTurn, semi: n.semi,
+                     glideAt: n.glideTo === undefined ? null : beatAt + n.glideAt * dur };
+        this.sargamVisual.push(ev);
+        if (this.onSargamNote && n.semi !== null && !n.glideIn) this.onSargamNote(ev);
       }
       // Exercise ended mid-line: the rest of the avartan is padding.
       if (q.total >= absB - 1e-9 && q.total < absB + 1 - 1e-9 && q.total < lineEnd - 1e-9) {

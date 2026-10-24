@@ -348,13 +348,22 @@
               <option value="early">Early (leaves at once)</option>
             </select></div>
           <div class="field"><label><input type="checkbox" id="sargamCheck"> Check my singing (mic)</label></div>
+          <div class="field"><label title="Play each swar on the keys on its beat (any octave); hover a swar for how early or late it was"><input type="checkbox" id="keysCheck"> Check my playing (keys)</label></div>
+          <div class="field"><label for="keysCheckTol" title="How far from the beat a key still counts as on it">Timing</label>
+            <select id="keysCheckTol">
+              <option value="strict">Strict · ±35 ms</option>
+              <option value="normal">Normal · ±70 ms</option>
+              <option value="relaxed">Relaxed · ±120 ms</option>
+            </select></div>
           <!-- Shown while Keys is on: what is played can be written into the line. -->
           <div id="keysWriteBox" hidden>
             <div class="field"><label><input type="checkbox" id="keysWrite"> Write what I play into the line editor</label></div>
             <div class="field"><label title="At the tempo and Laya: a swar held for three notes' time is written S - -"><input type="checkbox" id="keysHolds"> Write a - for each step a swar is held</label></div>
+            <div class="field"><label title="The first swar starts on sam; an avartan of silence ends the line"><input type="checkbox" id="keysClock"> Without the taal, write in time with the taal and tempo</label></div>
             <p class="muted small hint" data-i18n="keysWriteHelp">While the line editor is open, each swar you play is
               added at its cursor, with a <code>-</code> for each step you hold it (at the tempo and Laya). While the taal
-              plays, all you play is written as notation as you go, a line per avartan: faster swars as groups like
+              plays (or, if that option is on, with the taal stopped, timed silently at its tempo from the first swar on sam), all you
+              play is written as notation as you go, a line per avartan: faster swars as groups like
               <code>(SR)</code>, holds as <code>-</code>, rests as <code>~</code>. Click outside
               the text box to play from the computer keys; there <kbd>-</kbd> holds the swar, <kbd>\</kbd> adds a
               <code>|</code> and <kbd>Backspace</kbd> removes the last swar.</p>

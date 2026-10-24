@@ -29,6 +29,16 @@ or press `G`.
    green (in tune, within 30 cents), blue (low), red (high) or grey (missed),
    with a running score. Any octave counts. Use headphones in *Play along* mode,
    or the mic will hear the harmonium.
+6. **Check my playing (keys):** play the line on a MIDI keyboard (or the
+   computer keys) with **Keys** on; ticking this turns them on. Each swar is
+   marked green (on the beat), orange (early), blue (late), red (another swar
+   was played) or grey (missed), with a running score and how early or late
+   you play on average over the last 16 swars. Hover a swar for its offset in
+   ms. **Timing** sets how near the beat counts as on it: strict ±35 ms, normal
+   ±70 ms, relaxed ±120 ms (less for fast swars, so neighbours don't overlap).
+   Any octave counts; a `-` needs no key, grace swars aren't checked, and in
+   call & response only your turn is. Use *Notes only* to hear just yourself.
+   It replaces the mic check while on.
 
 Press **▶** (or Space). The line always starts on sam; the current note is
 highlighted as it sounds.
@@ -193,8 +203,15 @@ With **Keys** on and the line editor open, what you play on a MIDI keyboard
   `<P>G`, and a key held on into the next swar `^`. Swars played a little
   early or late still land on their beat. The line isn't played back while it
   is being written; stop the taal to finish it.
-- **With the taal stopped**, each swar goes in as you play it, with a `-` for
-  each step you hold it (at the tempo and Laya), if that option is on.
+- **With the taal stopped**, the same is done in silence if **Without the
+  taal, write in time with the taal and tempo** is on: your first swar is on
+  sam, and the beats go on at the tempo of the selected taal. After an avartan
+  with nothing played (10 seconds at most) the line is finished, and the next
+  swar starts a new line on sam.
+- **With that option off**, each swar goes in as you play it, with a `-` for
+  each step you hold it (at the tempo and Laya), if that option is on. Type
+  `(` first to put several swars in one step: inside an open `( )` no `-` is
+  written, however long you hold, so `(` S R `)` gives `(SR)`.
 - Only one swar sounds at a time: in a chord, the key pressed last is written.
   Loudness and pitch bend aren't written.
 

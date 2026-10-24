@@ -18,13 +18,13 @@
     swarOn: false, swarRaga: 'yaman', swarEvery: 2, swarSpeed: 1, swarVol: 0.5,
     sargamPanel: true, sargamOn: true, sargamExercise: 'scale', sargamRaga: 'bilawal',
     sargamCustom: 'S R G M P - - - | P M G R S - - -', sargamPerBeat: 1, sargamMode: 'along',
-    sargamInst: 'harmonium', sargamVol: 0.7, sargamGrace: true, sargamMeend: 1 / 3, sargamMeendCurve: 'even', sargamCheck: false, sargamVisible: 4, sargamEditorH: null, sargamCollapsed: {},
-    sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true, keysHolds: true, keysShow: true, midiSaNote: null,
+    sargamInst: 'harmonium', sargamVol: 0.7, sargamGrace: true, sargamMeend: 1 / 3, sargamMeendCurve: 'even', sargamCheck: false, keysCheck: false, keysCheckTol: 'normal', sargamVisible: 4, sargamEditorH: null, sargamCollapsed: {},
+    sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true, keysHolds: true, keysClock: true, keysShow: true, midiSaNote: null,
     fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'bn', theme: 'auto',
     focusPlay: false,
   };
   // Settings captured by a preset (everything except app preferences).
-  const APP_PREFS = ['keysOn', 'keysWrite', 'keysHolds', 'keysShow', 'midiSaNote', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamLang', 'theme', 'sargamVisible', 'sargamEditorH', 'sargamCollapsed',
+  const APP_PREFS = ['keysOn', 'keysWrite', 'keysHolds', 'keysClock', 'keysShow', 'midiSaNote', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'keysCheck', 'keysCheckTol', 'sargamLang', 'theme', 'sargamVisible', 'sargamEditorH', 'sargamCollapsed',
                      'lehraOpen', 'tanpuraOpen', 'swarOpen', 'keysOpen', 'taalOpen', 'focusPlay'];
 
   let store = { settings: {}, custom: [], sequences: [], presets: [], favorites: [], sargamFavorites: [], sargamLines: [] };
@@ -327,6 +327,7 @@
     }
     const sq = player.sargamVisual;
     while (sq.length && sq[0].time <= now) sargamNote(sq.shift());
+    resolveKeys();
     if (player.playing) {
       const t = Math.max(0, now - player.startTime);
       $('elapsed').textContent = $('dockElapsed').textContent =
@@ -475,7 +476,7 @@
       keepAwake(data);
       updateFocus();
       if (!data) { highlight(-1); markSeqStep(-1); sargamStopped(); finishRecording(); }
-      else { resetSargamScore(); beatLog.length = 0; beatAbs = 0; }
+      else { resetSargamScore(); finishRecording(); beatLog.length = 0; beatAbs = 0; }
     } else if (type === 'loading') {
       btn.classList.toggle('loading', data);
     } else if (type === 'pendingStop') {
@@ -1488,10 +1489,8 @@
       updateTurn(ev);
       finishCheck();
       // The line is about to be sung again: clear its old marks.
-      if (checking) {
-        for (const i of sargamLineNotes[ev.line] || []) {
-          sargamSpans[i].forEach((sp) => sp.classList.remove('ok', 'low', 'high', 'miss'));
-        }
+      if (checking || keysChecking()) {
+        for (const i of sargamLineNotes[ev.line] || []) sargamSpans[i].forEach(clearMark);
       }
       return;
     }
@@ -1531,6 +1530,7 @@
   }
 
   function showScore() {
+    if (S.keysCheck) { showKeyScore(); return; }
     const total = score.ok + score.low + score.high + score.miss;
     $('sargamScore').innerHTML = !S.sargamCheck ? '' : `<div class="legend">
       <span><i style="background:var(--ok)"></i>${tr('In tune')} ${num(score.ok)}</span>
@@ -1543,17 +1543,125 @@
   function resetSargamScore() {
     score.ok = score.low = score.high = score.miss = 0;
     checkNote = null;
-    sargamSpans.forEach((spans) => spans.forEach((sp) => sp.classList.remove('ok', 'low', 'high', 'miss')));
+    for (const k of ['ok', 'early', 'late', 'wrong', 'miss']) keyScore[k] = 0;
+    keyScore.offsets = [];
+    keyExpect = [];
+    keyPresses = [];
+    sargamSpans.forEach((spans) => spans.forEach(clearMark));
     showScore();
   }
 
   function sargamStopped() {
     sargamLine = -1;
     finishCheck();
+    keyExpect = [];
+    keyPresses = [];
     sargamOn.forEach((sp) => sp.classList.remove('on'));
     sargamOn = [];
     sargamLineEls.forEach((r) => r.classList.remove('current'));
     updateTurn(null);
+  }
+
+  const MARKS = ['ok', 'low', 'high', 'miss', 'early', 'late', 'wrong'];
+  function clearMark(sp) {
+    sp.classList.remove(...MARKS);
+    sp.removeAttribute('title');
+  }
+
+  // ── Checking what is played on the keys ──────────────────────────────
+  // Each swar of the line is to be played on its beat, in any octave. A key
+  // goes to the nearest swar of its pitch within reach (half the gap to the
+  // swars around it, at most KEY_REACH); when a swar's reach has passed with
+  // no such key, it was played wrong (another key was pressed) or missed. A
+  // key pressed before its swar is scheduled waits in keyPresses.
+  const KEY_TOL = { strict: 0.035, normal: 0.07, relaxed: 0.12 };   // seconds off the beat that count as on it
+  const KEY_REACH = 0.4;
+  const keyScore = { ok: 0, early: 0, late: 0, wrong: 0, miss: 0, offsets: [] };
+  let keyExpect = [];    // swars to play: { idx, pc, time, result }
+  let keyPresses = [];   // keys not given to a swar yet: { time, pc }
+  const pitchClass = (semi) => ((semi % 12) + 12) % 12;
+
+  function keysChecking() { return S.keysCheck && S.keysOn && player.playing; }
+
+  player.onSargamNote = (ev) => {
+    if (!keysChecking() || (S.sargamMode === 'call' && !ev.yourTurn)) return;
+    keyExpect.push({ idx: ev.idx, pc: pitchClass(ev.semi), time: ev.time, result: null });
+  };
+
+  // How far from swar i a key still counts for it, and how near is on the beat.
+  function keyWindow(i) {
+    const e = keyExpect[i], prev = keyExpect[i - 1], next = keyExpect[i + 1];
+    const gap = Math.min(prev ? e.time - prev.time : Infinity, next ? next.time - e.time : Infinity);
+    return { reach: Math.min(KEY_REACH, gap / 2), tol: Math.min(KEY_TOL[S.keysCheckTol] || KEY_TOL.normal, gap * 0.35) };
+  }
+
+  function checkKey(semi, stamp) {
+    if (!keysChecking()) return;
+    const time = heardTime(stamp), pc = pitchClass(semi);
+    let best = -1;
+    keyExpect.forEach((e, i) => {
+      if (e.result || e.pc !== pc || Math.abs(time - e.time) > keyWindow(i).reach) return;
+      if (best < 0 || Math.abs(time - e.time) < Math.abs(time - keyExpect[best].time)) best = i;
+    });
+    if (best >= 0) keyResult(best, time);
+    else keyPresses.push({ time, pc });
+  }
+
+  // Swars whose reach has passed without their key.
+  function resolveKeys() {
+    if (!keyExpect.length) return;
+    const now = heardTime();
+    keyExpect.forEach((e, i) => {
+      if (e.result) return;
+      const { reach } = keyWindow(i);
+      if (now <= e.time + reach) return;
+      const near = (p) => Math.abs(p.time - e.time) <= reach;
+      let k = keyPresses.findIndex((p) => p.pc === e.pc && near(p));
+      if (k >= 0) { keyResult(i, keyPresses[k].time); keyPresses.splice(k, 1); return; }
+      k = keyPresses.findIndex(near);
+      if (k >= 0) keyPresses.splice(k, 1);
+      keyResult(i, null, k >= 0);
+    });
+    keyExpect = keyExpect.filter((e) => !e.result || now - e.time < 2);
+    keyPresses = keyPresses.filter((p) => now - p.time < 2);
+  }
+
+  // time: when its key was heard, or null (wrong: another key; else missed).
+  function keyResult(i, time, wrong = false) {
+    const e = keyExpect[i];
+    let result = wrong ? 'wrong' : 'miss', title = '';
+    if (time !== null) {
+      const dt = time - e.time;
+      result = Math.abs(dt) <= keyWindow(i).tol ? 'ok' : dt < 0 ? 'early' : 'late';
+      keyScore.offsets.push(dt);
+      title = (dt > 0 ? '+' : dt < 0 ? '−' : '') + num(Math.abs(Math.round(dt * 1000))) + ' ms';
+    }
+    e.result = result;
+    keyScore[result]++;
+    (sargamSpans[e.idx] || []).forEach((sp) => {
+      sp.classList.remove(...MARKS);
+      sp.classList.add(result);
+      if (title) sp.title = title; else sp.removeAttribute('title');
+    });
+    showScore();
+  }
+
+  function showKeyScore() {
+    const k = keyScore;
+    const total = k.ok + k.early + k.late + k.wrong + k.miss;
+    // The mean offset of the last 16 keys: rushing or dragging.
+    const recent = k.offsets.slice(-16);
+    const mean = recent.length ? Math.round(1000 * recent.reduce((a, b) => a + b, 0) / recent.length) : 0;
+    const drift = !recent.length ? '' : Math.abs(mean) < 10 ? tr('On the beat on average') :
+      tr(mean < 0 ? '{ms} ms early on average' : '{ms} ms late on average', { ms: num(Math.abs(mean)) });
+    $('sargamScore').innerHTML = `<div class="legend">
+      <span><i style="background:var(--ok)"></i>${tr('On the beat')} ${num(k.ok)}</span>
+      <span><i style="background:var(--accent)"></i>${tr('Early')} ${num(k.early)}</span>
+      <span><i style="background:var(--khali)"></i>${tr('Late')} ${num(k.late)}</span>
+      <span><i style="background:var(--danger)"></i>${tr('Wrong swar')} ${num(k.wrong)}</span>
+      <span><i style="background:var(--muted)"></i>${tr('Missed')} ${num(k.miss)}</span>
+      ${total ? `<b>${num(Math.round((100 * k.ok) / total))}%</b>` : ''}
+      ${drift ? `<span class="muted">${drift}</span>` : ''}</div>`;
   }
 
 
@@ -1643,6 +1751,7 @@
     bind('sargamMeendCurve', 'sargamMeendCurve', { type: 'str', onChange: (v) => { engine.meendCurve = v; } });
     $('sargamCheck').addEventListener('change', async (e) => {
       S.sargamCheck = e.target.checked;
+      if (S.sargamCheck && S.keysCheck) { S.keysCheck = $('keysCheck').checked = false; save(); }
       if (S.sargamCheck && !tuner.running) {
         try {
           await tuner.start();
@@ -1657,6 +1766,13 @@
       }
       resetSargamScore();
     });
+    // Checking the keys turns them on, and the mic check off (one score at a time).
+    bind('keysCheck', 'keysCheck', { onChange: (v) => {
+      if (v && !S.keysOn) { $('keysOn').checked = true; $('keysOn').dispatchEvent(new Event('change')); }
+      if (v && S.sargamCheck) { $('sargamCheck').checked = false; $('sargamCheck').dispatchEvent(new Event('change')); }
+      resetSargamScore();
+    } });
+    bind('keysCheckTol', 'keysCheckTol', { type: 'str', onChange: showScore });
 
     applySargam();
   }
@@ -2195,6 +2311,7 @@
   // stamp: the event's time (performance.now() clock), for writing along with the taal.
   function noteOn(id, semi, vel, stamp) {
     noteOff(id, stamp);
+    checkKey(semi, stamp);
     writeSwar(id, semi, stamp);
     if (sustained.has(id)) { releaseNote(sustained.get(id)); sustained.delete(id); }
     const inst = S.sargamInst;
@@ -2213,7 +2330,7 @@
 
   function noteOff(id, stamp) {
     if (writtenHold && writtenHold.id === id) writeHold();
-    if (rec) { const t = heardTime(stamp); rec.tr.noteOff(id, beatAt(t), t); }
+    if (rec) { const { pos, time } = rec.at(stamp); rec.tr.noteOff(id, pos, time); }
     const n = held.get(id);
     if (!n) return;
     held.delete(id);
@@ -2257,10 +2374,11 @@
   function writeSwar(id, semi, stamp) {
     if (!writing()) return;
     // Along with the taal, everything played is written as notation instead.
-    if (player.playing && beatLog.length) {
-      const t = heardTime(stamp);
-      if (!rec) startRecording(t);
-      rec.tr.noteOn(id, semi, beatAt(t), t);
+    // Without it, the same, timed by a silent clock at its tempo.
+    if ((player.playing && beatLog.length) || S.keysClock) {
+      if (!rec) startRecording(stamp);
+      const { pos, time } = rec.at(stamp);
+      rec.tr.noteOn(id, semi, pos, time);
       return;
     }
     writeHold();
@@ -2278,7 +2396,9 @@
     if (!h || !writing()) return;
     const step = 60 / S.tempo / Number(S.sargamPerBeat);
     const dashes = Math.min(64, Math.round((performance.now() - h.t0) / 1000 / step) - 1);
-    if (dashes > 0) editLine((before) => before + (before && !/\s$/.test(before) ? ' ' : '') + Array(dashes).fill('-').join(' '));
+    // Inside an open "( )" the swars share one step, however long each is held.
+    if (dashes > 0) editLine((before) => before.lastIndexOf('(') > before.lastIndexOf(')') ? before
+      : before + (before && !/\s$/.test(before) ? ' ' : '') + Array(dashes).fill('-').join(' '));
   }
 
   // ── Writing along with the taal ──────────────────────────────────────
@@ -2286,7 +2406,7 @@
   // beat, each beat on the simplest grid that fits it (see transcribe.js).
   const beatLog = [];   // recent beats as scheduled: { time, abs, beat, dur, taal }
   let beatAbs = 0;      // beats since playing started
-  let rec = null;       // { tr, taal, timer } while recording
+  let rec = null;       // { tr, taal, timer, at, clock } while recording
   player.onBeat = (time, beat, dur, taal) => {
     if (rec && taal !== rec.taal) finishRecording();   // the taal changed
     beatLog.push({ time, abs: beatAbs++, beat, dur, taal });
@@ -2312,18 +2432,30 @@
     return c.currentTime - (c.outputLatency || 0) - (p - stamp) / 1000;
   }
 
-  function startRecording(time) {
-    const e = beatLog.reduce((a, x) => (x.time <= time + 1e-9 ? x : a), beatLog[0]);
-    const taal = e.taal;
-    // The line starts on the sam at or before the first swar (one played a
-    // little early for a beat starts on that beat).
-    const k = Math.floor(beatAt(time) + 1 / 8);
-    const inTaal = ((e.beat + (k - e.abs)) % taal.beats + taal.beats) % taal.beats;
+  // With the taal playing, swars are timed by its beats as heard; without it,
+  // by a silent clock (clock: true) at the tempo, with the first swar on sam.
+  function startRecording(stamp) {
+    let taal, start, at;
+    if (player.playing && beatLog.length) {
+      const time = heardTime(stamp);
+      const e = beatLog.reduce((a, x) => (x.time <= time + 1e-9 ? x : a), beatLog[0]);
+      taal = e.taal;
+      // The line starts on the sam at or before the first swar (one played a
+      // little early for a beat starts on that beat).
+      const k = Math.floor(beatAt(time) + 1 / 8);
+      start = k - ((e.beat + (k - e.abs)) % taal.beats + taal.beats) % taal.beats;
+      at = (st) => { const t = heardTime(st); return { pos: beatAt(t), time: t }; };
+    } else {
+      taal = player.taal;
+      const t0 = clockTime(stamp), spb = 60 / S.tempo;
+      start = 0;
+      at = (st) => { const t = clockTime(st); return { pos: (t - t0) / spb, time: t }; };
+    }
     const ta = $('sargamCustom');
     const before = ta.value.slice(0, ta.selectionStart);
     rec = {
-      taal,
-      tr: new window.Transcribe.Transcriber({ beats: taal.beats, vibhags: taal.vibhags, start: k - inTaal,
+      taal, at, clock: !player.playing,
+      tr: new window.Transcribe.Transcriber({ beats: taal.beats, vibhags: taal.vibhags, start,
         // Unmarked swars last one Laya step: [1] makes the written beats beats.
         lengthMark: Number(S.sargamPerBeat) !== 1 || before.includes('[') }),
       timer: setInterval(pumpRecording, 100),
@@ -2333,11 +2465,25 @@
     if (before.trim() && !/\n\s*$/.test(before)) editLine((b) => b.replace(/\s*$/, '') + '\n');
   }
 
+  // Seconds on the performance.now() clock (stamp: an event's time, if usable).
+  function clockTime(stamp) {
+    const p = performance.now();
+    return (stamp > p - 2000 && stamp <= p + 50 ? stamp : p) / 1000;
+  }
+
+  // The silent clock stops after an avartan (at most 10 s) with nothing
+  // played: the next swar starts a new line on sam.
+  const CLOCK_IDLE_S = 10;
+
   function pumpRecording() {
     if (!rec) return;
-    if (!writing() || !player.playing) { finishRecording(); return; }
-    const t = heardTime();
-    const text = rec.tr.take(beatAt(t), t);
+    if (!writing() || player.playing === rec.clock) { finishRecording(); return; }
+    const { pos, time } = rec.at();
+    if (rec.clock && !rec.tr.down.size) {
+      const last = Math.max(...rec.tr.notes.map((n) => n.released ?? n.tOn));
+      if (time - last > Math.min(CLOCK_IDLE_S, rec.taal.beats * 60 / S.tempo)) { finishRecording(); return; }
+    }
+    const text = rec.tr.take(pos, time);
     if (text) editLine((b) => b + text);
   }
 
@@ -2347,8 +2493,8 @@
     rec = null;
     clearInterval(r.timer);
     player.sargamMuted = false;
-    const t = heardTime();
-    const text = r.tr.take(beatAt(t), t, true);
+    const { pos, time } = r.at();
+    const text = r.tr.take(pos, time, true);
     if (text) editLine((b) => b + text);
   }
 
@@ -2545,6 +2691,7 @@
     bind('keysOn', 'keysOn', { onChange: on });
     bind('keysWrite', 'keysWrite');
     bind('keysHolds', 'keysHolds');
+    bind('keysClock', 'keysClock');
     bind('keysShow', 'keysShow', { onChange: drawBoard });
     drawBoard();
     $('midiSaLearn').addEventListener('click', () => { learningSa = !learningSa; showMidiSa(); });

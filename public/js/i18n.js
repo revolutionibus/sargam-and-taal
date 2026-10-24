@@ -154,6 +154,14 @@
     'Early (leaves at once)': 'আগেভাগে (সঙ্গে সঙ্গে সরে যায়)',
     'Grace swars are the small raised swars, written <P>G': 'স্পর্শ স্বর হলো ছোট করে উপরে লেখা স্বর, লেখা হয় <P>G',
     'Check my singing (mic)': 'আমার গান যাচাই করুন (মাইক)',
+    'Check my playing (keys)': 'আমার বাজানো যাচাই করুন (কি)',
+    'Play each swar on the keys on its beat (any octave); hover a swar for how early or late it was':
+      'প্রতিটি স্বর তার মাত্রায় কি-তে বাজান (যেকোনো সপ্তকে); কত আগে বা পরে হলো দেখতে স্বরের ওপর মাউস রাখুন',
+    'Timing': 'সময়',
+    'How far from the beat a key still counts as on it': 'মাত্রা থেকে কতটা দূরে বাজালেও মাত্রায় ধরা হবে',
+    'Strict · ±35 ms': 'কড়া · ±৩৫ ms',
+    'Normal · ±70 ms': 'সাধারণ · ±৭০ ms',
+    'Relaxed · ±120 ms': 'ঢিলে · ±১২০ ms',
     'Play swars from the keyboard': 'কিবোর্ড দিয়ে স্বর বাজান',
     'MIDI: {names}': 'MIDI: {names}',
     'No MIDI keyboard connected. The computer keys still work.': 'কোনো MIDI কিবোর্ড যুক্ত নেই। কম্পিউটারের কি দিয়ে বাজানো যাবে।',
@@ -175,6 +183,7 @@
     'Sa is on {key}': 'সা আছে {key} কি-তে',
     'Write what I play into the line editor': 'যা বাজাই তা লাইন এডিটরে লিখে রাখুন',
     'Write a - for each step a swar is held': 'স্বর যত ধাপ ধরে রাখি ততগুলো - লিখুন',
+    'Without the taal, write in time with the taal and tempo': 'তাল ছাড়াও তাল ও গতি অনুযায়ী সময় ধরে লিখুন',
     "At the tempo and Laya: a swar held for three notes' time is written S - -": 'গতি ও লয় অনুযায়ী: তিন স্বরের সময় ধরে রাখা স্বর লেখা হয় S - -',
     'Loop': 'লুপ',
     'All lines': 'সব লাইন',
@@ -218,6 +227,13 @@
     'Low': 'নিচু',
     'High': 'উঁচু',
     'Missed': 'বাদ গেছে',
+    'On the beat': 'মাত্রায়',
+    'Early': 'আগে',
+    'Late': 'পরে',
+    'Wrong swar': 'ভুল স্বর',
+    'On the beat on average': 'গড়ে মাত্রায়',
+    '{ms} ms early on average': 'গড়ে {ms} ms আগে',
+    '{ms} ms late on average': 'গড়ে {ms} ms পরে',
     'Microphone unavailable: {err}\nAllow this site to use the microphone in your browser, then try again.':
       'মাইক্রোফোন পাওয়া যাচ্ছে না: {err}\nব্রাউজারে এই সাইটকে মাইক্রোফোনের অনুমতি দিন, তারপর আবার চেষ্টা করুন।',
     "Microphone unavailable: {err}\nAllow the microphone for Taal Studio in your phone's settings.":
@@ -419,7 +435,7 @@
       '<kbd>T</kbd> <kbd>Y</kbd> <kbd>U</kbd>) কোমল স্বর ও তীব্র মা। <kbd>Z</kbd>/<kbd>X</kbd> দিয়ে এক সপ্তক নিচে/উপরে। ' +
       'MIDI কিবোর্ড নিজের সুরেই বাজে, যদি না নিচে তার জন্য সা-এর কি বেছে নিন। সাসটেইন প্যাডেলও ব্যবহার করা যাবে ।',
     keysWriteHelp: 'লাইন এডিটর খোলা থাকলে যে স্বর বাজাবেন তা কার্সরের জায়গায় লেখা হবে, আর যত ধাপ ধরে রাখবেন ' +
-      'ততগুলো <code>-</code> বসবে (গতি ও লয় অনুযায়ী)। তাল বাজার সময় যা বাজাবেন সবই সঙ্গে সঙ্গে স্বরলিপিতে লেখা হবে, ' +
+      'ততগুলো <code>-</code> বসবে (গতি ও লয় অনুযায়ী)। তাল বাজার সময় (বা সেই বিকল্প চালু থাকলে, তাল বন্ধ থাকলেও প্রথম স্বরকে সম ধরে তালের গতিতে) যা বাজাবেন সবই সঙ্গে সঙ্গে স্বরলিপিতে লেখা হবে, ' +
       'প্রতি আবর্তনে একটি লাইন: দ্রুত স্বর <code>(SR)</code> এর মতো দল হিসেবে, টানা <code>-</code>, বিরাম <code>~</code>। কম্পিউটারের কি দিয়ে বাজাতে ' +
       'লেখার বাক্সের বাইরে ক্লিক করুন; তখন <kbd>-</kbd> স্বর ধরে রাখে, <kbd>\\</kbd> একটি <code>|</code> বসায় ' +
       'আর <kbd>Backspace</kbd> শেষ স্বরটি মুছে দেয়।',
