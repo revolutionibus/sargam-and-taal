@@ -353,7 +353,9 @@
             <div class="field"><label><input type="checkbox" id="keysWrite"> Write what I play into the line editor</label></div>
             <div class="field"><label title="At the tempo and Laya: a swar held for three notes' time is written S - -"><input type="checkbox" id="keysHolds"> Write a - for each step a swar is held</label></div>
             <p class="muted small hint" data-i18n="keysWriteHelp">While the line editor is open, each swar you play is
-              added at its cursor, with a <code>-</code> for each step you hold it (at the tempo and Laya). Click outside
+              added at its cursor, with a <code>-</code> for each step you hold it (at the tempo and Laya). While the taal
+              plays, all you play is written as notation as you go, a line per avartan: faster swars as groups like
+              <code>(SR)</code>, holds as <code>-</code>, rests as <code>~</code>. Click outside
               the text box to play from the computer keys; there <kbd>-</kbd> holds the swar, <kbd>\</kbd> adds a
               <code>|</code> and <kbd>Backspace</kbd> removes the last swar.</p>
           </div>
@@ -515,6 +517,7 @@
 <script src="js/data.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/player.js"></script>
+<script src="js/transcribe.js"></script>
 <script src="js/tuner.js"></script>
 <script src="js/app.js"></script>
 </body>

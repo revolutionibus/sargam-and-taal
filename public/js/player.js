@@ -46,6 +46,8 @@
       this.sargamCount = -1;     // beats since the sargam started (-1 = wait for sam)
       this.sargamLoop = null;    // line indexes to loop, or null for every line
       this.picks = new WeakMap(); // choice group -> picked alternative
+      this.onBeat = null;        // (time, beat, beatDur, taal) for each beat scheduled
+      this.sargamMuted = false;  // don't play the sargam line (it is being written)
     }
 
     // notes: [{ pos, len, semi | null(rest) }] in beats, from Notation.parseSargam;
@@ -306,6 +308,7 @@
       const taal = this.taal;
       const b = this.beat;
       const dur = this.beatDur();
+      if (this.onBeat) this.onBeat(t, b, dur, taal);
 
       if (s.taalOn) {
         for (const g of taal.choices) if (g.start === b) this.picks.set(g, Math.floor(Math.random() * g.n));
@@ -388,7 +391,7 @@
         const grace = n.grace ? Math.min(SARGAM_GRACE * n.grace.length, n.len * dur / 3) : 0;
         const at = beatAt + grace;
         // Swars a meend slides into are part of the swar before them.
-        if (n.semi !== null && !n.glideIn && q.mode !== 'silent' && !yourTurn) {
+        if (n.semi !== null && !n.glideIn && q.mode !== 'silent' && !yourTurn && !this.sargamMuted) {
           // Sustaining instruments (harmonium, violin) don't ring on under a
           // "^": the next swar takes over, crossfading without a new attack.
           const sustain = !!D.SARGAM_INSTRUMENTS.find((i) => i.id === s.sargamInst)?.sustain;

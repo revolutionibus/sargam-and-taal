@@ -180,6 +180,24 @@ Teentaal fits 16 beats per line, Jhaptaal 10, Rupak 7, Keherwa 8, Dadra 6.
   in call & response. The editor shows a yellow warning for such a swar.
 - Mistakes (an unknown swar, a missing `)`, a bad length) show in red.
 
+## Writing from the keys
+
+With **Keys** on and the line editor open, what you play on a MIDI keyboard
+(or the computer keys) is written into the line.
+
+- **While the taal plays**, everything is written as notation as you go, a line
+  per avartan, starting on the sam before your first swar. Each beat is written
+  on the simplest grid that fits it: `S` for one swar, `(SR)`, `(SRG)`,
+  `(SRGm)`, up to 8 to the beat, and uneven ones like `(S-RG)`. Holds are `-`,
+  silences of a quarter beat or more `~`, a very short swar into the next
+  `<P>G`, and a key held on into the next swar `^`. Swars played a little
+  early or late still land on their beat. The line isn't played back while it
+  is being written; stop the taal to finish it.
+- **With the taal stopped**, each swar goes in as you play it, with a `-` for
+  each step you hold it (at the tempo and Laya), if that option is on.
+- Only one swar sounds at a time: in a chord, the key pressed last is written.
+  Loudness and pitch bend aren't written.
+
 ## Examples
 
 Unless stated otherwise, these assume **Laya: Barabar** (1 swar = 1 beat).

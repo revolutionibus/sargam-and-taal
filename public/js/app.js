@@ -474,8 +474,8 @@
       btn.setAttribute('aria-label', tr(data ? 'Stop' : 'Play'));
       keepAwake(data);
       updateFocus();
-      if (!data) { highlight(-1); markSeqStep(-1); sargamStopped(); }
-      else resetSargamScore();
+      if (!data) { highlight(-1); markSeqStep(-1); sargamStopped(); finishRecording(); }
+      else { resetSargamScore(); beatLog.length = 0; beatAbs = 0; }
     } else if (type === 'loading') {
       btn.classList.toggle('loading', data);
     } else if (type === 'pendingStop') {
@@ -2192,9 +2192,10 @@
   const sustained = new Map(); // notes let go while the sustain pedal is down
   let keyOctave = 0, pedal = false, learningSa = false, midiStarted = false, midiNames = null, midiError = '';
 
-  function noteOn(id, semi, vel) {
-    writeSwar(id, semi);
-    noteOff(id);
+  // stamp: the event's time (performance.now() clock), for writing along with the taal.
+  function noteOn(id, semi, vel, stamp) {
+    noteOff(id, stamp);
+    writeSwar(id, semi, stamp);
     if (sustained.has(id)) { releaseNote(sustained.get(id)); sustained.delete(id); }
     const inst = S.sargamInst;
     const n = { voice: null, release: KEY_RELEASE[inst] };
@@ -2210,8 +2211,9 @@
     });
   }
 
-  function noteOff(id) {
+  function noteOff(id, stamp) {
     if (writtenHold && writtenHold.id === id) writeHold();
+    if (rec) { const t = heardTime(stamp); rec.tr.noteOff(id, beatAt(t), t); }
     const n = held.get(id);
     if (!n) return;
     held.delete(id);
@@ -2252,8 +2254,15 @@
   // holding it writes a "-" for each further step (one note at the Laya and
   // tempo); it ends at the key's release or the next swar, whichever is first.
   let writtenHold = null;
-  function writeSwar(id, semi) {
+  function writeSwar(id, semi, stamp) {
     if (!writing()) return;
+    // Along with the taal, everything played is written as notation instead.
+    if (player.playing && beatLog.length) {
+      const t = heardTime(stamp);
+      if (!rec) startRecording(t);
+      rec.tr.noteOn(id, semi, beatAt(t), t);
+      return;
+    }
     writeHold();
     const oct = Math.floor(semi / 12);
     editLine((before) => {
@@ -2270,6 +2279,77 @@
     const step = 60 / S.tempo / Number(S.sargamPerBeat);
     const dashes = Math.min(64, Math.round((performance.now() - h.t0) / 1000 / step) - 1);
     if (dashes > 0) editLine((before) => before + (before && !/\s$/.test(before) ? ' ' : '') + Array(dashes).fill('-').join(' '));
+  }
+
+  // ── Writing along with the taal ──────────────────────────────────────
+  // While the taal plays, what is played is written by Transcribe, beat by
+  // beat, each beat on the simplest grid that fits it (see transcribe.js).
+  const beatLog = [];   // recent beats as scheduled: { time, abs, beat, dur, taal }
+  let beatAbs = 0;      // beats since playing started
+  let rec = null;       // { tr, taal, timer } while recording
+  player.onBeat = (time, beat, dur, taal) => {
+    if (rec && taal !== rec.taal) finishRecording();   // the taal changed
+    beatLog.push({ time, abs: beatAbs++, beat, dur, taal });
+    if (beatLog.length > 64) beatLog.shift();
+  };
+
+  // Where an audio-clock time falls, in beats since playing started.
+  function beatAt(time) {
+    let e = beatLog[0];
+    for (const x of beatLog) if (x.time <= time + 1e-9) e = x;
+    return e ? e.abs + (time - e.time) / e.dur : 0;
+  }
+
+  // The audio-clock time of what was being heard when an event happened
+  // (stamp: performance.now() time), so a swar lands where its beat was heard.
+  function heardTime(stamp) {
+    const c = engine.ctx;
+    if (!c) return 0;
+    const p = performance.now();
+    if (!(stamp > p - 2000 && stamp <= p + 50)) stamp = p;   // no usable event time
+    const o = c.getOutputTimestamp && c.getOutputTimestamp();
+    if (o && o.performanceTime > 0) return o.contextTime + (stamp - o.performanceTime) / 1000;
+    return c.currentTime - (c.outputLatency || 0) - (p - stamp) / 1000;
+  }
+
+  function startRecording(time) {
+    const e = beatLog.reduce((a, x) => (x.time <= time + 1e-9 ? x : a), beatLog[0]);
+    const taal = e.taal;
+    // The line starts on the sam at or before the first swar (one played a
+    // little early for a beat starts on that beat).
+    const k = Math.floor(beatAt(time) + 1 / 8);
+    const inTaal = ((e.beat + (k - e.abs)) % taal.beats + taal.beats) % taal.beats;
+    const ta = $('sargamCustom');
+    const before = ta.value.slice(0, ta.selectionStart);
+    rec = {
+      taal,
+      tr: new window.Transcribe.Transcriber({ beats: taal.beats, vibhags: taal.vibhags, start: k - inTaal,
+        // Unmarked swars last one Laya step: [1] makes the written beats beats.
+        lengthMark: Number(S.sargamPerBeat) !== 1 || before.includes('[') }),
+      timer: setInterval(pumpRecording, 100),
+    };
+    // The line being written isn't played back meanwhile.
+    player.sargamMuted = true;
+    if (before.trim() && !/\n\s*$/.test(before)) editLine((b) => b.replace(/\s*$/, '') + '\n');
+  }
+
+  function pumpRecording() {
+    if (!rec) return;
+    if (!writing() || !player.playing) { finishRecording(); return; }
+    const t = heardTime();
+    const text = rec.tr.take(beatAt(t), t);
+    if (text) editLine((b) => b + text);
+  }
+
+  function finishRecording() {
+    if (!rec) return;
+    const r = rec;
+    rec = null;
+    clearInterval(r.timer);
+    player.sargamMuted = false;
+    const t = heardTime();
+    const text = r.tr.take(beatAt(t), t, true);
+    if (text) editLine((b) => b + text);
   }
 
   // Replaces the text before the cursor with edit(before), as if typed.
@@ -2295,7 +2375,7 @@
       drawBoard();
       showKeysStatus();
     } else if (e.code in KEY_SEMI) {
-      if (!e.repeat) noteOn(e.code, KEY_SEMI[e.code] + 12 * keyOctave, 0.8);
+      if (!e.repeat) noteOn(e.code, KEY_SEMI[e.code] + 12 * keyOctave, 0.8, e.timeStamp);
     } else if (writing() && (e.code === 'Minus' || e.code === 'Backslash')) {
       const mark = e.code === 'Minus' ? '-' : '|';
       editLine((before) => before + (before && !/\s$/.test(before) ? ' ' : '') + mark);
@@ -2323,8 +2403,8 @@
     const cmd = status & 0xf0;
     if (cmd === 0x90 && b > 0) {
       if (learningSa) { setMidiSa(a); return; }
-      noteOn('m' + a, a - keysSa(), 0.15 + 0.85 * b / 127);
-    } else if (cmd === 0x80 || cmd === 0x90) noteOff('m' + a);
+      noteOn('m' + a, a - keysSa(), 0.15 + 0.85 * b / 127, e.timeStamp);
+    } else if (cmd === 0x80 || cmd === 0x90) noteOff('m' + a, e.timeStamp);
     else if (cmd === 0xb0 && a === 64) setPedal(b >= 64);
   }
 
@@ -2474,7 +2554,7 @@
     if (S.keysOn) initMidi();
     claimMidi();
     addEventListener('focus', claimMidi);
-    document.addEventListener('keyup', (e) => noteOff(e.code));
+    document.addEventListener('keyup', (e) => noteOff(e.code, e.timeStamp));
     addEventListener('blur', allNotesOff);
   }
 
