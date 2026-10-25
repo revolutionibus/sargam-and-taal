@@ -11,6 +11,15 @@
         ],
         "createdAt": "2026-10-22T14:25:34.955Z",
         "reason": "Claude: L480 is the Sa marker inset along the bottom edge of a piano key in the on-screen keyboard (.kb-key.sa), not a side accent on a card"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-10-25T17:57:23.245Z",
+        "reason": "Claude: static scan sees closed .pane (padding-left/right 0 while sliding shut, display:none when closed); open panes get 14-16px padding, verified in screenshots"
       }
     ]
   }

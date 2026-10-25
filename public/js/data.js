@@ -41,20 +41,31 @@
                 ['piano_fs4', 5], ['piano_a4', 8], ['piano_c5', 11], ['piano_ds5', 14],
                 ['piano_fs5', 17], ['piano_a5', 20], ['piano_c6', 23], ['piano_ds6', 26]],
     // University of Iowa MIS violin (2012), bowed without vibrato (the engine
-    // adds it), a minor third apart with crossfaded loops; see tools/import_violin.py.
+    // adds it), one per semitone with crossfaded loops; see tools/import_violin.py.
     // Loop points are exact to the sample (the loop ends at the file's end): a
     // point even one sample off clicks each time the loop wraps. A#4 is the
     // mf D-string take, warmer than the A-string one, trimmed to where the
     // string speaks (its first 0.34 s was quiet bow noise, which muted short
-    // swars). C#5 is that same take
-    // resampled up 3 semitones (Ni at Sa C#): every recording near C5 sounded
-    // harsh there.
-    violin:    [['violin_g3', -6, [1.069161, 3.123424]], ['violin_as3', -3, [0.968753, 2.772698]],
-                ['violin_cs4', 0, [2.155306, 3.182902]], ['violin_e4', 3, [1.799728, 3.746667]],
-                ['violin_g4', 6, [1.237460, 3.504853]], ['violin_as4', 9, [0.578912, 3.042540]],
-                ['violin_cs5', 12, [0.486805, 2.558461]], ['violin_e5', 15, [1.096145, 4.611338]],
-                ['violin_g5', 18, [3.545510, 4.872993]], ['violin_as5', 21, [1.246349, 4.797120]],
-                ['violin_cs6', 24, [0.936667, 5.017188]], ['violin_e6', 27, [1.685646, 4.754467]]],
+    // swars). B4, C5 and C#5 are that same take
+    // resampled up 1-3 semitones: every recording near C5 sounded
+    // harsh there. F5 is the F#5 take resampled down: its own swelled in late.
+    violin:    [['violin_g3', -6, [1.069161, 3.123424]], ['violin_gs3', -5, [0.565147, 2.916009]],
+                ['violin_a3', -4, [1.652562, 2.744875]], ['violin_as3', -3, [0.968753, 2.772698]],
+                ['violin_b3', -2, [0.957868, 2.910272]], ['violin_c4', -1, [0.395624, 2.991859]],
+                ['violin_cs4', 0, [2.155306, 3.182902]], ['violin_d4', 1, [0.681769, 3.499955]],
+                ['violin_ds4', 2, [1.179478, 3.478503]], ['violin_e4', 3, [1.799728, 3.746667]],
+                ['violin_f4', 4, [1.774921, 3.473764]], ['violin_fs4', 5, [0.407143, 3.534966]],
+                ['violin_g4', 6, [1.237460, 3.504853]], ['violin_gs4', 7, [0.440862, 3.409615]],
+                ['violin_a4', 8, [0.720068, 3.594943]], ['violin_as4', 9, [0.578912, 3.042540]],
+                ['violin_b4', 10, [1.555828, 3.032585]], ['violin_c5', 11, [1.466939, 2.858912]],
+                ['violin_cs5', 12, [0.486805, 2.558461]], ['violin_d5', 13, [0.511542, 5.183787]],
+                ['violin_ds5', 14, [1.029252, 4.946644]], ['violin_e5', 15, [1.096145, 4.611338]],
+                ['violin_f5', 16, [1.006871, 4.520544]], ['violin_fs5', 17, [0.953719, 4.266168]],
+                ['violin_g5', 18, [3.545510, 4.872993]], ['violin_gs5', 19, [1.647574, 4.410952]],
+                ['violin_a5', 20, [0.415624, 4.937619]], ['violin_as5', 21, [1.246349, 4.797120]],
+                ['violin_b5', 22, [0.852608, 4.463265]], ['violin_c6', 23, [3.560839, 4.415760]],
+                ['violin_cs6', 24, [0.936667, 5.017188]], ['violin_d6', 25, [3.349932, 4.372404]],
+                ['violin_ds6', 26, [1.223515, 3.805578]], ['violin_e6', 27, [1.685646, 4.754467]]],
   };
 
   // Tanpura tones (different instruments / jawari). Roles: pa, sa, sa2, sa_low.

@@ -387,6 +387,30 @@ details[data-keep][open] > summary::after { transform: rotate(-135deg); margin-t
 .instruments .card.off h3 { color: var(--muted); }
 .instruments .card.off .inst-body { opacity: .55; }
 
+/* ── Voice card: how close the singing is to the swar now playing.
+   The dot's colour matches the note marks (in tune / low / high). ── */
+.voice-meter { --vm: var(--muted); }
+.voice-meter.ok { --vm: var(--ok); }
+.voice-meter.low { --vm: var(--khali); }
+.voice-meter.high { --vm: var(--danger); }
+.vm-read { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 2px 0 10px; }
+.vm-swar { font-weight: 700; font-size: 1.9rem; line-height: 1.1; color: var(--vm); transition: color .15s; }
+.vm-cents { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 1.1rem; color: var(--vm); transition: color .15s; }
+.vm-track { position: relative; height: 26px; border-radius: 13px; background: var(--panel-2); border: 1px solid var(--line); }
+/* ±100¢ fills the track; the band spans ±--in-tune cents (set from app.js). */
+.vm-band { position: absolute; top: 3px; bottom: 3px; width: calc(var(--in-tune, 40) * 1%); left: calc(50% - var(--in-tune, 40) * .5%); border-radius: 9px; background: var(--ok); opacity: .2; }
+.vm-mid { position: absolute; top: 5px; bottom: 5px; left: 50%; width: 1px; background: var(--ok); opacity: .6; }
+.vm-dot {
+  position: absolute; top: 50%; left: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%;
+  background: var(--vm); box-shadow: 0 0 0 3px var(--panel-2); transition: left .08s linear, background .15s, opacity .2s;
+}
+.vm-scale { display: flex; justify-content: space-between; margin-top: 4px; font-size: .72rem; }
+/* Fixed height: the hint coming and going must not shift the page. */
+.vm-hint { margin: 8px 0 0; height: 2.8em; overflow: hidden; }
+.voice-meter.idle .vm-dot { opacity: .25; }
+.voice-meter.idle .vm-swar, .voice-meter.idle .vm-cents { color: var(--muted); }
+#card-voice { padding: 14px 16px 16px; }
+
 /* ── Player layout: rail · settings column · Sargam ── */
 /* Each card is a .pane that the rail opens and closes. The sargam panel
    takes three quarters of the row; the taal card and any open instruments
@@ -700,8 +724,9 @@ button[hidden] { display: none; }
   .instruments .card { min-width: 0; }
   /* Stacked: closed panes simply disappear (no sideways slide). */
   .pane:not(.open) { display: none !important; }
-  /* Stacked order: an instrument just opened from the rail, then the line
-     being sung, then the taal settings. */
+  /* Stacked order: the voice meter, an instrument just opened from the rail,
+     then the line being sung, then the taal settings. */
+  #card-voice { order: 0; }
   .instruments { order: 1; }
   #sargamPanel { order: 2; }
   #card-taal { order: 3; }

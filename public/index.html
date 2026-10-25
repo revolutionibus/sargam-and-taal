@@ -117,6 +117,9 @@
     <div class="player-layout" id="playerLayout">
       <!-- Rail: one icon per pane. A click opens or closes it; the rest of the layout slides. -->
       <nav class="inst-rail" aria-label="Panels">
+        <button class="inst-btn" data-open="voiceOpen" data-on="sargamCheck" title="Your voice" aria-label="Voice" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5v4M8.5 21.5h7"/></svg><span class="dot"></span><span class="inst-label">Voice</span></button>
+        <span class="rail-sep"></span>
         <button class="inst-btn" data-open="lehraOpen" data-on="lehraOn" title="Lehra" aria-label="Lehra" aria-expanded="false">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17h18l-3-9H6z"/><path d="M6.5 11.5h11M5.3 14.3h13.4"/><path d="M14 4l3.5 3.5"/><circle cx="18.6" cy="8.6" r="1"/></svg><span class="dot"></span><span class="inst-label">Lehra</span></button>
         <button class="inst-btn" data-open="tanpuraOpen" data-on="tanpuraOn" title="Tanpura" aria-label="Tanpura" aria-expanded="false">
@@ -135,6 +138,25 @@
       <!-- Settings column: the taal card and any open instruments, stacked at a
            fixed width so the sargam panel keeps the rest of the row. -->
       <div class="side-col">
+        <!-- Voice: while the mic checks the singing, how close the voice is to the swar now playing. -->
+        <div class="card pane" id="card-voice">
+          <div class="card-head">
+            <label class="switch" title="Check my singing (mic)"><input type="checkbox" id="voiceOn"><span></span></label>
+            <h3>Your voice</h3>
+            <button class="icon pane-close" data-open="voiceOpen" title="Close">✕</button>
+          </div>
+          <div id="voiceMeter" class="voice-meter idle">
+            <div class="vm-read">
+              <span class="vm-swar" id="vmSwar">—</span>
+              <span class="vm-cents" id="vmCents"></span>
+            </div>
+            <div class="vm-track" aria-hidden="true">
+              <i class="vm-band"></i><i class="vm-mid"></i><i class="vm-dot" id="vmDot"></i>
+            </div>
+            <div class="vm-scale small muted" aria-hidden="true"><span>Low</span><span>In tune</span><span>High</span></div>
+            <p class="small muted vm-hint" id="vmHint">Switch on to see where your voice is; while a sargam line plays, how close it is to the written swar.</p>
+          </div>
+        </div>
         <!-- Taal -->
         <div class="card pane" id="card-taal">
           <div class="card-head">

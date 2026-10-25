@@ -392,7 +392,7 @@
         const grace = n.grace ? Math.min(SARGAM_GRACE * n.grace.length, n.len * dur / 3) : 0;
         const at = beatAt + grace;
         // Swars a meend slides into are part of the swar before them.
-        if (n.semi !== null && !n.glideIn && q.mode !== 'silent' && !yourTurn && !this.sargamMuted) {
+        if (n.semi !== null && !n.glideIn && q.mode !== 'silent' && !yourTurn && !this.sargamMuted && !s.sargamVoiceInput) {
           // Sustaining instruments (harmonium, violin) don't ring on under a
           // "^": the next swar takes over, crossfading without a new attack.
           const sustain = !!D.SARGAM_INSTRUMENTS.find((i) => i.id === s.sargamInst)?.sustain;

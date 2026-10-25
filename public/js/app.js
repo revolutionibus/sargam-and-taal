@@ -14,18 +14,18 @@
     lehraOn: false, lehraId: 'tt-yaman', lehraVol: 0.6, lehraAuto: true,
     tanpuraOn: true, tanpuraPattern: 0, tanpuraTone: 'k1', tanpuraCount: 1, tanpuraSpeed: 1,
     tanpuraRandom: true, tanpuraVol: 0.6, tanpuraDelays: [1.0, 0.9, 0.9, 1.7],
-    lehraOpen: false, tanpuraOpen: false, swarOpen: false, keysOpen: false, taalOpen: true,
+    lehraOpen: false, tanpuraOpen: false, swarOpen: false, keysOpen: false, taalOpen: true, voiceOpen: false,
     swarOn: false, swarRaga: 'yaman', swarEvery: 2, swarSpeed: 1, swarVol: 0.5,
     sargamPanel: true, sargamOn: true, sargamExercise: 'scale', sargamRaga: 'bilawal',
     sargamCustom: 'S R G M P - - - | P M G R S - - -', sargamPerBeat: 1, sargamMode: 'along',
-    sargamInst: 'harmonium', sargamVol: 0.7, sargamGrace: true, sargamMeend: 1 / 3, sargamMeendCurve: 'even', sargamCheck: false, keysCheck: false, keysCheckTol: 'normal', sargamVisible: 4, sargamEditorH: null, sargamCollapsed: {},
+    sargamInst: 'harmonium', sargamVoiceInput: false, sargamVol: 0.7, sargamGrace: true, sargamMeend: 1 / 3, sargamMeendCurve: 'even', sargamCheck: false, keysCheck: false, keysCheckTol: 'normal', sargamVisible: 4, sargamEditorH: null, sargamCollapsed: {},
     sargamLoop: 'all', sargamLoopLines: {}, keysOn: false, keysWrite: true, keysHolds: true, keysClock: true, keysShow: true, midiSaNote: null,
     fadeOut: true, stopMode: 'immediate', accentSam: true, previews: true, sargamLang: 'bn', theme: 'auto',
     focusPlay: false,
   };
   // Settings captured by a preset (everything except app preferences).
-  const APP_PREFS = ['keysOn', 'keysWrite', 'keysHolds', 'keysClock', 'keysShow', 'midiSaNote', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'keysCheck', 'keysCheckTol', 'sargamLang', 'theme', 'sargamVisible', 'sargamEditorH', 'sargamCollapsed',
-                     'lehraOpen', 'tanpuraOpen', 'swarOpen', 'keysOpen', 'taalOpen', 'focusPlay'];
+  const APP_PREFS = ['keysOn', 'keysWrite', 'keysHolds', 'keysClock', 'keysShow', 'midiSaNote', 'fadeOut', 'stopMode', 'accentSam', 'previews', 'sargamPanel', 'sargamCheck', 'sargamVoiceInput', 'keysCheck', 'keysCheckTol', 'sargamLang', 'theme', 'sargamVisible', 'sargamEditorH', 'sargamCollapsed',
+                     'lehraOpen', 'tanpuraOpen', 'swarOpen', 'keysOpen', 'taalOpen', 'voiceOpen', 'focusPlay'];
 
   let store = { settings: {}, custom: [], sequences: [], presets: [], favorites: [], sargamFavorites: [], sargamLines: [] };
   try { Object.assign(store, JSON.parse(localStorage.getItem(STORE)) || {}); } catch (e) { /* fresh start */ }
@@ -463,6 +463,8 @@
       syncLehra(c);
       fillLehraSelect();
     }
+    // The mic never opens on page load, so Voice input starts it on Play.
+    if (S.sargamVoiceInput && !S.sargamCheck) setVoiceInput(true);
     player.starting = true;
     try { await player.start({ sequence }); } finally { player.starting = false; }
   }
@@ -511,7 +513,7 @@
   // flex sizes). While an instrument is open the sargam pane shrinks to make room.
   const PANES = {   // open-state setting -> element
     lehraOpen: 'card-lehra', tanpuraOpen: 'card-tanpura', swarOpen: 'card-swar', keysOpen: 'card-keys',
-    taalOpen: 'card-taal', sargamPanel: 'sargamPanel',
+    taalOpen: 'card-taal', sargamPanel: 'sargamPanel', voiceOpen: 'card-voice',
   };
   const INSTRUMENTS = ['lehraOpen', 'tanpuraOpen', 'swarOpen', 'keysOpen'];
   const SLIDE_MS = 350;   // matches the CSS transition
@@ -539,7 +541,7 @@
     }
     slide($('instruments'), anyInst, animate);
     const layout = $('playerLayout');
-    layout.classList.toggle('side-open', anyInst || !!S.taalOpen);
+    layout.classList.toggle('side-open', anyInst || !!S.taalOpen || !!S.voiceOpen);
     layout.classList.toggle('sargam-open', !!S.sargamPanel);
   }
   function togglePane(key) {
@@ -560,6 +562,8 @@
     $('card-tanpura').classList.toggle('off', !S.tanpuraOn);
     $('card-swar').classList.toggle('off', !S.swarOn);
     $('card-keys').classList.toggle('off', !S.keysOn);
+    $('card-voice').classList.toggle('off', !S.sargamCheck);
+    $('voiceOn').checked = !!S.sargamCheck;
     // Rail icons show which parts are switched on (the dot), and say so in
     // their names; the highlight means the pane is open.
     document.querySelectorAll('.inst-btn').forEach((b) => {
@@ -1421,16 +1425,9 @@
     const row = sargamLineEls[sargamLine];
     if (!row) return;
     const box = $('sargamLines');
+    // Only the lines box scrolls; the page stays where the user left it.
     if (box.scrollHeight > box.clientHeight) {
       box.scrollTo({ top: box.scrollTop + row.getBoundingClientRect().top - box.getBoundingClientRect().top, behavior: 'smooth' });
-    }
-    // With many lines the row can also be off screen; bring it back only
-    // while the panel is in view, so watching the beat grid isn't disturbed.
-    const panel = $('sargamPanel').getBoundingClientRect();
-    const r = row.getBoundingClientRect();
-    const inView = panel.bottom > 0 && panel.top < innerHeight;
-    if (inView && (r.top < 0 || r.bottom > innerHeight)) {
-      scrollBy({ top: r.top - Math.min(80, innerHeight / 4), behavior: 'smooth' });
     }
   }
 
@@ -1504,14 +1501,87 @@
   }
 
   function sargamPitch(f) {
+    showVoice(f);
     if (!checkNote || !f || !player.playing) return;
     const heardAt = engine.now - ((engine.ctx && engine.ctx.outputLatency) || 0);
     if (heardAt - checkNote.start < 0.06) return;   // skip the slide into the note
     if (checkNote.until !== null && heardAt > checkNote.until) return;   // sliding away
-    const expected = engine.saFrequency() * Math.pow(2, checkNote.semi / 12);
-    let cents = 1200 * Math.log2(f / expected);
-    cents = ((((cents + 600) % 1200) + 1200) % 1200) - 600;   // any octave counts
-    checkNote.samples.push(cents);
+    checkNote.samples.push(centsOff(f, checkNote.semi));
+  }
+
+  // Cents from the swar, in whichever octave is nearest (any octave counts).
+  function centsOff(f, semi) {
+    const expected = engine.saFrequency() * Math.pow(2, semi / 12);
+    const cents = 1200 * Math.log2(f / expected);
+    return ((((cents + 600) % 1200) + 1200) % 1200) - 600;
+  }
+
+  // A sung swar counts as in tune within this many cents (the meter's green band too).
+  const IN_TUNE = 40;
+  document.documentElement.style.setProperty('--in-tune', IN_TUNE);
+
+  // Voice input turns the mic check on with it (and off again when left).
+  const VOICE_INPUT = 'voice';
+  function setVoiceInput(on) {
+    S.sargamVoiceInput = on;
+    if (S.sargamCheck !== on) {
+      $('sargamCheck').checked = on;
+      $('sargamCheck').dispatchEvent(new Event('change'));
+    }
+  }
+
+  // Live voice meter (the Voice card): a dot that sits in the middle band when
+  // the voice is within the scoring tolerance (IN_TUNE) of its target. While a
+  // sargam line plays, the target is the written swar; otherwise it is the
+  // swar nearest the voice, so the card works as a tuner on its own.
+  let voiceCents = null, voiceSemi = null, voiceSilent = 0, voiceMsg = '';
+  function voiceIdle(msg) {
+    const el = $('voiceMeter');
+    el.classList.remove('ok', 'low', 'high');
+    el.classList.add('idle');
+    voiceCents = null;
+    if (msg !== voiceMsg) $('vmHint').textContent = voiceMsg = msg;
+  }
+  function showVoice(f) {
+    const el = $('voiceMeter');
+    if (!S.sargamCheck) {
+      voiceSemi = null;
+      $('vmSwar').textContent = '—';
+      $('vmCents').textContent = '';
+      voiceIdle(tr('Switch on to see where your voice is; while a sargam line plays, how close it is to the written swar.'));
+      return;
+    }
+    const note = player.playing && S.sargamOn ? checkNote : null;
+    if (note) $('vmSwar').textContent = N.swarLabel(note.semi, S.sargamLang).fullName;
+    if (!f) {
+      // Brief dropouts are normal mid-phrase; go idle only after ~300 ms.
+      if (++voiceSilent > 10) {
+        if (!note) $('vmSwar').textContent = '—';
+        $('vmCents').textContent = '';
+        voiceIdle(tr(note ? 'Sing this swar.' : 'Sing or play a note.'));
+      }
+      return;
+    }
+    voiceSilent = 0;
+    // Free: the nearest swar to the voice, counted from Sa (octave included).
+    const rel = 12 * Math.log2(f / engine.saFrequency());
+    const semi = note ? note.semi : Math.round(rel);
+    const c = note ? centsOff(f, semi) : (rel - semi) * 100;
+    if (!note) $('vmSwar').textContent = N.swarLabel(semi, S.sargamLang).fullName;
+    const midi = Math.round(69 + 12 * Math.log2(f / 440));
+    const hz = `${num(f.toFixed(1))} Hz · ${D.KEYS[((midi % 12) + 12) % 12]}${Math.floor(midi / 12) - 1}`;
+    const msg = hz + ' · ' + tr(note ? 'against the written swar' : 'nearest swar to your Sa');
+    if (msg !== voiceMsg) $('vmHint').textContent = voiceMsg = msg;
+    // Smooth within a swar; a new swar starts fresh.
+    voiceCents = voiceSemi === semi && voiceCents !== null ? voiceCents * 0.6 + c * 0.4 : c;
+    voiceSemi = semi;
+    const shown = Math.round(voiceCents);
+    const state = Math.abs(shown) <= IN_TUNE ? 'ok' : shown < 0 ? 'low' : 'high';
+    el.classList.remove('idle', 'ok', 'low', 'high');
+    el.classList.add(state);
+    $('vmCents').textContent = (shown > 0 ? '+' : shown < 0 ? '−' : '') + num(Math.abs(shown)) + '¢';
+    // ±100¢ fills the track; anything further pins to the end.
+    $('vmDot').style.left = `${50 + Math.max(-100, Math.min(100, voiceCents)) / 2}%`;
   }
 
   function finishCheck() {
@@ -1522,7 +1592,7 @@
     if (c.samples.length) {
       const sorted = c.samples.slice().sort((a, b) => a - b);
       const med = sorted[Math.floor(sorted.length / 2)];
-      result = Math.abs(med) <= 30 ? 'ok' : med < 0 ? 'low' : 'high';
+      result = Math.abs(med) <= IN_TUNE ? 'ok' : med < 0 ? 'low' : 'high';
     }
     score[result]++;
     (sargamSpans[c.idx] || []).forEach((sp) => sp.classList.add(result));
@@ -1560,6 +1630,7 @@
     sargamOn = [];
     sargamLineEls.forEach((r) => r.classList.remove('current'));
     updateTurn(null);
+    showVoice(null);
   }
 
   const MARKS = ['ok', 'low', 'high', 'miss', 'early', 'late', 'wrong'];
@@ -1672,6 +1743,8 @@
       $('sargamInst').appendChild(opt(i.id, i.name));
       $('keysInst').appendChild(opt(i.id, i.name));
     });
+    // Voice input: the line isn't played; the mic listens to the singing instead.
+    $('sargamInst').appendChild(opt(VOICE_INPUT, tr('Voice input')));
 
     bind('sargamOn', 'sargamOn', { onChange: () => { applySargam(); sargamStopped(); cardState(); } });
     $('sargamExercise').addEventListener('change', (e) => selectSargamExercise(e.target.value));
@@ -1736,10 +1809,18 @@
     });
     // One instrument for the line and the keys; the Keys pane shows the same choice.
     const setInst = (v) => {
-      $('sargamInst').value = $('keysInst').value = v;
+      $('keysInst').value = v;
+      if (!S.sargamVoiceInput) $('sargamInst').value = v;
       if (engine.ctx) engine.load(engine.melodicFiles(v));
     };
-    bind('sargamInst', 'sargamInst', { type: 'str', onChange: setInst });
+    // Voice input keeps the last instrument for the keys.
+    $('sargamInst').value = S.sargamVoiceInput ? VOICE_INPUT : S.sargamInst;
+    $('sargamInst').addEventListener('change', (e) => {
+      const v = e.target.value;
+      setVoiceInput(v === VOICE_INPUT);
+      if (v !== VOICE_INPUT) { S.sargamInst = v; setInst(v); }
+      save();
+    });
     bind('keysInst', 'sargamInst', { type: 'str', onChange: setInst });
     bind('sargamVol', 'sargamVol', { onChange: (v) => engine.setVolume('sargam', v) });
     bind('sargamGrace', 'sargamGrace', { onChange: applySargam });
@@ -1764,8 +1845,18 @@
         tuner.stop();
         $('tStart').textContent = tr('Start listening');
       }
+      // Checking the singing opens the Voice card to show how close it is.
+      if (S.sargamCheck && !S.voiceOpen) togglePane('voiceOpen');
       resetSargamScore();
+      cardState();
+      showVoice(null);
     });
+    // The Voice card's switch is the same mic check.
+    $('voiceOn').addEventListener('change', (e) => {
+      $('sargamCheck').checked = e.target.checked;
+      $('sargamCheck').dispatchEvent(new Event('change'));
+    });
+    showVoice(null);
     // Checking the keys turns them on, and the mic check off (one score at a time).
     bind('keysCheck', 'keysCheck', { onChange: (v) => {
       if (v && !S.keysOn) { $('keysOn').checked = true; $('keysOn').dispatchEvent(new Event('change')); }
@@ -2200,6 +2291,8 @@
         $('tStart').textContent = tr('Start listening');
         $('sargamCheck').checked = S.sargamCheck = false;
         resetSargamScore();
+        cardState();
+        showVoice(null);
         return;
       }
       try {
