@@ -16,8 +16,9 @@ to synthesized sounds.
 The grand piano (sargam practice) uses the Salamander Grand Piano V3 by
 Alexander Holm, CC-BY 3.0; `./import_piano.sh` re-downloads it into `public/sounds/`.
 
-The violin uses the University of Iowa Musical Instrument Samples (violin, 2012,
-arco mono): `tools/import_violin.py` cuts, tunes and loops them into `public/sounds/`.
+The violins come from [midi-js-soundfonts](https://github.com/gleitz/midi-js-soundfonts):
+Violin 1 is FluidR3_GM (MIT), Violin 2 is MusyngKite (CC BY-SA 3.0).
+`tools/import_violin_soundfont.py` downloads, tunes and loops them into `public/sounds/`.
 
 ### As a Python package
 

@@ -40,32 +40,43 @@
                 ['piano_fs3', -7], ['piano_a3', -4], ['piano_c4', -1], ['piano_ds4', 2],
                 ['piano_fs4', 5], ['piano_a4', 8], ['piano_c5', 11], ['piano_ds5', 14],
                 ['piano_fs5', 17], ['piano_a5', 20], ['piano_c6', 23], ['piano_ds6', 26]],
-    // University of Iowa MIS violin (2012), bowed without vibrato (the engine
-    // adds it), one per semitone with crossfaded loops; see tools/import_violin.py.
-    // Loop points are exact to the sample (the loop ends at the file's end): a
-    // point even one sample off clicks each time the loop wraps. A#4 is the
-    // mf D-string take, warmer than the A-string one, trimmed to where the
-    // string speaks (its first 0.34 s was quiet bow noise, which muted short
-    // swars). B4, C5 and C#5 are that same take
-    // resampled up 1-3 semitones: every recording near C5 sounded
-    // harsh there. F5 is the F#5 take resampled down: its own swelled in late.
-    violin:    [['violin_g3', -6, [1.069161, 3.123424]], ['violin_gs3', -5, [0.565147, 2.916009]],
-                ['violin_a3', -4, [1.652562, 2.744875]], ['violin_as3', -3, [0.968753, 2.772698]],
-                ['violin_b3', -2, [0.957868, 2.910272]], ['violin_c4', -1, [0.395624, 2.991859]],
-                ['violin_cs4', 0, [2.155306, 3.182902]], ['violin_d4', 1, [0.681769, 3.499955]],
-                ['violin_ds4', 2, [1.179478, 3.478503]], ['violin_e4', 3, [1.799728, 3.746667]],
-                ['violin_f4', 4, [1.774921, 3.473764]], ['violin_fs4', 5, [0.407143, 3.534966]],
-                ['violin_g4', 6, [1.237460, 3.504853]], ['violin_gs4', 7, [0.440862, 3.409615]],
-                ['violin_a4', 8, [0.720068, 3.594943]], ['violin_as4', 9, [0.578912, 3.042540]],
-                ['violin_b4', 10, [1.555828, 3.032585]], ['violin_c5', 11, [1.466939, 2.858912]],
-                ['violin_cs5', 12, [0.486805, 2.558461]], ['violin_d5', 13, [0.511542, 5.183787]],
-                ['violin_ds5', 14, [1.029252, 4.946644]], ['violin_e5', 15, [1.096145, 4.611338]],
-                ['violin_f5', 16, [1.006871, 4.520544]], ['violin_fs5', 17, [0.953719, 4.266168]],
-                ['violin_g5', 18, [3.545510, 4.872993]], ['violin_gs5', 19, [1.647574, 4.410952]],
-                ['violin_a5', 20, [0.415624, 4.937619]], ['violin_as5', 21, [1.246349, 4.797120]],
-                ['violin_b5', 22, [0.852608, 4.463265]], ['violin_c6', 23, [3.560839, 4.415760]],
-                ['violin_cs6', 24, [0.936667, 5.017188]], ['violin_d6', 25, [3.349932, 4.372404]],
-                ['violin_ds6', 26, [1.223515, 3.805578]], ['violin_e6', 27, [1.685646, 4.754467]]],
+    // midi-js-soundfonts violins, one per semitone with crossfaded loops; see
+    // tools/import_violin_soundfont.py. These carry their own vibrato.
+    // violin1 is FluidR3_GM (MIT), violin2 MusyngKite (CC BY-SA 3.0).
+    violin1:   [['violin1_g3', -6, [1.494649, 3.046984]], ['violin1_gs3', -5, [1.398571, 3.046757]],
+                ['violin1_a3', -4, [1.318322, 3.046848]], ['violin1_as3', -3, [1.252630, 3.047732]],
+                ['violin1_b3', -2, [0.946032, 3.038571]], ['violin1_c4', -1, [0.898821, 3.038277]],
+                ['violin1_cs4', 0, [0.863583, 3.038254]], ['violin1_d4', 1, [0.905624, 3.041837]],
+                ['violin1_ds4', 2, [0.842063, 3.041655]], ['violin1_e4', 3, [0.792358, 3.040771]],
+                ['violin1_f4', 4, [1.345011, 3.042404]], ['violin1_fs4', 5, [1.262494, 3.042857]],
+                ['violin1_g4', 6, [1.194263, 3.042653]], ['violin1_gs4', 7, [1.277347, 3.034354]],
+                ['violin1_a4', 8, [1.209909, 3.034127]], ['violin1_as4', 9, [1.156304, 3.034603]],
+                ['violin1_b4', 10, [0.967664, 3.036508]], ['violin1_c5', 11, [1.877279, 3.046780]],
+                ['violin1_cs5', 12, [1.758776, 3.046667]], ['violin1_d5', 13, [1.659320, 3.047007]],
+                ['violin1_ds5', 14, [1.359478, 3.041406]], ['violin1_e5', 15, [1.454127, 3.041859]],
+                ['violin1_f5', 16, [1.168980, 3.042653]], ['violin1_fs5', 17, [1.279501, 3.042857]],
+                ['violin1_g5', 18, [1.193946, 3.043651]], ['violin1_gs5', 19, [1.123424, 3.044014]],
+                ['violin1_a5', 20, [1.638254, 3.039819]], ['violin1_as5', 21, [1.527279, 3.038776]],
+                ['violin1_b5', 22, [1.433878, 3.039002]], ['violin1_c6', 23, [1.842789, 3.041655]],
+                ['violin1_cs6', 24, [1.532404, 3.040658]], ['violin1_d6', 25, [1.617483, 3.040748]],
+                ['violin1_ds6', 26, [1.474399, 3.046916]], ['violin1_e6', 27, [1.377279, 3.047143]]],
+    violin2:   [['violin2_g3', -6, [0.947823, 3.033991]], ['violin2_gs3', -5, [1.064830, 3.033583]],
+                ['violin2_a3', -4, [1.175102, 3.032993]], ['violin2_as3', -3, [1.279932, 3.034150]],
+                ['violin2_b3', -2, [0.545442, 3.028571]], ['violin2_c4', -1, [0.860862, 3.026259]],
+                ['violin2_cs4', 0, [0.982857, 3.026463]], ['violin2_d4', 1, [1.094694, 3.027007]],
+                ['violin2_ds4', 2, [0.568027, 3.036871]], ['violin2_e4', 3, [0.707166, 3.037755]],
+                ['violin2_f4', 4, [0.833447, 3.032676]], ['violin2_fs4', 5, [0.949977, 3.034127]],
+                ['violin2_g4', 6, [1.071224, 3.038685]], ['violin2_gs4', 7, [0.560023, 3.035896]],
+                ['violin2_a4', 8, [0.699728, 3.037234]], ['violin2_as4', 9, [0.830726, 3.036871]],
+                ['violin2_b4', 10, [0.681474, 3.037483]], ['violin2_c5', 11, [0.816871, 3.040522]],
+                ['violin2_cs5', 12, [0.642902, 3.040884]], ['violin2_d5', 13, [0.498367, 3.046553]],
+                ['violin2_ds5', 14, [0.712132, 3.045465]], ['violin2_e5', 15, [0.841633, 3.045397]],
+                ['violin2_f5', 16, [0.618934, 3.045964]], ['violin2_fs5', 17, [1.254898, 3.041905]],
+                ['violin2_g5', 18, [0.513515, 3.041859]], ['violin2_gs5', 19, [0.654218, 3.041474]],
+                ['violin2_a5', 20, [0.789660, 3.042381]], ['violin2_as5', 21, [0.916259, 3.042653]],
+                ['violin2_b5', 22, [1.029410, 3.036145]], ['violin2_c6', 23, [0.688526, 3.039728]],
+                ['violin2_cs6', 24, [0.820884, 3.040181]], ['violin2_d6', 25, [0.945193, 3.041202]],
+                ['violin2_ds6', 26, [0.572948, 3.045850]], ['violin2_e6', 27, [0.597868, 3.052200]]],
   };
 
   // Tanpura tones (different instruments / jawari). Roles: pa, sa, sa2, sa_low.
@@ -158,7 +169,8 @@
     { id: 'harmonium', name: 'Harmonium', sustain: true },
     { id: 'santoor', name: 'Santoor', sustain: false },
     { id: 'piano', name: 'Piano', sustain: false },
-    { id: 'violin', name: 'Violin', sustain: true },
+    { id: 'violin1', name: 'Violin 1', sustain: true },
+    { id: 'violin2', name: 'Violin 2', sustain: true },
   ];
 
   // ── Ragas (for swarmandal) ──────────────────────────────────────────────

@@ -6,10 +6,11 @@
   const BUSES = ['taal', 'dayan', 'bayan', 'manjeera', 'lehra', 'tanpura', 'swar', 'sargam'];
   const LEGATO_OFFSET = 0.3;  // seconds into the sample a legato note starts
   const LEGATO_FADE = 0.04;   // its fade-in, in place of the attack
-  const RELEASE = { harmonium: 0.12, piano: 0.25, violin: 0.2 };   // default fade after a melodic note
+  const RELEASE = { harmonium: 0.12, piano: 0.25, violin1: 0.2, violin2: 0.2 };   // default fade after a melodic note
   // Vibrato added to an instrument's samples: rate (Hz), depth (cents either
   // side), and how long the note stays straight before it fades in over rise (s).
-  const VIBRATO = { violin: { rate: 5.6, cents: 16, delay: 0.25, rise: 0.45 } };
+  // None now: the violin samples carry their own.
+  const VIBRATO = {};
   // Meend curves: how far through the slide the pitch is (0 to 1, in
   // semitones) at each point of its time (0 to 1). 'even' is an exponential ramp.
   const MEEND_CURVES = {
@@ -414,7 +415,7 @@
       const freq = (s) => this.saFrequency() * Math.pow(2, s / 12);
       const f = freq(semi);
       const glide = (o, mul) => glides && this.rampPitch(o.frequency, glides.map((g) => ({ at: g.at, end: g.end, value: freq(g.semi) * mul })));
-      if (instrument === 'harmonium' || instrument === 'violin') {
+      if (instrument === 'harmonium' || instrument.startsWith('violin')) {
         const lp = c.createBiquadFilter();
         lp.type = 'lowpass'; lp.frequency.value = 2200;
         const g = c.createGain();

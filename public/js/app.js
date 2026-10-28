@@ -34,6 +34,7 @@
   if (store.settings && !('lehraOpen' in store.settings)) store.settings.sargamPanel = true;
   const S = Object.assign({}, DEFAULTS, store.settings);
   S.sargamCheck = false;   // never open the microphone without a click
+  if (S.sargamInst === 'violin') S.sargamInst = 'violin2';   // the Iowa violin was removed
   store.settings = S;
 
   // Writes are batched (sliders fire many times a second); `now` and page
@@ -2396,7 +2397,7 @@
     KeyA: 0, KeyW: 1, KeyS: 2, KeyE: 3, KeyD: 4, KeyF: 5, KeyT: 6, KeyG: 7, KeyY: 8, KeyH: 9,
     KeyU: 10, KeyJ: 11, KeyK: 12, KeyO: 13, KeyL: 14, KeyP: 15, Semicolon: 16, Quote: 17,
   };
-  const KEY_RELEASE = { harmonium: 0.12, piano: 0.25, violin: 0.2 };   // santoor rings on
+  const KEY_RELEASE = { harmonium: 0.12, piano: 0.25, violin1: 0.2, violin2: 0.2 };   // santoor rings on
   const held = new Map();      // key code or 'm' + MIDI note -> { voice, release }
   const sustained = new Map(); // notes let go while the sustain pedal is down
   let keyOctave = 0, pedal = false, learningSa = false, midiStarted = false, midiNames = null, midiError = '';
