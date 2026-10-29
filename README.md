@@ -19,6 +19,8 @@ Alexander Holm, CC-BY 3.0; `./import_piano.sh` re-downloads it into `public/soun
 The violins come from [midi-js-soundfonts](https://github.com/gleitz/midi-js-soundfonts):
 Violin 1 is FluidR3_GM (MIT), Violin 2 is MusyngKite (CC BY-SA 3.0).
 `tools/import_violin_soundfont.py` downloads, tunes and loops them into `public/sounds/`.
+The banjo is FluidR3_GM from the same place (MIT), made by
+`tools/import_banjo_soundfont.py`; its strings are tuned D A D G (Sa Pa Sa Ma).
 
 ### As a Python package
 
@@ -55,9 +57,11 @@ Settings → Export all to back them up).
 
 ## Features
 
-- **Taal**: 13 taals plus a kayda; tabla or pakhawaj; start beat; dayan/bayan mix;
+- **Taal**: 13 taals plus a kayda; tabla, pakhawaj or cajon (synthesized; any theka's
+  bols map to bass / tone / slap / ghost strokes); start beat; dayan/bayan mix;
   tabla fine-tune; manjeera on taali/khali.
 - **Tempo**: ±1/±10, ½, ×2, tap tempo, reset; laya shown.
+- **Metronome**: 1–4 clicks per beat, higher on sam and each vibhag; plays with the taal off too.
 - **Sa**: any key plus a fine tune in cents; all instruments retune together.
 - **Lehra**: harmonium or santoor, synced and auto-loaded per taal.
 - **Tanpura**: 10 tunings (Pa/Ma/Ni/…), 3 tones, 1–2 tanpuras, speed, string

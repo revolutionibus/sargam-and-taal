@@ -11,6 +11,7 @@
     taalId: 'teentaal', tempo: 120, key: 1, fine: 0, master: 0.8,
     taalOn: true, drum: '', startBeat: 1, taalVol: 0.9, dayanVol: 1, bayanVol: 1, tablaFine: 0,
     manjeeraOn: false, manjeeraVol: 0.5, manjeeraMode: 'beats', manjeeraBeats: {},
+    metroOn: false, metroVol: 0.6, metroSub: 1, metroAccent: true,
     lehraOn: false, lehraId: 'tt-yaman', lehraVol: 0.6, lehraAuto: true,
     tanpuraOn: true, tanpuraPattern: 0, tanpuraTone: 'k1', tanpuraCount: 1, tanpuraSpeed: 1,
     tanpuraRandom: true, tanpuraVol: 0.6, tanpuraDelays: [1.0, 0.9, 0.9, 1.7],
@@ -193,7 +194,7 @@
   });
   engine.setSa(S.key, S.fine);
   engine.tablaFine = S.tablaFine / 100;
-  for (const k of ['master', 'taal', 'dayan', 'bayan', 'manjeera', 'lehra', 'tanpura', 'swar', 'sargam']) {
+  for (const k of ['master', 'taal', 'dayan', 'bayan', 'manjeera', 'metro', 'lehra', 'tanpura', 'swar', 'sargam']) {
     engine.vol[k] = S[k + 'Vol'] !== undefined ? S[k + 'Vol'] : S.master;
   }
   engine.vol.master = S.master;
@@ -642,7 +643,18 @@
     });
 
     bind('taalOn', 'taalOn', { onChange: cardState });
-    bind('drumSelect', 'drum', { type: 'str', onChange: () => selectTaal(S.taalId, { keepTempo: true }) });
+    // The Taal card's Drum menu and the quick switch by "Now" in the transport
+    // are the same setting.
+    const setDrum = (v) => {
+      S.drum = v;
+      $('drumSelect').value = $('quickDrum').value = v;
+      save();
+      selectTaal(S.taalId, { keepTempo: true });
+    };
+    for (const id of ['drumSelect', 'quickDrum']) {
+      $(id).value = S.drum;
+      $(id).addEventListener('change', (e) => setDrum(e.target.value));
+    }
     bind('startBeat', 'startBeat');
     bind('taalVol', 'taalVol', { onChange: (v) => engine.setVolume('taal', v) });
     bind('dayanVol', 'dayanVol', { onChange: (v) => engine.setVolume('dayan', v) });
@@ -657,6 +669,10 @@
       save();
     });
     showManjeera();
+    bind('metroOn', 'metroOn');
+    bind('metroVol', 'metroVol', { onChange: (v) => engine.setVolume('metro', v) });
+    bind('metroSub', 'metroSub');
+    bind('metroAccent', 'metroAccent');
 
     bind('lehraOn', 'lehraOn', { onChange: cardState });
     $('lehraSelect').addEventListener('change', (e) => {
@@ -2044,7 +2060,8 @@
     const groups = [];
     for (const p of parts) {
       if (p.rest) continue;
-      if (drum === 'pakhawaj') (N.PK_BOLS[p.bol] || []).forEach(([g, d]) => groups.push([g, d, p]));
+      const strokes = N.drumStrokes(drum, p.bol);
+      if (strokes) strokes.forEach(([g, d]) => groups.push([g, d, p]));
       else {
         const b = N.BOLS[p.bol];
         if (b.r) groups.push([b.r, 0, p, bus.dayan]);

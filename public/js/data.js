@@ -18,6 +18,9 @@
     pk_dha: 0, pk_dhin: 0, pk_din: 0, pk_dhe: 0, pk_open_dhin: 0, pk_na: 0,
     pk_pressed_na: 0, pk_tin: 0, pk_tun: 0, pk_ti: 0, pk_tta: 0, pk_ra: 0,
     pk_normal_ge: 0, pk_open_ge: 0, pk_ki: 0, pk_thap: 0,
+    // Cajon: no recordings yet, so these play synthesized (Engine.synthStroke)
+    // unless a cajon_<stroke>.wav is added.
+    cajon_bass: 0, cajon_tone: 0, cajon_slap: 0, cajon_ghost: 0, cajon_mute: 0,
   };
 
   // Bayan (left drum) strokes stay at their recorded pitch, like a real bayan.
@@ -25,6 +28,7 @@
     'ki', 'thap', 'tichki', 'gin', 'open_ge', 'pressed_ge', 'closed_ge',
     'ge_for_dha', 'ge_for_dhin', 'first_closed_then_open_ge',
     'manjeera_open', 'manjeera_closed',
+    'cajon_bass', 'cajon_tone', 'cajon_slap', 'cajon_ghost', 'cajon_mute',
   ]);
 
   // Melodic instruments: [sample, semitone offset from C#4, optional loop
@@ -40,6 +44,17 @@
                 ['piano_fs3', -7], ['piano_a3', -4], ['piano_c4', -1], ['piano_ds4', 2],
                 ['piano_fs4', 5], ['piano_a4', 8], ['piano_c5', 11], ['piano_ds5', 14],
                 ['piano_fs5', 17], ['piano_a5', 20], ['piano_c6', 23], ['piano_ds6', 26]],
+    // FluidR3_GM banjo (MIT), one per semitone; see tools/import_banjo_soundfont.py.
+    banjo:     [['banjo_c3', -13], ['banjo_cs3', -12], ['banjo_d3', -11], ['banjo_ds3', -10],
+                ['banjo_e3', -9], ['banjo_f3', -8], ['banjo_fs3', -7], ['banjo_g3', -6],
+                ['banjo_gs3', -5], ['banjo_a3', -4], ['banjo_as3', -3], ['banjo_b3', -2],
+                ['banjo_c4', -1], ['banjo_cs4', 0], ['banjo_d4', 1], ['banjo_ds4', 2],
+                ['banjo_e4', 3], ['banjo_f4', 4], ['banjo_fs4', 5], ['banjo_g4', 6],
+                ['banjo_gs4', 7], ['banjo_a4', 8], ['banjo_as4', 9], ['banjo_b4', 10],
+                ['banjo_c5', 11], ['banjo_cs5', 12], ['banjo_d5', 13], ['banjo_ds5', 14],
+                ['banjo_e5', 15], ['banjo_f5', 16], ['banjo_fs5', 17], ['banjo_g5', 18],
+                ['banjo_gs5', 19], ['banjo_a5', 20], ['banjo_as5', 21], ['banjo_b5', 22],
+                ['banjo_c6', 23]],
     // midi-js-soundfonts violins, one per semitone with crossfaded loops; see
     // tools/import_violin_soundfont.py. These carry their own vibrato.
     // violin1 is FluidR3_GM (MIT), violin2 MusyngKite (CC BY-SA 3.0).
@@ -78,6 +93,11 @@
                 ['violin2_cs6', 24, [0.820884, 3.040181]], ['violin2_d6', 25, [0.945193, 3.041202]],
                 ['violin2_ds6', 26, [0.572948, 3.045850]], ['violin2_e6', 27, [0.597868, 3.052200]]],
   };
+
+  // Open strings of plucked instruments, in semitones from Sa, low to high.
+  // Each swar is played on the highest string at or below it, and a new pluck
+  // stops the note ringing on that string. Banjo: D A D G with Sa at D.
+  const STRINGS = { banjo: [-12, -5, 0, 5] };
 
   // Tanpura tones (different instruments / jawari). Roles: pa, sa, sa2, sa_low.
   const TANPURA_TONES = [
@@ -132,6 +152,22 @@
       bols: 'Dha Dha | Din Ta | KiTa Dha | TiTa KaTa | GaDi GeNe' },
     { id: 'kayda1', name: 'Kayda — DhaDha TiTa (Teentaal)', tempo: 90, marks: 'X 2 0 3', kind: 'composition',
       bols: 'DhaDha TiTa DhaDha TinNa | TaTa TiTa DhaDha DhinNa | TaTa TiTa TaTa TinNa | DhaDha TiTa DhaDha DhinNa' },
+    // Cajon grooves: one step is an 8th note, so the tempo is twice the
+    // song's BPM. Dha = bass, Na = slap, Tin = tone, Ti = ghost, Ke = mute.
+    { id: 'cajon-rock', name: 'Cajon — Basic rock', tempo: 200, marks: 'X 0', kind: 'composition', drum: 'cajon',
+      bols: 'Dha - Na - | Dha Dha Na -' },
+    { id: 'cajon-rock-ghost', name: 'Cajon — Rock with ghost notes', tempo: 200, marks: 'X 0', kind: 'composition', drum: 'cajon',
+      bols: 'Dha Ti Na Ti | Dha Dha Na# Ti' },
+    { id: 'cajon-ballad', name: 'Cajon — Slow ballad (2 bars)', tempo: 150, marks: 'X 0 X 0', kind: 'composition', drum: 'cajon',
+      bols: 'Dha - Ti - | Na# - Ti Dha | - Dha Ti - | Na# - Ke Ti' },
+    { id: 'cajon-funk', name: 'Cajon — Pop / funk 16ths', tempo: 180, marks: 'X 0', kind: 'composition', drum: 'cajon',
+      bols: 'DhaTi TiTi Na#Ti TiDha | TiDha TiTi Na#Ti KeTi' },
+    { id: 'cajon-6-8', name: 'Cajon — 6/8 groove', tempo: 180, marks: 'X 0', kind: 'composition', drum: 'cajon',
+      bols: 'Dha Ti Ti | Na# Ti Ti' },
+    { id: 'cajon-fill', name: 'Cajon — Fill into a chorus', tempo: 150, marks: 'X 0', kind: 'composition', drum: 'cajon',
+      bols: 'Dha Ti Na# Ti | TiRaKiTa TiRaKiTa Na# Na#' },
+    { id: 'cajon-tihai', name: 'Cajon — Tihai ending', tempo: 150, marks: 'X 0', kind: 'composition', drum: 'cajon',
+      bols: 'Dha Na#KeTi Dha - | Na#KeTi Dha - Na#KeTi' },
   ];
 
   // ── Lehras ──────────────────────────────────────────────────────────────
@@ -169,6 +205,7 @@
     { id: 'harmonium', name: 'Harmonium', sustain: true },
     { id: 'santoor', name: 'Santoor', sustain: false },
     { id: 'piano', name: 'Piano', sustain: false },
+    { id: 'banjo', name: 'Banjo', sustain: false },
     { id: 'violin1', name: 'Violin 1', sustain: true },
     { id: 'violin2', name: 'Violin 2', sustain: true },
   ];
@@ -229,7 +266,7 @@
 
   root.Data = {
     SAMPLE_BASE_MIDI, SAMPLE_GROUPS, UNPITCHED, MELODIC,
-    TANPURA_TONES, TANPURA_ROLE_SEMI, TANPURA_PATTERNS,
+    TANPURA_TONES, TANPURA_ROLE_SEMI, TANPURA_PATTERNS, STRINGS,
     TAALS, LEHRAS, SARGAM_INSTRUMENTS, RAGAS, KEYS, ALANKARS, buildAlankar,
   };
 })(this);

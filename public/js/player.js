@@ -136,7 +136,8 @@
       const add = (arr) => arr.forEach((f) => files.add(f));
       const groupsFromTaal = (t) => {
         for (const ev of t.events) {
-          if (t.drum === 'pakhawaj') (N.PK_BOLS[ev.bol] || []).forEach(([g]) => add(e.filesForGroup(g)));
+          const strokes = N.drumStrokes(t.drum, ev.bol);
+          if (strokes) strokes.forEach(([g]) => add(e.filesForGroup(g)));
           else {
             const b = N.BOLS[ev.bol];
             if (b.r) add(e.filesForGroup(b.r));
@@ -318,8 +319,9 @@
           if (ev.alt && this.pick(ev.alt.group) !== ev.alt.k) continue;
           const at = t + (ev.pos - b) * dur;
           const accent = (s.accentSam && ev.pos === 0 ? 1.12 : 1) * (ev.vel || 1);
-          if (taal.drum === 'pakhawaj') {
-            for (const [g, delay] of N.PK_BOLS[ev.bol] || []) e.stroke(g, at + delay, 0.9 * accent, ses.dayan);
+          const strokes = N.drumStrokes(taal.drum, ev.bol);
+          if (strokes) {
+            for (const [g, delay, v = 1] of strokes) e.stroke(g, at + delay, 0.9 * v * accent, ses.dayan);
           } else {
             const bol = N.BOLS[ev.bol];
             const v = (bol.v || 1) * accent;
@@ -342,6 +344,16 @@
           } else if (!samOnly) {
             e.stroke('manjeera_closed', t, 0.55, ses.manjeera);
           }
+        }
+      }
+
+      // Metronome: its own channel, so it keeps time with the taal off too.
+      // Sam clicks high, the other vibhags mid, and subdivisions softly.
+      if (s.metroOn) {
+        const sub = samOnly ? 1 : Math.max(1, s.metroSub || 1);
+        for (let k = 0; k < sub; k++) {
+          const level = k > 0 ? 'sub' : b === 0 && s.metroAccent ? 'sam' : taal.vibhagStart.has(b) && s.metroAccent ? 'vibhag' : 'beat';
+          e.click(t + (k * dur) / sub, level, ses.metro);
         }
       }
 

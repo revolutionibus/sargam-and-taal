@@ -3,7 +3,7 @@
 (function (root) {
   'use strict';
   const D = root.Data;
-  const BUSES = ['taal', 'dayan', 'bayan', 'manjeera', 'lehra', 'tanpura', 'swar', 'sargam'];
+  const BUSES = ['taal', 'dayan', 'bayan', 'manjeera', 'metro', 'lehra', 'tanpura', 'swar', 'sargam'];
   const LEGATO_OFFSET = 0.3;  // seconds into the sample a legato note starts
   const LEGATO_FADE = 0.04;   // its fade-in, in place of the attack
   const RELEASE = { harmonium: 0.12, piano: 0.25, violin1: 0.2, violin2: 0.2 };   // default fade after a melodic note
@@ -29,7 +29,7 @@
       this.saSemis = 0;           // Sa relative to C#4, in semitones (fractional)
       this.tablaFine = 0;         // extra dayan tuning, semitones
       this.meendCurve = 'even';   // 'even' or a key of MEEND_CURVES
-      this.vol = { master: 0.8, taal: 0.9, dayan: 1, bayan: 1, manjeera: 0.5,
+      this.vol = { master: 0.8, taal: 0.9, dayan: 1, bayan: 1, manjeera: 0.5, metro: 0.6,
                    lehra: 0.6, tanpura: 0.6, swar: 0.5, sargam: 0.7 };
       this.session = null;
       this.preview = null;
@@ -63,6 +63,7 @@
       for (const b of BUSES) s[b] = c.createGain();
       s.taal.connect(s.out);
       s.dayan.connect(s.taal); s.bayan.connect(s.taal); s.manjeera.connect(s.taal);
+      s.metro.connect(s.out);
       s.lehra.connect(s.out); s.tanpura.connect(s.out); s.swar.connect(s.out); s.sargam.connect(s.out);
       this.applyVolumes(s);
       s.voices = {};
@@ -270,6 +271,13 @@
       }
     }
 
+    // Metronome click (synthesized, not tuned to Sa). level: 'sam' | 'vibhag' | 'beat' | 'sub'.
+    click(time, level, bus) {
+      const [freq, amp] = { sam: [2000, 0.9], vibhag: [1500, 0.7], beat: [1000, 0.6], sub: [800, 0.3] }[level];
+      this.tone(freq, time, amp, 0.012, bus, 'square');
+      this.tone(freq * 2, time, amp * 0.3, 0.006, bus);
+    }
+
     // ── Melodic ─────────────────────────────────────────────────────────
     // semi: semitones relative to Sa (0 = madhya Sa). Uses the sample nearest
     // the sounding pitch, so the key's transposition is kept small.
@@ -289,11 +297,27 @@
         if (set.every(([f]) => this.missing.has(f + '.wav'))) this.synthMelodic(instrument, semi, time, dur, vel, bus, glides);
         return null;
       }
-      return this.playBuffer(this.buffers.get(best[0]), time, bus,
+      const strings = D.STRINGS[instrument];
+      let voiceKey = null;
+      if (strings) {
+        // Played on the highest string at or below the swar (below the lowest
+        // string: the lowest); a new pluck damps that string's last note.
+        const k = Math.max(0, strings.findLastIndex((o) => o <= semi));
+        voiceKey = `${instrument}_${k}`;
+        const prev = (this.session || this.preview).voices[voiceKey];
+        if (prev) {
+          prev.gain.gain.cancelScheduledValues(time);
+          prev.gain.gain.setTargetAtTime(0, time, 0.02);
+          try { prev.src.stop(time + 0.2); } catch (e) { /* already stopped */ }
+        }
+      }
+      const v = this.playBuffer(this.buffers.get(best[0]), time, bus,
         { semis: this.saSemis + semi - best[1], vel, dur,
           release: release ?? RELEASE[instrument] ?? 0.6, legato,
           loop: best[2], vibrato: VIBRATO[instrument],
           glides: glides && glides.map((g) => ({ at: g.at, end: g.end, semis: this.saSemis + g.semi - best[1] })) });
+      if (voiceKey) (this.session || this.preview).voices[voiceKey] = v;
+      return v;
     }
 
     melodicFiles(instrument) {
@@ -403,6 +427,38 @@
           break;
         case 'manjeera_closed':
           this.noiseBurst(t, 0.5 * v, 0.03, bus, 'highpass', 4000);
+          break;
+        // Cajon: a low body thump (bass), a mid ring (tone), the front plate's
+        // crack (slap), soft finger taps (ghost) and a damped palm (mute). The
+        // snare wires behind the plate add a short buzz to each.
+        case 'cajon_bass': {
+          const o = this.tone(120, t, 1.1 * v, 0.11, bus);
+          o.frequency.setValueAtTime(120, t);
+          o.frequency.exponentialRampToValueAtTime(62, t + 0.09);
+          this.noiseBurst(t, 0.45 * v, 0.02, bus, 'lowpass', 400);
+          this.noiseBurst(t, 0.08 * v, 0.05, bus, 'highpass', 4500);
+          break;
+        }
+        case 'cajon_tone': {
+          const o = this.tone(230, t, 0.6 * v, 0.07, bus);
+          o.frequency.setValueAtTime(230, t);
+          o.frequency.exponentialRampToValueAtTime(190, t + 0.06);
+          this.noiseBurst(t, 0.4 * v, 0.025, bus, 'bandpass', 900, 1.2);
+          this.noiseBurst(t, 0.15 * v, 0.06, bus, 'highpass', 4000);
+          break;
+        }
+        case 'cajon_slap':
+          this.noiseBurst(t, 1.0 * v, 0.03, bus, 'bandpass', 2600, 0.8);
+          this.tone(340, t, 0.35 * v, 0.03, bus, 'triangle');
+          this.noiseBurst(t + 0.004, 0.35 * v, 0.09, bus, 'highpass', 5000);
+          break;
+        case 'cajon_ghost':
+          this.noiseBurst(t, 0.3 * v, 0.012, bus, 'bandpass', 3200, 0.9);
+          this.noiseBurst(t, 0.08 * v, 0.03, bus, 'highpass', 6000);
+          break;
+        case 'cajon_mute':
+          this.tone(150, t, 0.5 * v, 0.025, bus);
+          this.noiseBurst(t, 0.35 * v, 0.015, bus, 'lowpass', 700);
           break;
         default:
           if (group.startsWith('pk_')) ring([0.8, 0.3, 0.1], [0.4, 0.25, 0.15], 0.2);

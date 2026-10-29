@@ -57,6 +57,19 @@
       <button id="tempoReset" title="Taal's default tempo">↺</button>
     </div>
   </div>
+  <div class="tgroup t-metro">
+    <label><input type="checkbox" id="metroOn"> Metronome</label>
+    <div class="row">
+      <input id="metroVol" aria-label="Metronome volume" type="range" min="0" max="1.5" step="0.01">
+      <select id="metroSub" aria-label="Clicks per beat" title="Clicks per beat">
+        <option value="1">1 per beat</option>
+        <option value="2">2 per beat</option>
+        <option value="3">3 per beat</option>
+        <option value="4">4 per beat</option>
+      </select>
+      <label class="small" title="Higher click on sam, and on each vibhag"><input type="checkbox" id="metroAccent"> Accent sam</label>
+    </div>
+  </div>
   <div class="tgroup t-master">
     <label for="masterVol">Master</label>
     <input id="masterVol" type="range" min="0" max="1" step="0.01">
@@ -90,7 +103,15 @@
   </div>
 
   <div class="tgroup status">
-    <button id="nowBtn" class="now-btn" title="Choose taal"><span class="muted">Now:</span> <b id="nowPlaying">—</b></button>
+    <div class="now-row">
+      <button id="nowBtn" class="now-btn" title="Choose taal"><span class="muted">Now:</span> <b id="nowPlaying">—</b></button>
+      <select id="quickDrum" class="quick-drum" aria-label="Drum" title="Drum">
+        <option value="">Taal default</option>
+        <option value="tabla">Tabla</option>
+        <option value="pakhawaj">Pakhawaj</option>
+        <option value="cajon">Cajon</option>
+      </select>
+    </div>
     <div class="status-count"><span class="muted">Avartan</span> <b id="avartan">0</b>
          <span class="muted">· Time</span> <b id="elapsed">0:00</b></div>
   </div>
@@ -171,6 +192,7 @@
               <option value="">Taal default</option>
               <option value="tabla">Tabla</option>
               <option value="pakhawaj">Pakhawaj</option>
+              <option value="cajon">Cajon</option>
             </select></div>
           <div class="field"><label for="taalVol">Volume</label><input id="taalVol" type="range" min="0" max="1.5" step="0.01"></div>
           <details data-keep="taal-more">
@@ -410,7 +432,7 @@
         <div class="field"><label for="cMarks">Vibhag marks</label><input id="cMarks" type="text" placeholder="X 2 0 3"></div>
         <div class="field"><label for="cTempo">Default tempo</label><input id="cTempo" type="number" min="10" max="800" value="100"></div>
         <div class="field"><label for="cDrum">Drum</label>
-          <select id="cDrum"><option value="tabla">Tabla</option><option value="pakhawaj">Pakhawaj</option></select></div>
+          <select id="cDrum"><option value="tabla">Tabla</option><option value="pakhawaj">Pakhawaj</option><option value="cajon">Cajon</option></select></div>
         <label for="cBols">Bols <span class="muted small" data-i18n="bolsHelp">— beats separated by spaces, vibhags by “|”. Several bols in one beat
           share it: <code>TiRaKiTa</code>, <code>DhaGe</code>. “-” is a rest. <code>(Na---)[1]</code> fits a group
           into 1 beat, <code>(Dha|Dha2)</code> picks one at random, <code>Dha2</code> = recording 2, <code>#</code> louder,

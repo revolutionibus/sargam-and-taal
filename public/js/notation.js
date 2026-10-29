@@ -67,6 +67,31 @@
     gi: [['pk_normal_ge', 0]], gin: [['pk_open_ge', 0]],
     ke: [['pk_ki', 0]], ka: [['pk_ki', 0]], ki: [['pk_ki', 0]], kat: [['pk_thap', 0]],
   };
+  // Cajon: tabla bols played as cajon strokes, so any theka works on it.
+  // Open bayan bols (Dha, Dhin, Ge) are the bass in the middle of the face,
+  // Na/Ta the slap at the edge, Tin/Tun the tone, TiRaKiTa finger ghosts and
+  // Ke/Ka a muted palm. Entries are [sample, delaySeconds, velocity].
+  const CAJON_BOLS = {
+    dha: [['cajon_bass', 0, 1]], dhin: [['cajon_bass', 0, 0.95]], dhi: [['cajon_bass', 0, 0.95]],
+    din: [['cajon_bass', 0, 0.95]], di: [['cajon_bass', 0, 0.8]],
+    dhe: [['cajon_bass', 0, 0.9], ['cajon_ghost', 0, 0.7]],
+    dhum: [['cajon_bass', 0, 1.05]],
+    na: [['cajon_slap', 0, 0.9]], ne: [['cajon_slap', 0, 0.7]], ta: [['cajon_slap', 0, 0.9]],
+    tin: [['cajon_tone', 0, 0.9]], sur: [['cajon_tone', 0, 0.9]], tun: [['cajon_tone', 0, 0.9]], tu: [['cajon_tone', 0, 0.9]],
+    ti: [['cajon_ghost', 0, 0.8]], te: [['cajon_ghost', 0, 0.8]], ra: [['cajon_ghost', 0, 0.7]], re: [['cajon_ghost', 0, 0.7]],
+    tr: [['cajon_ghost', 0, 0.8], ['cajon_ghost', 0.035, 0.6]], tra: [['cajon_ghost', 0, 0.8], ['cajon_ghost', 0.035, 0.6]],
+    ge: [['cajon_bass', 0, 0.85]], ghe: [['cajon_bass', 0, 0.85]], ga: [['cajon_bass', 0, 0.85]],
+    gi: [['cajon_bass', 0, 0.85]], gin: [['cajon_bass', 0, 0.9]],
+    ke: [['cajon_mute', 0, 0.8]], ka: [['cajon_mute', 0, 0.8]], ki: [['cajon_mute', 0, 0.8]],
+    kat: [['cajon_slap', 0, 1.1]],
+  };
+  // Strokes for a bol on a drum played from a one-table map (pakhawaj, cajon):
+  // [[sample, delaySeconds, velocity]], or null for the tabla's two hands.
+  function drumStrokes(drum, bol) {
+    if (drum === 'pakhawaj') return PK_BOLS[bol] || [];
+    if (drum === 'cajon') return CAJON_BOLS[bol] || [];
+    return null;
+  }
   const BOL_KEYS = Object.keys(BOLS).sort((a, b) => b.length - a.length);
   const REST = new Set(['-', '_', '~']);
   const ACCENT_VEL = 1.25;
@@ -425,7 +450,7 @@
     return out;
   }
 
-  const api = { BOLS, PK_BOLS, splitBols, parseBols, parseSwars, parseSargam, parseManjeera, slotsToNotes,
+  const api = { BOLS, PK_BOLS, CAJON_BOLS, drumStrokes, splitBols, parseBols, parseSwars, parseSargam, parseManjeera, slotsToNotes,
                 swarLabel, eventsInBeat, SWAR_SEMI };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Notation = api;
